@@ -1,0 +1,6 @@
+@sgu_food_tour_pj_HostAddress = http://localhost:5026
+
+GET {{sgu_food_tour_pj_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
