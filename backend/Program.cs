@@ -1,88 +1,56 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using SGU_FOOD_TOUR_PJ.data;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. CẤU HÌNH BẢO MẬT JWT ---
-// Khóa bí mật (phải đủ dài và phức tạp)
-var securityKey = "SguFoodTourSecretKey_SieuBaoMat_2026!!!"; 
-var issuer = "SguFoodTourBackend";
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+// --- BƯỚC 1: CẤU HÌNH SWAGGER (Đã làm sạch để không bị lỗi) ---
+builder.Services.AddSwaggerGen();
+
+// --- BƯỚC 2: ĐĂNG KÝ DATABASE (POSTGRESQL) ---
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// --- BƯỚC 3: ĐĂNG KÝ JWT AUTHENTICATION ---
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options => 
+{
+    options.TokenValidationParameters = new TokenValidationParameters 
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = false, // Tạm tắt kiểm tra người nhận
-            ValidateLifetime = true,  // Kiểm tra thời hạn token
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = issuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey))
-        };
-    });
-
-builder.Services.AddAuthorization();
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+        ValidateIssuer = false, // Trong thực tế có thể bật lên
+        ValidateAudience = false // Trong thực tế có thể bật lên
+    };
+});
 
 var app = builder.Build();
 
-// --- 2. KÍCH HOẠT MIDDLEWARE BẢO MẬT ---
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+// --- BƯỚC 4: KÍCH HOẠT MIDDLEWARE (THỨ TỰ CỰC KỲ QUAN TRỌNG) ---
+// Bắt buộc phải là Authentication (Xác thực ai) TRƯỚC Authorization (Quyền gì)
 app.UseAuthentication(); 
-app.UseAuthorization();  
+app.UseAuthorization();
 
-
-// --- 3. API ĐĂNG NHẬP (TẠO TOKEN) ---
-app.MapPost("/api/login", (UserLogin userInfo) =>
-{
-    // Tạm thời fix cứng tài khoản, sau này mình sẽ thay bằng Database
-    if (userInfo.Username == "admin" && userInfo.Password == "123456")
-    {
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, userInfo.Username),
-            new Claim(ClaimTypes.Role, "Admin")
-        };
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(2), // Token sống được 2 tiếng
-            Issuer = issuer,
-            SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey)), 
-                SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        var jwtString = tokenHandler.WriteToken(token);
-
-        return Results.Ok(new { message = "Đăng nhập thành công!", token = jwtString });
-    }
-    
-    return Results.Unauthorized(); // Trả về lỗi 401 nếu sai tài khoản
-});
-
-
-// --- 4. API BẢO MẬT (YÊU CẦU TOKEN) ---
-// Thêm [Authorize] để khóa API này lại
-app.MapGet("/api/profile", [Authorize] () =>
-{
-    return Results.Ok(new { 
-        message = "Chào mừng bạn đến với hệ thống quản lý SGU Food Tour!",
-        status = "Thành công"
-    });
-});
+app.MapControllers();
 
 app.Run();
-
-// --- 5. ĐỊNH NGHĨA DỮ LIỆU ĐẦU VÀO ---
-class UserLogin
-{
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-}
