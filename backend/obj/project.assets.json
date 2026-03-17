@@ -3679,11 +3679,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\sgu\\C#\\sgu-food-tour-pj\\backend\\sgu-food-tour-pj.csproj",
+      "projectUniqueName": "D:\\sgu\\CSharp\\sgu-food-tour-pj\\backend\\sgu-food-tour-pj.csproj",
       "projectName": "sgu-food-tour-pj",
-      "projectPath": "D:\\sgu\\C#\\sgu-food-tour-pj\\backend\\sgu-food-tour-pj.csproj",
+      "projectPath": "D:\\sgu\\CSharp\\sgu-food-tour-pj\\backend\\sgu-food-tour-pj.csproj",
       "packagesPath": "C:\\Users\\nhanh\\.nuget\\packages\\",
-      "outputPath": "D:\\sgu\\C#\\sgu-food-tour-pj\\backend\\obj\\",
+      "outputPath": "D:\\sgu\\CSharp\\sgu-food-tour-pj\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\nhanh\\AppData\\Roaming\\NuGet\\NuGet.Config",

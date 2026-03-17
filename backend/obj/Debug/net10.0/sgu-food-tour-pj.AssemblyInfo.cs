@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("sgu-food-tour-pj")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+955a9ed7f44437a001a02ca72b8f8dffe0f9b75d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a04f9a97cf3f56b57f2c1487d7172f80cb89991f")]
 [assembly: System.Reflection.AssemblyProductAttribute("sgu-food-tour-pj")]
 [assembly: System.Reflection.AssemblyTitleAttribute("sgu-food-tour-pj")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

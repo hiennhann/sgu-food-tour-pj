@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ojKTMxFv7/Q=",
+  "dgSpecHash": "Sw5fdMeZ6yE=",
   "success": true,
-  "projectFilePath": "D:\\sgu\\C#\\sgu-food-tour-pj\\backend\\sgu-food-tour-pj.csproj",
+  "projectFilePath": "D:\\sgu\\CSharp\\sgu-food-tour-pj\\backend\\sgu-food-tour-pj.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\nhanh\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\nhanh\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
