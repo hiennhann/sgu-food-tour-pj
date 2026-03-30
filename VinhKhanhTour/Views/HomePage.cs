@@ -41,20 +41,44 @@ namespace VinhKhanhTour
             var contentScrollView = new ScrollView();
             var contentStack = new VerticalStackLayout { Spacing = 15, Padding = new Thickness(15, 15, 15, 0) };
 
-            var searchBarGrid = new Grid();
-            var searchEntry = new Entry { Placeholder = "🔍 Tìm kiếm món ăn, quán...", BackgroundColor = Color.FromArgb("#F2F2F2"), HeightRequest = 45 };
-            searchBarGrid.Children.Add(new Border { StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 }, Content = searchEntry, Stroke = Colors.Transparent });
-            contentStack.Children.Add(searchBarGrid);
+            var searchEntry = new Entry { BackgroundColor = Color.FromArgb("#F2F2F2"), HeightRequest = 45 };
+
+            // SỬ DỤNG CONVERTER ĐỂ DỊCH (Cách này né được mọi ký tự đặc biệt)
+            searchEntry.SetBinding(
+                Entry.PlaceholderProperty,
+                new Binding(
+                    path: "CurrentLanguageCode",
+                    source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+                    converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                    converterParameter: "Tìm quán ốc, lẩu, sushi..."
+                )
+            );
 
             contentStack.Children.Add(CreateCategoryList());
 
-            var ctaButton = new Button { Text = "🗺️ Bắt Đầu Tour Ngay →", BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 50, Margin = new Thickness(0, 10) };
+            var ctaButton = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 50, Margin = new Thickness(0, 10) };
+            ctaButton.SetBinding(Button.TextProperty, new Binding(
+                path: "CurrentLanguageCode",
+                source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                converterParameter: "Bắt Đầu Tour Ngay →",
+                stringFormat: "🗺️ {0}" // Tự động ghép icon bản đồ vào chữ dịch
+            ));
             ctaButton.Clicked += async (s, e) => await Navigation.PushAsync(new MapPage());
             contentStack.Children.Add(ctaButton);
 
             var featuredHeader = new HorizontalStackLayout { Spacing = 5 };
             featuredHeader.Children.Add(new Label { Text = "📍", TextColor = Color.FromArgb("#FF5C0F"), FontSize = 20 });
-            featuredHeader.Children.Add(new Label { Text = "Địa điểm nổi bật", FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, VerticalOptions = LayoutOptions.Center });
+
+            var headerLabel = new Label { FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, VerticalOptions = LayoutOptions.Center };
+            headerLabel.SetBinding(Label.TextProperty, new Binding(
+                path: "CurrentLanguageCode",
+                source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                converterParameter: "Địa điểm nổi bật"
+            ));
+            featuredHeader.Children.Add(headerLabel);
+
             contentStack.Children.Add(featuredHeader);
 
             // =========================================================
@@ -97,7 +121,20 @@ namespace VinhKhanhTour
                 Grid.SetColumn(ratingStack, 0);
                 infoGrid.Children.Add(ratingStack);
 
-                var playBtn = new Button { Text = "▶️ Phát Audio", BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontSize = 10, Padding = new Thickness(10, 5), CornerRadius = 10, HeightRequest = 30 };
+                var playBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontSize = 10, Padding = new Thickness(10, 5), CornerRadius = 10, HeightRequest = 30 };
+
+                // Dùng Converter + stringFormat
+                playBtn.SetBinding(
+                    Button.TextProperty,
+                    new Binding(
+                        path: "CurrentLanguageCode",
+                        source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+                        converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                        converterParameter: "Nghe Audio",
+                        stringFormat: "▶️ {0}"
+                    )
+                );
+
                 Grid.SetColumn(playBtn, 1);
                 infoGrid.Children.Add(playBtn);
                 cardGrid.Children.Add(infoGrid);
@@ -170,7 +207,16 @@ namespace VinhKhanhTour
         {
             var layout = new HorizontalStackLayout { Spacing = 5, Padding = new Thickness(15, 10) };
             layout.Children.Add(new Image { Source = icon, HeightRequest = 20, WidthRequest = 20 });
-            layout.Children.Add(new Label { Text = text, TextColor = isSelected ? Colors.White : Colors.Black, VerticalOptions = LayoutOptions.Center });
+
+            // SỬA Ở ĐÂY: Dùng Binding thay vì gán Text trực tiếp
+            var textLabel = new Label { TextColor = isSelected ? Colors.White : Colors.Black, VerticalOptions = LayoutOptions.Center };
+            textLabel.SetBinding(Label.TextProperty, new Binding(
+                path: "CurrentLanguageCode",
+                source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                converterParameter: text // Truyền trực tiếp tham số text vào converter
+            ));
+            layout.Children.Add(textLabel);
 
             return new Border
             {
@@ -185,7 +231,17 @@ namespace VinhKhanhTour
         {
             var layout = new VerticalStackLayout { Spacing = 2, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
             layout.Children.Add(new Image { Source = icon, HeightRequest = 24, WidthRequest = 24, Opacity = isSelected ? 1.0 : 0.5 });
-            layout.Children.Add(new Label { Text = text, TextColor = isSelected ? Color.FromArgb("#FF5C0F") : Color.FromArgb("#808080"), FontSize = 10, HorizontalOptions = LayoutOptions.Center });
+
+            // SỬA Ở ĐÂY: Dùng Binding cho Tab Bar
+            var textLabel = new Label { TextColor = isSelected ? Color.FromArgb("#FF5C0F") : Color.FromArgb("#808080"), FontSize = 10, HorizontalOptions = LayoutOptions.Center };
+            textLabel.SetBinding(Label.TextProperty, new Binding(
+                path: "CurrentLanguageCode",
+                source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                converterParameter: text
+            ));
+            layout.Children.Add(textLabel);
+
             return layout;
         }
     }

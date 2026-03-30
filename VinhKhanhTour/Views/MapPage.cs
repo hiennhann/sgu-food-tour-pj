@@ -1,6 +1,9 @@
 ﻿using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Layouts;
+using VinhKhanhTour.Helpers; // Dùng TranslateConverter
+using VinhKhanhTour.Models;
+using VinhKhanhTour.Services; // Dùng LocalizationResourceManager
 
 namespace VinhKhanhTour.Views
 {
@@ -21,7 +24,9 @@ namespace VinhKhanhTour.Views
                 }
             };
 
-            var headerLabel = new Label { Text = "Bản đồ Ẩm thực Vĩnh Khánh", FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
+            var headerLabel = new Label { FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
+            // DỊCH TIÊU ĐỀ BẢN ĐỒ
+            headerLabel.SetBinding(Label.TextProperty, new Binding(".", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Bản Đồ Phố Vĩnh Khánh"));
             Grid.SetRow(headerLabel, 0);
             mainGrid.Children.Add(headerLabel);
 
@@ -38,13 +43,10 @@ namespace VinhKhanhTour.Views
 
             var locationLayout = new HorizontalStackLayout { Spacing = 5 };
             locationLayout.Children.Add(new Image { Source = "icon_location_blue.png", WidthRequest = 16, HeightRequest = 16 });
-            locationLayout.Children.Add(new Label { Text = "My Location", TextColor = Color.FromArgb("#0066CC"), VerticalOptions = LayoutOptions.Center });
+            var locationLabel = new Label { TextColor = Color.FromArgb("#0066CC"), VerticalOptions = LayoutOptions.Center };
+            locationLabel.SetBinding(Label.TextProperty, new Binding(".", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "BẠN ĐANG Ở GẦN"));
+            locationLayout.Children.Add(locationLabel);
             floatingControls.Children.Add(new Border { Stroke = Color.FromArgb("#E0E0E0"), StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 }, BackgroundColor = Colors.White, Padding = new Thickness(10, 5), Content = locationLayout });
-
-            var autoPlayLayout = new HorizontalStackLayout { Spacing = 10 };
-            autoPlayLayout.Children.Add(new Label { Text = "Auto-play audio", TextColor = Colors.Black, VerticalOptions = LayoutOptions.Center });
-            autoPlayLayout.Children.Add(new Switch { IsToggled = true, OnColor = Color.FromArgb("#FF5C0F") });
-            floatingControls.Children.Add(new Border { Stroke = Color.FromArgb("#E0E0E0"), StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 }, BackgroundColor = Colors.White, Padding = new Thickness(10, 5), Content = autoPlayLayout });
 
             mapAreaGrid.Children.Add(floatingControls);
 
@@ -84,7 +86,26 @@ namespace VinhKhanhTour.Views
             ratingStack.Children.Add(new Label { Text = "(154)", TextColor = Colors.Gray });
             infoStack.Children.Add(ratingStack);
 
-            infoStack.Children.Add(new Button { Text = "▶ Phát Audio", BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 8, HeightRequest = 40, Margin = new Thickness(0, 5, 0, 0) });
+            var audioBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 8, HeightRequest = 40, Margin = new Thickness(0, 5, 0, 0) };
+            audioBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Nghe Audio", stringFormat: "▶ {0}"));
+
+            // --- THÊM PHẦN XỬ LÝ CLICK ---
+            audioBtn.Clicked += async (s, e) =>
+            {
+                // Tạo một FoodPlace giả lập dựa trên dữ liệu hiện tại của thẻ
+                var currentMapPlace = new FoodPlace
+                {
+                    Id = "1",
+                    Name = "Quán Ốc Vũ",
+                    // Mẹo: Gọi thẳng từ điển ra để đọc kịch bản đa ngôn ngữ
+                    NarrationText = LocalizationResourceManager.Instance["Quán Ốc Vũ là một trong những quán ốc lâu đời và nổi tiếng nhất tại Vĩnh Khánh."] ?? "Quán Ốc Vũ..."
+                };
+
+                // Nhờ Engine phát âm thanh ngay trên bản đồ
+                await NarrationEngine.Instance.PlayNarrationAsync(currentMapPlace, isManual: true);
+            };
+
+            infoStack.Children.Add(audioBtn);
 
             Grid.SetColumn(infoStack, 1);
             cardGrid.Children.Add(infoStack);
@@ -117,12 +138,16 @@ namespace VinhKhanhTour.Views
             return new Border { StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(15, 15, 0, 0) }, BackgroundColor = Colors.White, Content = tabBarGrid, Stroke = Color.FromArgb("#E0E0E0") };
         }
 
+        // HÀM TẠO TAB ĐÃ ĐƯỢC ĐỒNG BỘ
         private View CreateTabItem(string text, string icon, bool isSelected = false)
         {
             var layout = new VerticalStackLayout { Spacing = 2, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
-            // Đã đổi ColorFilter thành Opacity để tương thích MAUI
             layout.Children.Add(new Image { Source = icon, HeightRequest = 24, WidthRequest = 24, Opacity = isSelected ? 1.0 : 0.5 });
-            layout.Children.Add(new Label { Text = text, TextColor = isSelected ? Color.FromArgb("#FF5C0F") : Color.FromArgb("#808080"), FontSize = 10, HorizontalOptions = LayoutOptions.Center });
+
+            var textLabel = new Label { TextColor = isSelected ? Color.FromArgb("#FF5C0F") : Color.FromArgb("#808080"), FontSize = 10, HorizontalOptions = LayoutOptions.Center };
+            textLabel.SetBinding(Label.TextProperty, new Binding(".", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: text));
+            layout.Children.Add(textLabel);
+
             return layout;
         }
     }

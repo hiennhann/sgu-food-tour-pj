@@ -1,11 +1,12 @@
 ﻿using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
+using VinhKhanhTour.Models; // Thêm thư viện
 
 namespace VinhKhanhTour.Views
 {
     public class MenuPage : ContentPage
     {
-        public MenuPage()
+        public MenuPage(FoodPlace place)
         {
             NavigationPage.SetHasNavigationBar(this, false);
             BackgroundColor = Color.FromArgb("#F8F9FA");

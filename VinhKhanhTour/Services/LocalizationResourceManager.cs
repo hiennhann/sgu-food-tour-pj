@@ -1,0 +1,320 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using Microsoft.Maui.Storage;
+
+namespace VinhKhanhTour.Services
+{
+    public class LocalizationResourceManager : INotifyPropertyChanged
+    {
+        public static LocalizationResourceManager Instance { get; } = new LocalizationResourceManager();
+
+        private CultureInfo _currentCulture = new CultureInfo("vi-VN");
+
+        private LocalizationResourceManager()
+        {
+            var savedLang = Preferences.Default.Get("AppLanguage", "vi");
+            SetCulture(new CultureInfo(savedLang switch
+            {
+                "en" => "en-US",
+                "es" => "es-ES",
+                "fr" => "fr-FR",
+                "de" => "de-DE",
+                "zh" => "zh-CN",
+                "ja" => "ja-JP",
+                "ko" => "ko-KR",
+                "ru" => "ru-RU",
+                "it" => "it-IT",
+                "pt" => "pt-PT",
+                "hi" => "hi-IN",
+                _ => "vi-VN"
+            }));
+        }
+
+        public void SetCulture(CultureInfo culture)
+        {
+            _currentCulture = culture;
+            Preferences.Default.Set("AppLanguage", _currentCulture.TwoLetterISOLanguageName);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CurrentLanguageCode"));
+        }
+
+        public string CurrentLanguageCode => _currentCulture.TwoLetterISOLanguageName;
+
+        public string this[string text]
+        {
+            get
+            {
+                Dictionary<string, string>? dict = null;
+
+                switch (CurrentLanguageCode)
+                {
+                    case "en": dict = _englishResources; break;
+                    case "es": dict = _spanishResources; break;
+                    case "fr": dict = _frenchResources; break;
+                    case "de": dict = _germanResources; break;
+                    case "zh": dict = _chineseResources; break;
+                    case "ja": dict = _japaneseResources; break;
+                    case "ko": dict = _koreanResources; break;
+                    case "ru": dict = _russianResources; break;
+                    case "it": dict = _italianResources; break;
+                    case "pt": dict = _portugueseResources; break;
+                    case "hi": dict = _hindiResources; break;
+                }
+
+                if (dict != null && dict.TryGetValue(text, out var translatedString))
+                {
+                    return translatedString;
+                }
+
+                return text;
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        // --- CÁC TỪ ĐIỂN NGÔN NGỮ ĐÃ ĐƯỢC BỔ SUNG ĐẦY ĐỦ ---
+        private readonly Dictionary<string, string> _englishResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "Home" }, { "Bản đồ", "Map" }, { "Khám phá", "Explore" }, { "Cài đặt", "Settings" },
+            { "Khám phá Ẩm thực", "Explore Cuisine" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "Saigon Snail Paradise — District 4" },
+            { "Tìm quán ốc, lẩu, sushi...", "Search for snails, hotpot, sushi..." }, { "Bắt Đầu Tour Ngay", "Start Tour Now" },
+            { "Bắt Đầu Tour Ngay →", "Start Tour Now →" }, { "Địa điểm nổi bật", "Featured Locations" }, { "Nghe Audio", "Listen Audio" },
+            { "🔥 Tất cả", "🔥 All" }, { "🐚 Ốc & Hải sản", "🐚 Snails & Seafood" }, { "🍖 Đồ nướng", "🍖 BBQ" },
+            { "🍜 Món nước", "🍜 Noodle/Broth" }, { "🍣 Sushi", "🍣 Sushi" }, { "🐚 Ốc", "🐚 Snail" }, { "Tất cả", "All" },
+            { "Ốc & Hải sản", "Snails & Seafood" }, { "Đồ nướng", "BBQ" }, { "Món nước", "Noodle/Broth" },
+            { "Giao diện", "Appearance" }, { "Chế độ Tối (Dark Mode)", "Dark Mode" }, { "Ngôn ngữ / Language", "Language" },
+            { "Âm thanh & Giọng đọc", "Audio & TTS" }, { "Tốc độ đọc (TTS)", "Speech Rate (TTS)" }, { "Về ứng dụng", "About App" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "Course Project — Mobile App Development" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "Designed with ❤️ by the dev team" }, { "Bình thường", "Normal" },
+            { "Tốc độ", "Rate" }, { "Bán kính", "Radius" }, { "Bản Đồ Phố Vĩnh Khánh", "Vinh Khanh Street Map" },
+            { "Đang tìm kiếm vệ tinh GPS...", "Searching for GPS satellites..." }, { "BẠN ĐANG Ở GẦN", "YOU ARE NEAR" },
+            { "Chọn một điểm trên map", "Select a point on the map" }, { "Cách quán gần nhất", "Nearest place" },
+            { "Chưa tìm thấy quán ốc", "No snail stall found" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "About" }, { "Xem Thực Đơn", "View Menu" }, { "Chỉ Đường", "Directions" },
+            { "Giới thiệu về {0}", "About {0}" }, { "Lỗi Audio", "Audio Error" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Your device does not support TTS for this language." }, { "Đóng", "Close" }
+        };
+
+        private readonly Dictionary<string, string> _spanishResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "Inicio" }, { "Bản đồ", "Mapa" }, { "Khám phá", "Explorar" }, { "Cài đặt", "Ajustes" },
+            { "Khám phá Ẩm thực", "Explorar Cocina" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "Paraíso de Caracoles en Saigón — Distrito 4" },
+            { "Tìm quán ốc, lẩu, sushi...", "Busque caracoles, estofado, sushi..." }, { "Bắt Đầu Tour Ngay", "Comenzar Tour Ahora" },
+            { "Bắt Đầu Tour Ngay →", "Comenzar Tour Ahora →" }, { "Địa điểm nổi bật", "Lugares Destacados" }, { "Nghe Audio", "Escuchar Audio" },
+            { "🔥 Tất cả", "🔥 Todo" }, { "🐚 Ốc & Hải sản", "🐚 Caracoles y Mariscos" }, { "🍖 Đồ nướng", "🍖 BBQ" },
+            { "🍜 Món nước", "🍜 Fideos/Caldo" }, { "🍣 Sushi", "🍣 Sushi" }, { "🐚 Ốc", "🐚 Caracol" }, { "Tất cả", "Todo" },
+            { "Ốc & Hải sản", "Caracoles y Mariscos" }, { "Đồ nướng", "BBQ" }, { "Món nước", "Fideos/Caldo" },
+            { "Giao diện", "Apariencia" }, { "Chế độ Tối (Dark Mode)", "Modo Oscuro" }, { "Ngôn ngữ / Language", "Idioma" },
+            { "Âm thanh & Giọng đọc", "Audio y TTS" }, { "Tốc độ đọc (TTS)", "Velocidad (TTS)" }, { "Về ứng dụng", "Acerca de la App" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "Proyecto de Curso — Desarrollo Móvil" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "Diseñado con ❤️ por el equipo de desarrollo" }, { "Bình thường", "Normal" },
+            { "Tốc độ", "Velocidad" }, { "Bán kính", "Radio" }, { "Bản Đồ Phố Vĩnh Khánh", "Mapa de la calle Vinh Khanh" },
+            { "Đang tìm kiếm vệ tinh GPS...", "Buscando satélites GPS..." }, { "BẠN ĐANG Ở GẦN", "ESTÁS CERCA" },
+            { "Chọn một điểm trên map", "Selecciona un punto" }, { "Cách quán gần nhất", "Lugar más cercano" },
+            { "Chưa tìm thấy quán ốc", "No se encontró ningún puesto" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "Acerca de" }, { "Xem Thực Đơn", "Ver Menú" }, { "Chỉ Đường", "Direcciones" },
+            { "Giới thiệu về {0}", "Acerca de {0}" }, { "Lỗi Audio", "Error de Audio" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Su dispositivo no soporta TTS para este idioma." }, { "Đóng", "Cerrar" }
+        };
+
+        private readonly Dictionary<string, string> _frenchResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "Accueil" }, { "Bản đồ", "Carte" }, { "Khám phá", "Explorer" }, { "Cài đặt", "Paramètres" },
+            { "Khám phá Ẩm thực", "Explorer la Cuisine" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "Paradis des Escargots — District 4" },
+            { "Tìm quán ốc, lẩu, sushi...", "Rechercher escargots, fondue, sushi..." }, { "Bắt Đầu Tour Ngay", "Commencer la Tournée" },
+            { "Bắt Đầu Tour Ngay →", "Commencer la Tournée →" }, { "Địa điểm nổi bật", "Lieux Remarquables" }, { "Nghe Audio", "Écouter l'Audio" },
+            { "🔥 Tất cả", "🔥 Tout" }, { "🐚 Ốc & Hải sản", "🐚 Escargots et Fruits de mer" }, { "🍖 Đồ nướng", "🍖 BBQ" },
+            { "🍜 Món nước", "🍜 Nouilles/Bouillon" }, { "🍣 Sushi", "🍣 Sushi" }, { "🐚 Ốc", "🐚 Escargot" }, { "Tất cả", "Tout" },
+            { "Ốc & Hải sản", "Escargots et Fruits de mer" }, { "Đồ nướng", "BBQ" }, { "Món nước", "Nouilles/Bouillon" },
+            { "Giao diện", "Apparence" }, { "Chế độ Tối (Dark Mode)", "Mode Sombre" }, { "Ngôn ngữ / Language", "Langue" },
+            { "Âm thanh & Giọng đọc", "Audio & TTS" }, { "Tốc độ đọc (TTS)", "Vitesse (TTS)" }, { "Về ứng dụng", "À propos" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "Projet de Cours — Développement Mobile" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "Conçu avec ❤️ par l'équipe de développement" }, { "Bình thường", "Normal" },
+            { "Tốc độ", "Vitesse" }, { "Bán kính", "Rayon" }, { "Bản Đồ Phố Vĩnh Khánh", "Carte de Vinh Khanh" },
+            { "Đang tìm kiếm vệ tinh GPS...", "Recherche de satellites GPS..." }, { "BẠN ĐANG Ở GẦN", "VOUS ÊTES PROCHE" },
+            { "Chọn một điểm trên map", "Sélectionnez un point" }, { "Cách quán gần nhất", "Lieu le plus proche" },
+            { "Chưa tìm thấy quán ốc", "Aucun stand trouvé" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "À propos" }, { "Xem Thực Đơn", "Voir le Menu" }, { "Chỉ Đường", "Itinéraire" },
+            { "Giới thiệu về {0}", "À propos de {0}" }, { "Lỗi Audio", "Erreur Audio" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Votre appareil ne prend pas en charge la synthèse vocale pour cette langue." }, { "Đóng", "Fermer" }
+        };
+
+        private readonly Dictionary<string, string> _germanResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "Startseite" }, { "Bản đồ", "Karte" }, { "Khám phá", "Erkunden" }, { "Cài đặt", "Einstellungen" },
+            { "Khám phá Ẩm thực", "Küche Entdecken" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "Saigons Schneckenparadies — Distrikt 4" },
+            { "Tìm quán ốc, lẩu, sushi...", "Suchen Sie nach Schnecken, Hotpot, Sushi..." }, { "Bắt Đầu Tour Ngay", "Tour Jetzt Starten" },
+            { "Bắt Đầu Tour Ngay →", "Tour Jetzt Starten →" }, { "Địa điểm nổi bật", "Ausgewählte Orte" }, { "Nghe Audio", "Audio Hören" },
+            { "🔥 Tất cả", "🔥 Alle" }, { "🐚 Ốc & Hải sản", "🐚 Schnecken & Meeresfrüchte" }, { "🍖 Đồ nướng", "🍖 Grillen" },
+            { "🍜 Món nước", "🍜 Nudeln/Brühe" }, { "🍣 Sushi", "🍣 Sushi" }, { "🐚 Ốc", "🐚 Schnecke" }, { "Tất cả", "Alle" },
+            { "Ốc & Hải sản", "Schnecken & Meeresfrüchte" }, { "Đồ nướng", "Grillen" }, { "Món nước", "Nudeln/Brühe" },
+            { "Giao diện", "Erscheinungsbild" }, { "Chế độ Tối (Dark Mode)", "Dunkler Modus" }, { "Ngôn ngữ / Language", "Sprache" },
+            { "Âm thanh & Giọng đọc", "Audio & TTS" }, { "Tốc độ đọc (TTS)", "Lesegeschwindigkeit (TTS)" }, { "Về ứng dụng", "Über die App" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "Kursprojekt — Entwicklung mobiler Apps" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "Entworfen mit ❤️ vom Entwicklungsteam" }, { "Bình thường", "Normal" },
+            { "Tốc độ", "Rate" }, { "Bán kính", "Radius" }, { "Bản Đồ Phố Vĩnh Khánh", "Vinh Khanh Karte" },
+            { "Đang tìm kiếm vệ tinh GPS...", "GPS-Satelliten werden gesucht..." }, { "BẠN ĐANG Ở GẦN", "DU BIST IN DER NÄHE" },
+            { "Chọn một điểm trên map", "Wähle einen Punkt" }, { "Cách quán gần nhất", "Nächster Ort" },
+            { "Chưa tìm thấy quán ốc", "Kein Stand gefunden" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "Über" }, { "Xem Thực Đơn", "Menü Ansehen" }, { "Chỉ Đường", "Wegbeschreibung" },
+            { "Giới thiệu về {0}", "Über {0}" }, { "Lỗi Audio", "Audiofehler" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Ihr Gerät unterstützt kein TTS für diese Sprache." }, { "Đóng", "Schließen" }
+        };
+
+        private readonly Dictionary<string, string> _chineseResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "首页" }, { "Bản đồ", "地图" }, { "Khám phá", "探索" }, { "Cài đặt", "设置" },
+            { "Khám phá Ẩm thực", "探索美食" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "西贡蜗牛天堂 — 第四郡" },
+            { "Tìm quán ốc, lẩu, sushi...", "寻找蜗牛、火锅、寿司..." }, { "Bắt Đầu Tour Ngay", "立即开始游览" },
+            { "Bắt Đầu Tour Ngay →", "立即开始游览 →" }, { "Địa điểm nổi bật", "特色地点" }, { "Nghe Audio", "收听音频" },
+            { "🔥 Tất cả", "🔥 全部" }, { "🐚 Ốc & Hải sản", "🐚 蜗牛与海鲜" }, { "🍖 Đồ nướng", "🍖 烧烤" },
+            { "🍜 Món nước", "🍜 面条/汤水" }, { "🍣 Sushi", "🍣 寿司" }, { "🐚 Ốc", "🐚 蜗牛" }, { "Tất cả", "全部" },
+            { "Ốc & Hải sản", "蜗牛与海鲜" }, { "Đồ nướng", "烧烤" }, { "Món nước", "面条/汤水" },
+            { "Giao diện", "外观" }, { "Chế độ Tối (Dark Mode)", "深色模式" }, { "Ngôn ngữ / Language", "语言" },
+            { "Âm thanh & Giọng đọc", "音频与语音" }, { "Tốc độ đọc (TTS)", "语速 (TTS)" }, { "Về ứng dụng", "关于应用" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "课程项目 — 移动应用开发" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "开发团队用心 ❤️ 设计" }, { "Bình thường", "正常" },
+            { "Tốc độ", "速度" }, { "Bán kính", "半径" }, { "Bản Đồ Phố Vĩnh Khánh", "永庆街地图" },
+            { "Đang tìm kiếm vệ tinh GPS...", "正在搜索GPS卫星..." }, { "BẠN ĐANG Ở GẦN", "您在附近" },
+            { "Chọn một điểm trên map", "在地图上选择一个点" }, { "Cách quán gần nhất", "最近的地方" },
+            { "Chưa tìm thấy quán ốc", "未找到摊位" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "关于" }, { "Xem Thực Đơn", "查看菜单" }, { "Chỉ Đường", "路线" },
+            { "Giới thiệu về {0}", "关于 {0}" }, { "Lỗi Audio", "音频错误" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "您的设备不支持该语言的语音朗读。" }, { "Đóng", "关闭" }
+        };
+
+        private readonly Dictionary<string, string> _japaneseResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "ホーム" }, { "Bản đồ", "マップ" }, { "Khám phá", "探索" }, { "Cài đặt", "設定" },
+            { "Khám phá Ẩm thực", "料理を探索" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "サイゴンのカタツムリの楽園 — 4区" },
+            { "Tìm quán ốc, lẩu, sushi...", "カタツムリ、鍋、寿司を探す..." }, { "Bắt Đầu Tour Ngay", "今すぐツアーを開始" },
+            { "Bắt Đầu Tour Ngay →", "今すぐツアーを開始 →" }, { "Địa điểm nổi bật", "おすすめの場所" }, { "Nghe Audio", "音声を聞く" },
+            { "🔥 Tất cả", "🔥 すべて" }, { "🐚 Ốc & Hải sản", "🐚 カタツムリ＆シーフード" }, { "🍖 Đồ nướng", "🍖 BBQ" },
+            { "🍜 Món nước", "🍜 麺/スープ" }, { "🍣 Sushi", "🍣 寿司" }, { "🐚 Ốc", "🐚 カタツムリ" }, { "Tất cả", "すべて" },
+            { "Ốc & Hải sản", "カタツムリ＆シーフード" }, { "Đồ nướng", "BBQ" }, { "Món nước", "麺/スープ" },
+            { "Giao diện", "外観" }, { "Chế độ Tối (Dark Mode)", "ダークモード" }, { "Ngôn ngữ / Language", "言語" },
+            { "Âm thanh & Giọng đọc", "オーディオと音声" }, { "Tốc độ đọc (TTS)", "読み上げ速度 (TTS)" }, { "Về ứng dụng", "アプリについて" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "コースプロジェクト — モバイルアプリ開発" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "開発チームによって ❤️ を込めてデザインされました" }, { "Bình thường", "普通" },
+            { "Tốc độ", "速度" }, { "Bán kính", "半径" }, { "Bản Đồ Phố Vĩnh Khánh", "ヴィンカン通りマップ" },
+            { "Đang tìm kiếm vệ tinh GPS...", "GPS衛星を検索中..." }, { "BẠN ĐANG Ở GẦN", "あなたの近く" },
+            { "Chọn một điểm trên map", "マップ上のポイントを選択" }, { "Cách quán gần nhất", "最も近い場所" },
+            { "Chưa tìm thấy quán ốc", "屋台が見つかりません" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "概要" }, { "Xem Thực Đơn", "メニューを見る" }, { "Chỉ Đường", "ルート" },
+            { "Giới thiệu về {0}", "{0} について" }, { "Lỗi Audio", "オーディオエラー" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "お使いのデバイスはこの言語の音声読み上げをサポートしていません。" }, { "Đóng", "閉じる" }
+        };
+
+        private readonly Dictionary<string, string> _koreanResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "홈" }, { "Bản đồ", "지도" }, { "Khám phá", "탐색" }, { "Cài đặt", "설정" },
+            { "Khám phá Ẩm thực", "요리 탐색" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "사이공 달팽이 천국 — 4군" },
+            { "Tìm quán ốc, lẩu, sushi...", "달팽이, 전골, 초밥 검색..." }, { "Bắt Đầu Tour Ngay", "지금 투어 시작" },
+            { "Bắt Đầu Tour Ngay →", "지금 투어 시작 →" }, { "Địa điểm nổi bật", "추천 장소" }, { "Nghe Audio", "오디오 듣기" },
+            { "🔥 Tất cả", "🔥 모두" }, { "🐚 Ốc & Hải sản", "🐚 달팽이 & 해산물" }, { "🍖 Đồ nướng", "🍖 바베큐" },
+            { "🍜 Món nước", "🍜 누들/국물" }, { "🍣 Sushi", "🍣 초밥" }, { "🐚 Ốc", "🐚 달팽이" }, { "Tất cả", "모두" },
+            { "Ốc & Hải sản", "달팽이 & 해산물" }, { "Đồ nướng", "바베큐" }, { "Món nước", "누들/국물" },
+            { "Giao diện", "외관" }, { "Chế độ Tối (Dark Mode)", "다크 모드" }, { "Ngôn ngữ / Language", "언어" },
+            { "Âm thanh & Giọng đọc", "오디오 및 TTS" }, { "Tốc độ đọc (TTS)", "음성 속도 (TTS)" }, { "Về ứng dụng", "앱 정보" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "코스 프로젝트 — 모바일 앱 개발" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "개발팀이 ❤️ 로 디자인함" }, { "Bình thường", "보통" },
+            { "Tốc độ", "속도" }, { "Bán kính", "반경" }, { "Bản Đồ Phố Vĩnh Khánh", "빈칸 거리 지도" },
+            { "Đang tìm kiếm vệ tinh GPS...", "GPS 위성 검색 중..." }, { "BẠN ĐANG Ở GẦN", "당신은 근처에 있습니다" },
+            { "Chọn một điểm trên map", "지도에서 지점을 선택하세요" }, { "Cách quán gần nhất", "가장 가까운 곳" },
+            { "Chưa tìm thấy quán ốc", "노점을 찾을 수 없습니다" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "소개" }, { "Xem Thực Đơn", "메뉴 보기" }, { "Chỉ Đường", "길찾기" },
+            { "Giới thiệu về {0}", "{0} 소개" }, { "Lỗi Audio", "오디오 오류" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "기기에서 이 언어의 음성 낭독을 지원하지 않습니다." }, { "Đóng", "닫기" }
+        };
+
+        private readonly Dictionary<string, string> _russianResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "Главная" }, { "Bản đồ", "Карта" }, { "Khám phá", "Исследовать" }, { "Cài đặt", "Настройки" },
+            { "Khám phá Ẩm thực", "Исследовать кухню" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "Рай улиток Сайгона — Район 4" },
+            { "Tìm quán ốc, lẩu, sushi...", "Искать улитки, хот-пот, суши..." }, { "Bắt Đầu Tour Ngay", "Начать тур сейчас" },
+            { "Bắt Đầu Tour Ngay →", "Начать тур сейчас →" }, { "Địa điểm nổi bật", "Избранные места" }, { "Nghe Audio", "Слушать аудио" },
+            { "🔥 Tất cả", "🔥 Все" }, { "🐚 Ốc & Hải sản", "🐚 Улитки и морепродукты" }, { "🍖 Đồ nướng", "🍖 Барбекю" },
+            { "🍜 Món nước", "🍜 Лапша/Бульон" }, { "🍣 Sushi", "🍣 Суши" }, { "🐚 Ốc", "🐚 Улитка" }, { "Tất cả", "Все" },
+            { "Ốc & Hải sản", "Улитки и морепродукты" }, { "Đồ nướng", "Барбекю" }, { "Món nước", "Лапша/Бульон" },
+            { "Giao diện", "Внешний вид" }, { "Chế độ Tối (Dark Mode)", "Темный режим" }, { "Ngôn ngữ / Language", "Язык" },
+            { "Âm thanh & Giọng đọc", "Аудио и TTS" }, { "Tốc độ đọc (TTS)", "Скорость речи (TTS)" }, { "Về ứng dụng", "О приложении" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "Курсовой проект — Разработка мобильных приложений" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "Разработано с ❤️ командой разработчиков" }, { "Bình thường", "Нормальный" },
+            { "Tốc độ", "Скорость" }, { "Bán kính", "Радиус" }, { "Bản Đồ Phố Vĩnh Khánh", "Карта улицы Винь Кхань" },
+            { "Đang tìm kiếm vệ tinh GPS...", "Поиск спутников GPS..." }, { "BẠN ĐANG Ở GẦN", "ВЫ РЯДОМ" },
+            { "Chọn một điểm trên map", "Выберите точку" }, { "Cách quán gần nhất", "Ближайшее место" },
+            { "Chưa tìm thấy quán ốc", "Киоск не найден" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "О нас" }, { "Xem Thực Đơn", "Посмотреть Меню" }, { "Chỉ Đường", "Маршрут" },
+            { "Giới thiệu về {0}", "О {0}" }, { "Lỗi Audio", "Ошибка Аудио" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Ваше устройство не поддерживает TTS для этого языка." }, { "Đóng", "Закрыть" }
+        };
+
+        private readonly Dictionary<string, string> _italianResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "Home" }, { "Bản đồ", "Mappa" }, { "Khám phá", "Esplora" }, { "Cài đặt", "Impostazioni" },
+            { "Khám phá Ẩm thực", "Esplora la cucina" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "Paradiso delle lumache di Saigon — Distretto 4" },
+            { "Tìm quán ốc, lẩu, sushi...", "Cerca lumache, hotpot, sushi..." }, { "Bắt Đầu Tour Ngay", "Inizia il tour ora" },
+            { "Bắt Đầu Tour Ngay →", "Inizia il tour ora →" }, { "Địa điểm nổi bật", "Luoghi in evidenza" }, { "Nghe Audio", "Ascolta l'audio" },
+            { "🔥 Tất cả", "🔥 Tutto" }, { "🐚 Ốc & Hải sản", "🐚 Lumache e frutti di mare" }, { "🍖 Đồ nướng", "🍖 BBQ" },
+            { "🍜 Món nước", "🍜 Noodle/Brodo" }, { "🍣 Sushi", "🍣 Sushi" }, { "🐚 Ốc", "🐚 Lumaca" }, { "Tất cả", "Tutto" },
+            { "Ốc & Hải sản", "Lumache e frutti di mare" }, { "Đồ nướng", "BBQ" }, { "Món nước", "Noodle/Brodo" },
+            { "Giao diện", "Aspetto" }, { "Chế độ Tối (Dark Mode)", "Modalità scura" }, { "Ngôn ngữ / Language", "Lingua" },
+            { "Âm thanh & Giọng đọc", "Audio e TTS" }, { "Tốc độ đọc (TTS)", "Velocità di pronuncia (TTS)" }, { "Về ứng dụng", "Informazioni sull'app" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "Progetto del corso — Sviluppo di app mobili" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "Progettato con ❤️ dal team di sviluppo" }, { "Bình thường", "Normale" },
+            { "Tốc độ", "Velocità" }, { "Bán kính", "Raggio" }, { "Bản Đồ Phố Vĩnh Khánh", "Mappa di Vinh Khanh" },
+            { "Đang tìm kiếm vệ tinh GPS...", "Ricerca satelliti GPS..." }, { "BẠN ĐANG Ở GẦN", "SEI VICINO" },
+            { "Chọn un điểm trên map", "Seleziona un punto" }, { "Cách quán gần nhất", "Luogo più vicino" },
+            { "Chưa tìm thấy quán ốc", "Nessuna bancarella" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "Informazioni" }, { "Xem Thực Đơn", "Vedi Menu" }, { "Chỉ Đường", "Indicazioni" },
+            { "Giới thiệu về {0}", "Informazioni su {0}" }, { "Lỗi Audio", "Errore Audio" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Il tuo dispositivo non supporta il TTS per questa lingua." }, { "Đóng", "Chiudi" }
+        };
+
+        private readonly Dictionary<string, string> _portugueseResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "Início" }, { "Bản đồ", "Mapa" }, { "Khám phá", "Explorar" }, { "Cài đặt", "Configurações" },
+            { "Khám phá Ẩm thực", "Explorar Culinária" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "Paraíso dos Caracóis de Saigon — Distrito 4" },
+            { "Tìm quán ốc, lẩu, sushi...", "Procure caracóis, ensopado, sushi..." }, { "Bắt Đầu Tour Ngay", "Começar Tour Agora" },
+            { "Bắt Đầu Tour Ngay →", "Começar Tour Agora →" }, { "Địa điểm nổi bật", "Locais em Destaque" }, { "Nghe Audio", "Ouvir Áudio" },
+            { "🔥 Tất cả", "🔥 Todos" }, { "🐚 Ốc & Hải sản", "🐚 Caracóis & Frutos do Mar" }, { "🍖 Đồ nướng", "🍖 BBQ" },
+            { "🍜 Món nước", "🍜 Macarrão/Caldo" }, { "🍣 Sushi", "🍣 Sushi" }, { "🐚 Ốc", "🐚 Caracol" }, { "Tất cả", "Todos" },
+            { "Ốc & Hải sản", "Caracóis & Frutos do Mar" }, { "Đồ nướng", "BBQ" }, { "Món nước", "Macarrão/Caldo" },
+            { "Giao diện", "Aparência" }, { "Chế độ Tối (Dark Mode)", "Modo Escuro" }, { "Ngôn ngữ / Language", "Idioma" },
+            { "Âm thanh & Giọng đọc", "Áudio & TTS" }, { "Tốc độ đọc (TTS)", "Velocidade (TTS)" }, { "Về ứng dụng", "Sobre o App" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "Projeto de Curso — Desenvolvimento de App Mobile" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "Projetado com ❤️ pela equipe de desenvolvimento" }, { "Bình thường", "Normal" },
+            { "Tốc độ", "Taxa" }, { "Bán kính", "Raio" }, { "Bản Đồ Phố Vĩnh Khánh", "Mapa de Vinh Khanh" },
+            { "Đang tìm kiếm vệ tinh GPS...", "Buscando satélites GPS..." }, { "BẠN ĐANG Ở GẦN", "VOCÊ ESTÁ PERTO" },
+            { "Chọn một điểm trên map", "Selecione um ponto" }, { "Cách quán gần nhất", "Lugar mais próximo" },
+            { "Chưa tìm thấy quán ốc", "Nenhuma banca" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "Sobre" }, { "Xem Thực Đơn", "Ver Menu" }, { "Chỉ Đường", "Rotas" },
+            { "Giới thiệu về {0}", "Sobre {0}" }, { "Lỗi Audio", "Erro de Áudio" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Seu dispositivo não suporta TTS para este idioma." }, { "Đóng", "Fechar" }
+        };
+
+        private readonly Dictionary<string, string> _hindiResources = new(StringComparer.OrdinalIgnoreCase) {
+            { "Trang chủ", "होम" }, { "Bản đồ", "नक्शा" }, { "Khám phá", "एक्सप्लोर करें" }, { "Cài đặt", "सेटिंग्स" },
+            { "Khám phá Ẩm thực", "व्यंजन का अन्वेषण करें" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "साइगॉन स्नेल पैराडाइज़ — जिला 4" },
+            { "Tìm quán ốc, lẩu, sushi...", "घोंघे, हॉटपॉट, सुशी खोजें..." }, { "Bắt Đầu Tour Ngay", "अभी टूर शुरू करें" },
+            { "Bắt Đầu Tour Ngay →", "अभी टूर शुरू करें →" }, { "Địa điểm nổi bật", "विशेष स्थान" }, { "Nghe Audio", "ऑडियो सुनें" },
+            { "🔥 Tất cả", "🔥 सभी" }, { "🐚 Ốc & Hải sản", "🐚 घोंघे और समुद्री भोजन" }, { "🍖 Đồ nướng", "🍖 बीबीक्यू" },
+            { "🍜 Món nước", "🍜 नूडल/सूप" }, { "🍣 Sushi", "🍣 सुशी" }, { "🐚 Ốc", "🐚 घोंघा" }, { "Tất cả", "सभी" },
+            { "Ốc & Hải sản", "घोंघे और समुद्री भोजन" }, { "Đồ nướng", "बीबीक्यू" }, { "Món nước", "नूडल/सूप" },
+            { "Giao diện", "दिखावट" }, { "Chế độ Tối (Dark Mode)", "डार्क मोड" }, { "Ngôn ngữ / Language", "भाषा" },
+            { "Âm thanh & Giọng đọc", "ऑडियो और टीटीएस" }, { "Tốc độ đọc (TTS)", "पढ़ने की गति (टीटीएस)" }, { "Về ứng dụng", "ऐप के बारे में" },
+            { "Đồ án môn học — Xây dựng ứng dụng di động", "पाठ्यक्रम परियोजना — मोबाइल ऐप विकास" },
+            { "Thiết kế ❤️ bởi đội ngũ phát triển", "विकास टीम द्वारा ❤️ के साथ डिज़ाइन किया गया" }, { "Bình thường", "सामान्य" },
+            { "Tốc độ", "गति" }, { "Bán kính", "त्रिज्या" }, { "Bản Đồ Phố Vĩnh Khánh", "विन्ह खान स्ट्रीट मैप" },
+            { "Đang tìm kiếm vệ tinh GPS...", "GPS उपग्रह खोज रहा है..." }, { "BẠN ĐANG Ở GẦN", "आप पास हैं" },
+            { "Chọn một điểm trên map", "मानचित्र पर एक बिंदु चुनें" }, { "Cách quán gần nhất", "निकटतम स्थान" },
+            { "Chưa tìm thấy quán ốc", "कोई स्टॉल नहीं मिला" },
+            // TỪ VỰNG MỚI
+            { "Giới thiệu", "के बारे में" }, { "Xem Thực Đơn", "मेनू देखें" }, { "Chỉ Đường", "दिशा-निर्देश" },
+            { "Giới thiệu về {0}", "{0} के बारे में" }, { "Lỗi Audio", "ऑडियो त्रुटि" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "आपका उपकरण इस भाषा के लिए टीटीएस का समर्थन नहीं करता है।" }, { "Đóng", "बंद करें" }
+        };
+    }
+}

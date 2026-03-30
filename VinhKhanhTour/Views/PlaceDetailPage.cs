@@ -39,9 +39,9 @@ namespace VinhKhanhTour.Views
             var titleRow = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Auto } } };
 
             // Trói buộc Tên quán
-            var titleLabel = new Label { FontSize = 24, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
-            titleLabel.SetBinding(Label.TextProperty, "Name");
-            titleRow.Children.Add(titleLabel);
+            var introLabel = new Label { FontSize = 18, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
+            introLabel.SetBinding(Label.TextProperty, new Binding("[Giới thiệu]", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance));
+            infoLayout.Children.Add(introLabel);
 
             // Trói buộc Đánh giá (Kèm định dạng thêm icon Ngôi sao)
             var ratingLabel = new Label { FontSize = 16, FontAttributes = FontAttributes.Bold, TextColor = Color.FromArgb("#FF5C0F"), VerticalOptions = LayoutOptions.Center };
@@ -70,16 +70,29 @@ namespace VinhKhanhTour.Views
             // --- HAI NÚT HÀNH ĐỘNG ---
             var actionGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, ColumnSpacing = 15, Margin = new Thickness(0, 20) };
 
-            var menuBtn = new Button { Text = "📋 Xem Thực Đơn", BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 15, HeightRequest = 55 };
-            // menuBtn.Clicked += async (s, e) => await Navigation.PushAsync(new MenuPage()); 
+            var menuBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 15, HeightRequest = 55 };
+            menuBtn.SetBinding(Button.TextProperty, new Binding(
+                path: "CurrentLanguageCode",
+                source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                converterParameter: "Xem Thực Đơn",
+                stringFormat: "📋 {0}"
+            ));
+            menuBtn.Clicked += async (s, e) => await Navigation.PushAsync(new MenuPage(place));
             Grid.SetColumn(menuBtn, 0);
             actionGrid.Children.Add(menuBtn);
 
-            var audioBtn = new Button { Text = "🎧 Nghe Audio", BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 15, HeightRequest = 55 };
-            // audioBtn.Clicked += async (s, e) => await Navigation.PushAsync(new AudioPlayerPage()); 
+            var audioBtn = new Button { BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 15, HeightRequest = 55 };
+            audioBtn.SetBinding(Button.TextProperty, new Binding(
+                path: "CurrentLanguageCode",
+                source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                converterParameter: "Nghe Audio",
+                stringFormat: "🎧 {0}"
+            ));
+            audioBtn.Clicked += async (s, e) => await Navigation.PushAsync(new AudioPlayerPage(place));
             Grid.SetColumn(audioBtn, 1);
             actionGrid.Children.Add(audioBtn);
-
             infoLayout.Children.Add(actionGrid);
 
             var infoBorder = new Border { StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(25, 25, 0, 0) }, BackgroundColor = Colors.White, Content = infoLayout, Stroke = Colors.Transparent, Margin = new Thickness(0, -25, 0, 0) };
