@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
+
 namespace VinhKhanhTour
 {
     public static class MauiProgram
@@ -16,7 +17,7 @@ namespace VinhKhanhTour
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

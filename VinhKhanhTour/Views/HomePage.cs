@@ -58,12 +58,12 @@ namespace VinhKhanhTour
 
             var ctaButton = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 50, Margin = new Thickness(0, 10) };
             ctaButton.SetBinding(Button.TextProperty, new Binding(
-                path: "CurrentLanguageCode",
-                source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
-                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
-                converterParameter: "Bắt Đầu Tour Ngay →",
-                stringFormat: "🗺️ {0}" // Tự động ghép icon bản đồ vào chữ dịch
-            ));
+     path: "CurrentLanguageCode",
+     source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+     converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+     converterParameter: "Bắt Đầu Tour Ngay", // Bỏ dấu mũi tên ở đây đi
+     stringFormat: "🗺️ {0} →" // Đưa dấu mũi tên ra ngoài format
+ ));
             ctaButton.Clicked += async (s, e) => await Navigation.PushAsync(new MapPage());
             contentStack.Children.Add(ctaButton);
 
