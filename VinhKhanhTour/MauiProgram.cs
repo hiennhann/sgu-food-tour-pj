@@ -1,10 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
-
+using Microsoft.Maui.Controls.Hosting; // BẮT BUỘC cho Map
+using Microsoft.Maui.Hosting;
+using System;
+using VinhKhanhTour.Data;
 
 namespace VinhKhanhTour
 {
     public static class MauiProgram
     {
+        public static IServiceProvider Services { get; private set; }
+
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -16,11 +21,16 @@ namespace VinhKhanhTour
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            // Đăng ký Database
+            builder.Services.AddSingleton<PoiRepository>();
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+            var app = builder.Build();
+            Services = app.Services;
+            return app;
         }
     }
 }

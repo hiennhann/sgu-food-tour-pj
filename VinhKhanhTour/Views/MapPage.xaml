@@ -4,71 +4,55 @@
              x:Class="VinhKhanhTour.Views.MapPage"
              xmlns:helpers="clr-namespace:VinhKhanhTour.Helpers"
              xmlns:services="clr-namespace:VinhKhanhTour.Services"
-             Title="Bản Đồ Phố Vĩnh Khánh"
              Shell.NavBarIsVisible="False">
 
-	<ContentPage.Resources>
-		<helpers:TranslateConverter x:Key="Translate" />
-	</ContentPage.Resources>
+    <ContentPage.Resources>
+        <helpers:TranslateConverter x:Key="Translate" />
+    </ContentPage.Resources>
 
-	<Grid x:Name="RootGrid" RowDefinitions="*, 80">
+    <Grid x:Name="RootGrid" RowDefinitions="*, 80">
 
-		<Image Grid.Row="0" Source="map_background.jpg" Aspect="AspectFill" Opacity="0.8" />
+        <Grid x:Name="MapContainer" Grid.Row="0">
 
-		<Grid x:Name="MapContainer" Grid.Row="0">
-			<Border Margin="{OnIdiom Phone='15,45,15,0', Tablet='30,60,30,0'}"
-                    Padding="15,10" HorizontalOptions="Center" VerticalOptions="Start"
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-                    StrokeShape="RoundRectangle 24" StrokeThickness="0">
-				<Border.Shadow>
-					<Shadow Brush="Black" Opacity="0.15" Offset="0,4" Radius="12" />
-				</Border.Shadow>
-				<HorizontalStackLayout Spacing="10">
-					<Border StrokeShape="RoundRectangle 5" WidthRequest="10" HeightRequest="10" BackgroundColor="#27AE60" StrokeThickness="0" VerticalOptions="Center" />
-					<Label x:Name="DebugLabel"
-                           Text="{Binding CurrentLanguageCode, Source={x:Static services:LocalizationResourceManager.Instance}, Converter={StaticResource Translate}, ConverterParameter='Radar đang quét...'}"
-                           FontSize="{OnIdiom Phone=13, Tablet=15}" FontAttributes="Bold" VerticalOptions="Center" />
-				</HorizontalStackLayout>
-			</Border>
+            <WebView x:Name="BanDoWebView" HorizontalOptions="Fill" VerticalOptions="Fill" Navigating="BanDoWebView_Navigating" />
 
-			<Border VerticalOptions="End" Margin="{OnIdiom Phone='12,0,12,24', Tablet='40,0,40,40'}" Padding="0"
-                    StrokeShape="RoundRectangle 20" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" StrokeThickness="0"
-                    HorizontalOptions="{OnIdiom Phone=Fill, Tablet=Center}">
-				<Border.Shadow>
-					<Shadow Brush="Black" Offset="0,8" Radius="24" Opacity="0.2"/>
-				</Border.Shadow>
+            <Grid InputTransparent="True">
 
-				<Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto" Padding="{OnIdiom Phone='20,16', Tablet='24,20'}">
+                <Border Margin="{OnIdiom Phone='15,45,15,0', Tablet='30,60,30,0'}"
+                        Padding="15,10" HorizontalOptions="Center" VerticalOptions="Start"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                        StrokeShape="RoundRectangle 24" StrokeThickness="0">
+                    <HorizontalStackLayout Spacing="10">
+                        <Border StrokeShape="RoundRectangle 5" WidthRequest="10" HeightRequest="10" BackgroundColor="#27AE60" StrokeThickness="0" VerticalOptions="Center" />
+                        <Label x:Name="DebugLabel" Text="Radar đang quét..." FontSize="{OnIdiom Phone=13, Tablet=15}" FontAttributes="Bold" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
 
-					<VerticalStackLayout Grid.Column="0" Spacing="4" Margin="0,0,16,0">
-						<Label Text="{Binding CurrentLanguageCode, Source={x:Static services:LocalizationResourceManager.Instance}, Converter={StaticResource Translate}, ConverterParameter='BẠN ĐANG Ở GẦN'}" FontSize="10" FontAttributes="Bold" TextColor="#FF5C0F" CharacterSpacing="1" />
-						<Label x:Name="PoiNameLabel" Text="Đang dò tìm..." FontSize="{OnIdiom Phone=18, Tablet=22}" FontAttributes="Bold" MaxLines="2" LineBreakMode="WordWrap"/>
-						<Label x:Name="DistanceLabel" Text="Khoảng cách: -- m" FontSize="{OnIdiom Phone=13, Tablet=15}" Opacity="0.6"/>
-					</VerticalStackLayout>
+                <Border x:Name="BottomInfoCard" VerticalOptions="End" Margin="{OnIdiom Phone='12,0,12,24', Tablet='40,0,40,40'}" Padding="0"
+                        StrokeShape="RoundRectangle 20" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" StrokeThickness="0"
+                        HorizontalOptions="{OnIdiom Phone=Fill, Tablet=Center}" InputTransparent="False">
 
-					<HorizontalStackLayout Grid.Row="{OnIdiom Phone=1, Tablet=0}" Grid.Column="{OnIdiom Phone=0, Tablet=1}" Grid.ColumnSpan="{OnIdiom Phone=2, Tablet=1}"
-                                           HorizontalOptions="Center" VerticalOptions="Center" Spacing="16" Margin="{OnIdiom Phone='0,14,0,0', Tablet='0,0,0,0'}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="BottomInfoCard_Tapped" />
+                    </Border.GestureRecognizers>
 
-						<Button Text="📍" x:Name="RouteButton" FontSize="24"
-                                BackgroundColor="#FFF0ED" TextColor="#FF5C0F"
-                                WidthRequest="56" HeightRequest="56" CornerRadius="28" Padding="0"
-                                Clicked="OnRouteClicked">
-							<Button.Shadow>
-								<Shadow Brush="Gray" Offset="0,4" Radius="12" Opacity="0.2"/>
-							</Button.Shadow>
-						</Button>
+                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto" Padding="{OnIdiom Phone='20,16', Tablet='24,20'}">
 
-						<Button Text="⏸" x:Name="PlayPauseButton" FontSize="28"
-                                BackgroundColor="#FF5C0F" TextColor="White"
-                                WidthRequest="56" HeightRequest="56" CornerRadius="28" Padding="0"
-                                Clicked="OnPlayPauseClicked">
-							<Button.Shadow>
-								<Shadow Brush="#FF5C0F" Offset="0,4" Radius="12" Opacity="0.3"/>
-							</Button.Shadow>
-						</Button>
-					</HorizontalStackLayout>
-				</Grid>
-			</Border>
-		</Grid>
-	</Grid>
+                        <VerticalStackLayout Grid.Column="0" Spacing="4" Margin="0,0,16,0">
+                            <Label x:Name="CardStatusLabel" Text="BẠN ĐANG Ở GẦN" FontSize="10" FontAttributes="Bold" TextColor="#FF5C0F" CharacterSpacing="1" />
+                            <Label x:Name="PoiNameLabel" Text="Đang dò tìm..." FontSize="{OnIdiom Phone=18, Tablet=22}" FontAttributes="Bold" MaxLines="2" LineBreakMode="WordWrap"/>
+                            <Label x:Name="DistanceLabel" Text="Khoảng cách: -- m" FontSize="{OnIdiom Phone=13, Tablet=15}" Opacity="0.6"/>
+                            <Label Text="👆 Chạm để xem chi tiết" FontSize="11" TextColor="#27AE60" Margin="0,4,0,0"/>
+                        </VerticalStackLayout>
+
+                        <HorizontalStackLayout Grid.Row="{OnIdiom Phone=1, Tablet=0}" Grid.Column="{OnIdiom Phone=0, Tablet=1}" Grid.ColumnSpan="{OnIdiom Phone=2, Tablet=1}"
+                                               HorizontalOptions="Center" VerticalOptions="Center" Spacing="16" Margin="{OnIdiom Phone='0,14,0,0', Tablet='0,0,0,0'}">
+                            <Button Text="📍" x:Name="RouteButton" FontSize="24" BackgroundColor="#FFF0ED" TextColor="#FF5C0F" WidthRequest="56" HeightRequest="56" CornerRadius="28" Padding="0" Clicked="OnRouteClicked" />
+                            <Button Text="⏸" x:Name="PlayPauseButton" FontSize="28" BackgroundColor="#FF5C0F" TextColor="White" WidthRequest="56" HeightRequest="56" CornerRadius="28" Padding="0" Clicked="OnPlayPauseClicked" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
 </ContentPage>
