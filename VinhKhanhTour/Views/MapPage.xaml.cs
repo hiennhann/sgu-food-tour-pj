@@ -1,4 +1,4 @@
-﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Devices.Sensors;
 using Microsoft.Maui.ApplicationModel;
 using System;
@@ -73,7 +73,7 @@ namespace VinhKhanhTour.Views
         }
 
         // ========================================================
-        // HTML BẢN ĐỒ: THÊM SỰ KIỆN CLICK CHO MAUI
+        // HTML BẢN ĐỒ (ĐÃ FIX LỖI NUỐT SỰ KIỆN VÀ XUNG ĐỘT GIAO DIỆN)
         // ========================================================
         private static string TaoHtmlBanDo(List<Poi> danhSach, int selectedId)
         {
@@ -92,16 +92,6 @@ namespace VinhKhanhTour.Views
             double centerLat = 10.761622;
             double centerLng = 106.661172;
 
-            if (selectedId > 0)
-            {
-                var selectedPoi = danhSach.FirstOrDefault(p => p.Id == selectedId);
-                if (selectedPoi != null)
-                {
-                    centerLat = selectedPoi.Latitude;
-                    centerLng = selectedPoi.Longitude;
-                }
-            }
-
             return $@"<!DOCTYPE html>
 <html>
 <head>
@@ -110,17 +100,18 @@ namespace VinhKhanhTour.Views
     <link rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'/>
     <style>
         * {{ margin:0; padding:0; box-sizing:border-box; }}
+        html, body {{ width:100%; height:100%; overflow:hidden; }}
         body {{ background:#f0ede8; }}
-        #map {{ width:100vw; height:100vh; }}
+        #map {{ position:absolute; top:0; bottom:0; left:0; right:0; }}
         .marker-pin {{ width: 32px; height: 32px; border-radius: 50% 50% 50% 0; background: #2D6A4F; transform: rotate(-45deg); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; }}
         .marker-pin::after {{ content: ''; width: 12px; height: 12px; background: white; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }}
-        .marker-pin.selected {{ background: #FF5C0F; width: 40px; height: 40px; box-shadow: 0 4px 16px rgba(255,92,15,0.5); }}
+        .marker-pin.selected {{ background: #FF5C0F; width: 40px; height: 40px; box-shadow: 0 4px 16px rgba(255,92,15,0.5); z-index: 1000 !important; }}
         .marker-pin.playing {{ background: #FFD700; width: 38px; height: 38px; box-shadow: 0 4px 16px rgba(255,215,0,0.6); animation: pulse-yellow 2s infinite; }}
         @keyframes pulse-yellow {{ 0% {{ box-shadow: 0 0 0 0 rgba(255,215,0,0.6); }} 70% {{ box-shadow: 0 0 0 14px rgba(255,215,0,0); }} 100% {{ box-shadow: 0 0 0 0 rgba(255,215,0,0); }} }}
         .marker-wrapper {{ width: 40px; height: 50px; }}
         .user-loc {{ width: 22px; height: 22px; background: #1A73E8; border: 4px solid white; border-radius: 50%; box-shadow: 0 0 0 8px rgba(26,115,232,0.30), 0 2px 8px rgba(0,0,0,0.35); animation: u-pulse 2s infinite; }}
         @keyframes u-pulse {{ 0% {{ box-shadow: 0 0 0 8px rgba(26,115,232,0.30), 0 2px 8px rgba(0,0,0,0.35); }} 50% {{ box-shadow: 0 0 0 20px rgba(26,115,232,0.08), 0 2px 8px rgba(0,0,0,0.35); }} 100% {{ box-shadow: 0 0 0 8px rgba(26,115,232,0.30), 0 2px 8px rgba(0,0,0,0.35); }} }}
-        .user-loc-wrap {{ width: 30px; height: 30px; }}
+        .user-loc-wrap {{ width: 30px; height: 30px; z-index: 9999 !important; }}
         .leaflet-popup-content-wrapper {{ border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: none; }}
         .leaflet-popup-content {{ margin: 12px 16px; font-family: -apple-system, sans-serif; text-align: center; }}
         .popup-ten {{ font-weight: 700; font-size: 14px; color: #1A1A1A; margin-bottom: 2px; }}
@@ -137,6 +128,11 @@ namespace VinhKhanhTour.Views
         var allMarkers = {{}};
         var allCircles = {{}};
         var userMarker = null;
+        
+        // CÁC BIẾN QUẢN LÝ TRẠNG THÁI CỦA JAVASCRIPT
+        var isClickingMarker = false; 
+        var currentSelectedId = 0;
+        var currentPlayingId = 0;
 
         function taoIcon(state) {{
             var cls = 'marker-pin';
@@ -150,33 +146,47 @@ namespace VinhKhanhTour.Views
             allCircles[id] = circle;
 
             var marker = L.marker([lat, lng], {{ icon: taoIcon('normal') }}).addTo(map);
-            marker.bindPopup(""<div class='popup-ten'>"" + ten + ""</div>"");
+            var popupHtml = `<div class='popup-ten' style='margin-bottom:8px;'>${{ten}}</div><button onclick='window.location.href=""openmap://${{lat}},${{lng}}"";' style='background-color:#FF5C0F; color:white; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; cursor:pointer;'>📍 Mở GG Map</button>`;
+            marker.bindPopup(popupHtml);
             
-            // 🔴 JS BẮN TÍN HIỆU CLICK GHIM SANG C#
-            marker.on('click', function() {{
+            // 🔴 FIX LỖI CHẠM XUYÊN: Khóa sự kiện Click nền Map khi chạm vào Ghim
+            marker.on('click', function(e) {{
+                isClickingMarker = true;
                 window.location.href = 'tappin://' + id;
+                setTimeout(function() {{ isClickingMarker = false; }}, 500);
             }});
 
             allMarkers[id] = marker;
         }}
 
-        // 🔴 JS BẮN TÍN HIỆU CLICK RA NGOÀI ĐỂ HỦY CHỌN
-        map.on('click', function() {{
+        // 🔴 CHỈ HỦY CHỌN NẾU NGƯỜI DÙNG THỰC SỰ BẤM VÀO KHOẢNG TRỐNG
+        map.on('click', function(e) {{
+            if (isClickingMarker) return; 
             window.location.href = 'mapclick://clear';
         }});
 
+        // 🔴 FIX LỖI RADAR ĐÈ MÀU: Quản lý riêng biệt 2 trạng thái Selected (Cam) và Playing (Vàng)
         function updateMarkerState(id, state) {{
+            if (state === 'selected') currentSelectedId = id;
+            if (state === 'playing') currentPlayingId = id;
+            if (state === 'normal' && id === 0) currentSelectedId = 0; // Hủy chọn
+
+            // Reset toàn bộ về xám
             for (let key in allMarkers) {{
                 allMarkers[key].setIcon(taoIcon('normal'));
-                allCircles[key].setStyle({{ color: '#A9A9A9', fillColor: '#A9A9A9' }});
+                allCircles[key].setStyle({{ color: '#A9A9A9', fillColor: '#A9A9A9', fillOpacity: 0.2 }});
             }}
-            if (id && allMarkers[id]) {{
-                allMarkers[id].setIcon(taoIcon(state));
-                if(state === 'playing') {{
-                    allCircles[id].setStyle({{ color: '#FFD700', fillColor: '#FFD700', fillOpacity: 0.4 }});
-                }} else if (state === 'selected') {{
-                    allCircles[id].setStyle({{ color: '#FF5C0F', fillColor: '#FF5C0F', fillOpacity: 0.3 }});
-                }}
+            
+            // Áp dụng màu Vàng cho quán Radar đang quét
+            if (currentPlayingId > 0 && allMarkers[currentPlayingId]) {{
+                allMarkers[currentPlayingId].setIcon(taoIcon('playing'));
+                allCircles[currentPlayingId].setStyle({{ color: '#FFD700', fillColor: '#FFD700', fillOpacity: 0.4 }});
+            }}
+
+            // Áp dụng màu Cam cho quán người dùng bấm chọn (Đè lên màu Vàng nếu trùng)
+            if (currentSelectedId > 0 && allMarkers[currentSelectedId]) {{
+                allMarkers[currentSelectedId].setIcon(taoIcon('selected'));
+                allCircles[currentSelectedId].setStyle({{ color: '#FF5C0F', fillColor: '#FF5C0F', fillOpacity: 0.3 }});
             }}
         }}
 
@@ -184,12 +194,11 @@ namespace VinhKhanhTour.Views
             if (userMarker) {{ userMarker.setLatLng([lat, lng]); }} 
             else {{
                 var icon = L.divIcon({{ className: 'user-loc-wrap', html: ""<div class='user-loc'></div>"", iconSize: [24, 24], iconAnchor: [12, 12] }});
-                userMarker = L.marker([lat, lng], {{ icon: icon, zIndexOffset: 1000 }}).addTo(map);
+                userMarker = L.marker([lat, lng], {{ icon: icon, zIndexOffset: 9999 }}).addTo(map);
             }}
         }}
 
         {jsGhim}
-        updateMarkerState({selectedId}, 'selected');
     </script>
 </body>
 </html>";
@@ -209,22 +218,15 @@ namespace VinhKhanhTour.Views
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
         }
 
-        // ========================================================
-        // NHẬN SỰ KIỆN TƯƠNG TÁC TỪ JAVASCRIPT
-        // ========================================================
-        // ========================================================
-        // NHẬN SỰ KIỆN TƯƠNG TÁC TỪ JAVASCRIPT (ĐÃ FIX LỖI DẤU / )
-        // ========================================================
         private void BanDoWebView_Navigating(object sender, WebNavigatingEventArgs e)
         {
+            if (string.IsNullOrEmpty(e.Url)) return;
+
             string url = e.Url.ToLower();
 
-            // 1. Nếu người dùng chọn vào 1 Ghim
             if (url.StartsWith("tappin://"))
             {
-                e.Cancel = true; // Ngăn không cho load trang web mới
-
-                // LẤY ID VÀ XÓA DẤU '/' Ở CUỐI (Fix lỗi Android WebView)
+                e.Cancel = true;
                 string idStr = url.Replace("tappin://", "").TrimEnd('/');
 
                 if (int.TryParse(idStr, out int idQuan))
@@ -240,17 +242,16 @@ namespace VinhKhanhTour.Views
                             PoiNameLabel.Text = selectedPoi.Name;
                             DistanceLabel.Text = "👆 Chạm vào thẻ này để xem Menu";
 
-                            // Đổi màu ghim trên JS thành Cam (Selected)
-                            await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState({_selectedPoiId}, 'selected');");
+                            try { await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState({_selectedPoiId}, 'selected');"); }
+                            catch { }
                         });
                     }
                 }
             }
-            // 2. Nếu người dùng click vào vùng trống trên map (Hủy chọn)
             else if (url.StartsWith("mapclick://"))
             {
                 e.Cancel = true;
-                _selectedPoiId = 0; // Trả về trạng thái Radar tự động quét
+                _selectedPoiId = 0;
 
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
@@ -258,15 +259,29 @@ namespace VinhKhanhTour.Views
                     PoiNameLabel.Text = _nearestPoi?.Name ?? "Đang dò tìm...";
                     DistanceLabel.Text = "Đang theo dõi Radar GPS...";
 
-                    // Reset bản đồ về trạng thái bình thường (normal)
-                    await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState(0, 'normal');");
+                    try { await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState(0, 'normal');"); }
+                    catch { }
                 });
+            }
+            else if (url.StartsWith("openmap://"))
+            {
+                e.Cancel = true;
+                string coords = url.Replace("openmap://", "").TrimEnd('/');
+                var parts = coords.Split(',');
+                if (parts.Length == 2 &&
+                    double.TryParse(parts[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double lat) &&
+                    double.TryParse(parts[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double lng))
+                {
+                    MainThread.BeginInvokeOnMainThread(async () => {
+                        var location = new Location(lat, lng);
+                        var options = new MapLaunchOptions { NavigationMode = NavigationMode.Driving };
+                        try { await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options); }
+                        catch { await DisplayAlert("Lỗi", "Không thể mở bản đồ", "OK"); }
+                    });
+                }
             }
         }
 
-        // ========================================================
-        // CLICK VÀO THẺ ĐỂ MỞ TRANG CHI TIẾT (PlaceDetailPage)
-        // ========================================================
         private async void BottomInfoCard_Tapped(object sender, EventArgs e)
         {
             int targetId = _selectedPoiId > 0 ? _selectedPoiId : (_nearestPoi?.Id ?? 0);
@@ -276,14 +291,12 @@ namespace VinhKhanhTour.Views
                 var poi = _cachedPois.FirstOrDefault(p => p.Id == targetId);
                 if (poi != null)
                 {
-                    // Truyền dữ liệu sang trang PlaceDetailPage
                     var foodPlace = ConvertPoiToFoodPlace(poi);
                     await Navigation.PushAsync(new PlaceDetailPage(foodPlace));
                 }
             }
             else
             {
-                // Thông báo cho người dùng nếu chưa có dữ liệu quán
                 await DisplayAlert("Thông báo", "Vui lòng chạm chọn một quán trên bản đồ, hoặc đợi Radar quét vị trí của bạn.", "OK");
             }
         }
@@ -322,6 +335,12 @@ namespace VinhKhanhTour.Views
                 var request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(5));
                 Location? location = await Geolocation.Default.GetLocationAsync(request);
                 if (location == null) location = await Geolocation.Default.GetLastKnownLocationAsync();
+
+                if (location == null)
+                {
+                    location = new Location(10.761622, 106.661172);
+                }
+
                 if (location != null) Geolocation_LocationChanged(this, new GeolocationLocationChangedEventArgs(location));
             }
             catch { }
@@ -359,71 +378,72 @@ namespace VinhKhanhTour.Views
 
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    var latStr = _currentUserLocation.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                    var lngStr = _currentUserLocation.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                    await BanDoWebView.EvaluateJavaScriptAsync($"setUserLocation({latStr}, {lngStr});");
-
-                    if (DebugLabel != null) DebugLabel.Text = $"GPS: {_currentUserLocation.Latitude:F5}, {_currentUserLocation.Longitude:F5}";
-
-                    // CHỈ cập nhật nhãn nếu người dùng KHÔNG bấm chọn quán thủ công
-                    if (_selectedPoiId == 0)
+                    try
                     {
-                        CardStatusLabel.Text = "BẠN ĐANG Ở GẦN";
-                        if (DistanceLabel != null) DistanceLabel.Text = $"{Services.LocalizationResourceManager.Instance["Cách quán gần nhất"] ?? "Cách quán gần nhất"}: {nearestDistance:F0}m";
-                        if (PoiNameLabel != null) PoiNameLabel.Text = nearestTriggeredPoi != null ? nearestTriggeredPoi.Name : (closestPoi?.Name ?? "Chưa tìm thấy");
-                    }
+                        var latStr = _currentUserLocation.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        var lngStr = _currentUserLocation.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
-                    if (nearestTriggeredPoi != null)
-                    {
-                        if (_currentDwellingPoiId != nearestTriggeredPoi.Id)
+                        await BanDoWebView.EvaluateJavaScriptAsync($"setUserLocation({latStr}, {lngStr});");
+
+                        if (DebugLabel != null) DebugLabel.Text = $"GPS: {_currentUserLocation.Latitude:F5}, {_currentUserLocation.Longitude:F5}";
+
+                        if (_selectedPoiId == 0)
                         {
-                            _currentDwellingPoiId = nearestTriggeredPoi.Id;
-                            if (_isPlaying)
+                            CardStatusLabel.Text = "BẠN ĐANG Ở GẦN";
+                            if (DistanceLabel != null) DistanceLabel.Text = $"{Services.LocalizationResourceManager.Instance["Cách quán gần nhất"] ?? "Cách quán gần nhất"}: {nearestDistance:F0}m";
+                            if (PoiNameLabel != null) PoiNameLabel.Text = nearestTriggeredPoi != null ? nearestTriggeredPoi.Name : (closestPoi?.Name ?? "Chưa tìm thấy");
+                        }
+
+                        if (nearestTriggeredPoi != null)
+                        {
+                            if (_currentDwellingPoiId != nearestTriggeredPoi.Id)
                             {
-                                _playingPoiId = nearestTriggeredPoi.Id;
-                                await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState({_playingPoiId}, 'playing');");
-                                await NarrationEngine.Instance.PlayNarrationAsync(ConvertPoiToFoodPlace(nearestTriggeredPoi), isManual: false);
+                                _currentDwellingPoiId = nearestTriggeredPoi.Id;
+                                if (_isPlaying)
+                                {
+                                    _playingPoiId = nearestTriggeredPoi.Id;
+                                    await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState({_playingPoiId}, 'playing');");
+                                    await NarrationEngine.Instance.PlayNarrationAsync(ConvertPoiToFoodPlace(nearestTriggeredPoi), isManual: false);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (_currentDwellingPoiId != 0)
+                            {
+                                _currentDwellingPoiId = 0;
+                                _playingPoiId = 0;
+                                // Không cần gọi JS reset về 0 ở đây nữa vì hàm updateMarkerState đã tách biệt 2 luồng
                             }
                         }
                     }
-                    else
-                    {
-                        if (_currentDwellingPoiId != 0)
-                        {
-                            _currentDwellingPoiId = 0;
-                            _playingPoiId = 0;
-                            await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState({_selectedPoiId}, 'selected');");
-                        }
-                    }
+                    catch { }
                 });
             });
         }
 
         private FoodPlace ConvertPoiToFoodPlace(Poi p)
         {
-            // Truyền ImageUrl sang để PlaceDetailPage có ảnh
             return new FoodPlace { Id = p.Id.ToString(), Name = p.Name, NarrationText = p.DisplayTtsScript, ImageUrl = p.ImageUrl };
         }
 
-        // ========================================================
-        // TÍNH NĂNG CHỈ ĐƯỜNG MỞ GOOGLE MAPS
-        // ========================================================
         private async void OnRouteClicked(object sender, EventArgs e)
         {
-            // Lấy ID đang được thao tác (ưu tiên click thủ công, nếu không thì lấy quán gần nhất)
             Poi target = (_selectedPoiId > 0) ? _cachedPois.FirstOrDefault(p => p.Id == _selectedPoiId) : _nearestPoi;
 
             if (target != null)
             {
-                var location = new Location(target.Latitude, target.Longitude);
-                var options = new MapLaunchOptions
+                try
                 {
-                    Name = target.Name,
-                    NavigationMode = NavigationMode.Driving
-                };
-
-                try { await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options); }
-                catch (Exception ex) { await DisplayAlert("Lỗi", "Không thể mở ứng dụng bản đồ.", "OK"); }
+                    var location = new Location(target.Latitude, target.Longitude);
+                    var options = new MapLaunchOptions { Name = target.Name, NavigationMode = NavigationMode.Driving };
+                    await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options);
+                }
+                catch { await DisplayAlert("Lỗi", "Không thể mở ứng dụng bản đồ.", "OK"); }
+            }
+            else
+            {
+                await DisplayAlert("Chú ý", "Vui lòng chạm vào một quán trên bản đồ trước khi bấm Chỉ đường!", "OK");
             }
         }
 
@@ -434,7 +454,6 @@ namespace VinhKhanhTour.Views
             if (!_isPlaying) NarrationEngine.Instance.CancelCurrentNarration();
         }
 
-        // --- TẠO TAB BAR BẰNG CODE ---
         private Border CreateTabBar()
         {
             var tabBarGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, BackgroundColor = Colors.White, Padding = new Thickness(0, 5, 0, 5) };

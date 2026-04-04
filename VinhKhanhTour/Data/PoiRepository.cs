@@ -8,30 +8,55 @@ namespace VinhKhanhTour.Data
 {
     public class PoiRepository
     {
+        // 🔴 TĂNG SỐ NÀY LÊN MỖI KHI BẠN ĐỔI TỌA ĐỘ HOẶC THÊM QUÁN MỚI VÀO Poi.GetSampleData()
+        private const int DATA_VERSION = 1;
+
         private SQLiteAsyncConnection _database;
+        private bool _isInitialized = false;
 
         public PoiRepository()
         {
         }
 
-        // Hàm khởi tạo Database
+        // Hàm khởi tạo Database & Kiểm tra phiên bản
         private async Task InitAsync()
         {
-            if (_database is not null)
-                return;
+            if (_isInitialized) return;
+            _isInitialized = true;
 
             _database = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
-
-            // Tạo bảng dựa trên class Poi
             await _database.CreateTableAsync<Poi>();
 
-            // KIỂM TRA: Nếu database trống (mới cài app), tự động Seed dữ liệu mẫu vào
-            var count = await _database.Table<Poi>().CountAsync();
-            if (count == 0)
+            // Dùng Name = "VK_VERSION" làm lính gác (Sentinel)
+            // Dùng Priority để lưu con số phiên bản hiện tại
+            var sentinel = await _database.Table<Poi>().FirstOrDefaultAsync(p => p.Name == "VK_VERSION");
+
+            bool canSeedLai = false;
+
+            if (sentinel == null || sentinel.Priority != DATA_VERSION)
             {
+                // Nếu chưa có lính gác, hoặc lính gác báo version cũ -> Xóa sạch DB cũ
+                await _database.DeleteAllAsync<Poi>();
+                canSeedLai = true;
+            }
+
+            if (canSeedLai)
+            {
+                // 1. Nạp lính gác mới với Version mới
+                await _database.InsertAsync(new Poi
+                {
+                    Name = "VK_VERSION",
+                    Priority = DATA_VERSION,
+                    DisplayName = "System Version",
+                    DisplayTtsScript = "",
+                    ImageUrl = ""
+                });
+
+                // 2. Bơm toàn bộ dữ liệu thật từ Poi.GetSampleData() vào DB
                 var initialData = Poi.GetSampleData();
                 await _database.InsertAllAsync(initialData);
-                System.Diagnostics.Debug.WriteLine("[Database] Đã nạp thành công dữ liệu mẫu vào SQLite!");
+
+                System.Diagnostics.Debug.WriteLine($"[Database] Đã cập nhật SQLite lên phiên bản {DATA_VERSION}!");
             }
         }
 
@@ -39,7 +64,10 @@ namespace VinhKhanhTour.Data
         public async Task<List<Poi>> GetAllPoisAsync()
         {
             await InitAsync();
-            return await _database.Table<Poi>().ToListAsync();
+            // CỰC KỲ QUAN TRỌNG: Lọc bỏ record lính gác ra khỏi danh sách để không hiện lên map
+            return await _database.Table<Poi>()
+                                  .Where(p => p.Name != "VK_VERSION")
+                                  .ToListAsync();
         }
 
         // Lấy 1 quán theo ID

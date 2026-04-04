@@ -1,4 +1,4 @@
-﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Media;
 using System;
@@ -135,6 +135,19 @@ namespace VinhKhanhTour.Views
                 converterParameter: "Chỉ Đường",
                 stringFormat: "📍 {0}"
             ));
+
+            // THÊM SỰ KIỆN CLICK VÀO ĐÂY ĐỂ MỞ GOOGLE MAPS
+            routeBtn.Clicked += async (s, e) =>
+            {
+                try 
+                {
+                    string nameQuery = Uri.EscapeDataString(_currentPlace.Name + " Phố Vĩnh Khánh, Quận 4");
+                    string googleMapUrl = $"https://www.google.com/maps/search/?api=1&query={nameQuery}";
+                    await Launcher.Default.OpenAsync(googleMapUrl);
+                }
+                catch { await Application.Current.MainPage.DisplayAlert("Lỗi", "Không thể mở ứng dụng bản đồ Google Maps.", "OK"); }
+            };
+
             Grid.SetColumn(routeBtn, 0);
             actionGrid.Children.Add(routeBtn);
 
