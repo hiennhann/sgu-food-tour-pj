@@ -28,28 +28,40 @@
                     </HorizontalStackLayout>
                 </Border>
 
-                <Border x:Name="BottomInfoCard" VerticalOptions="End" Margin="{OnIdiom Phone='12,0,12,24', Tablet='40,0,40,40'}" Padding="0"
+                <Border x:Name="BottomInfoCard" VerticalOptions="End" Margin="16,0,16,24" Padding="0"
                         StrokeShape="RoundRectangle 20" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" StrokeThickness="0"
-                        HorizontalOptions="{OnIdiom Phone=Fill, Tablet=Center}" InputTransparent="False">
+                        HorizontalOptions="Fill" InputTransparent="False">
+
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,4" Radius="12" Opacity="0.15" />
+                    </Border.Shadow>
 
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="BottomInfoCard_Tapped" />
                     </Border.GestureRecognizers>
 
-                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto" Padding="{OnIdiom Phone='20,16', Tablet='24,20'}">
+                    <Grid ColumnDefinitions="*, Auto" Padding="20,16" ColumnSpacing="12" VerticalOptions="Center">
 
-                        <VerticalStackLayout Grid.Column="0" Spacing="4" Margin="0,0,16,0">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
                             <Label x:Name="CardStatusLabel" Text="BẠN ĐANG Ở GẦN" FontSize="10" FontAttributes="Bold" TextColor="#FF5C0F" CharacterSpacing="1" />
-                            <Label x:Name="PoiNameLabel" Text="Đang dò tìm..." FontSize="{OnIdiom Phone=18, Tablet=22}" FontAttributes="Bold" MaxLines="2" LineBreakMode="WordWrap"/>
-                            <Label x:Name="DistanceLabel" Text="Khoảng cách: -- m" FontSize="{OnIdiom Phone=13, Tablet=15}" Opacity="0.6"/>
-                            <Label Text="👆 Chạm để xem chi tiết" FontSize="11" TextColor="#27AE60" Margin="0,4,0,0"/>
+
+                            <Label x:Name="PoiNameLabel" Text="Đang dò tìm..." FontSize="20" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation" TextColor="{AppThemeBinding Light=Black, Dark=White}" Margin="0,2,0,2"/>
+
+                            <Label x:Name="DistanceLabel" Text="Khoảng cách: -- m" FontSize="13" TextColor="#808080" MaxLines="1" LineBreakMode="TailTruncation"/>
+
+                            <HorizontalStackLayout Spacing="4" Margin="0,4,0,0">
+                                <Label Text="👆" FontSize="11" VerticalOptions="Center"/>
+                                <Label Text="Chạm để xem chi tiết" FontSize="11" TextColor="#27AE60" FontAttributes="Bold" VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
                         </VerticalStackLayout>
 
-                        <HorizontalStackLayout Grid.Row="{OnIdiom Phone=1, Tablet=0}" Grid.Column="{OnIdiom Phone=0, Tablet=1}" Grid.ColumnSpan="{OnIdiom Phone=2, Tablet=1}"
-                                               HorizontalOptions="Center" VerticalOptions="Center" Spacing="16" Margin="{OnIdiom Phone='0,14,0,0', Tablet='0,0,0,0'}">
-                            <Button Text="📍" x:Name="RouteButton" FontSize="24" BackgroundColor="#FFF0ED" TextColor="#FF5C0F" WidthRequest="56" HeightRequest="56" CornerRadius="28" Padding="0" Clicked="OnRouteClicked" />
-                            <Button Text="⏸" x:Name="PlayPauseButton" FontSize="28" BackgroundColor="#FF5C0F" TextColor="White" WidthRequest="56" HeightRequest="56" CornerRadius="28" Padding="0" Clicked="OnPlayPauseClicked" />
+                        <HorizontalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="10">
+                            <Button Text="📍" x:Name="RouteButton" FontSize="20" BackgroundColor="#FFF0ED" TextColor="#FF5C0F" 
+                                    WidthRequest="48" HeightRequest="48" CornerRadius="24" Padding="0" Clicked="OnRouteClicked" />
+                            <Button Text="⏸" x:Name="PlayPauseButton" FontSize="20" BackgroundColor="#FF5C0F" TextColor="White" 
+                                    WidthRequest="48" HeightRequest="48" CornerRadius="24" Padding="0" Clicked="OnPlayPauseClicked" />
                         </HorizontalStackLayout>
+
                     </Grid>
                 </Border>
             </Grid>

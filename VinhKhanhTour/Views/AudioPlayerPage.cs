@@ -1,10 +1,7 @@
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
-using Microsoft.Maui.Media;
+using Microsoft.Maui.ApplicationModel;
 using System;
-using System.Linq;
-using System.Threading;
-using VinhKhanhTour.Helpers;
 using VinhKhanhTour.Models;
 using VinhKhanhTour.Services;
 
@@ -13,200 +10,152 @@ namespace VinhKhanhTour.Views
     public class AudioPlayerPage : ContentPage
     {
         private FoodPlace _currentPlace;
-        private CancellationTokenSource _cancelTokenSource;
         private bool _isPlaying = false;
-        private ImageButton _playPauseBtn;
+        private Button _playPauseBtn;
 
         public AudioPlayerPage(FoodPlace place)
         {
             _currentPlace = place;
-            BindingContext = place; // Ràng buộc dữ liệu vào trang
-
             NavigationPage.SetHasNavigationBar(this, false);
-            BackgroundColor = Color.FromArgb("#5D1E0F");
+            BackgroundColor = Colors.White;
 
-            var mainGrid = new Grid
+            var mainStack = new VerticalStackLayout { Spacing = 20 };
+
+            var headerGrid = new Grid { BackgroundColor = Color.FromArgb("#FF5C0F"), HeightRequest = 60, Padding = new Thickness(15, 0) };
+
+            // SỬA LẠI: Dùng nút chữ (Button) thay vì nút ảnh (ImageButton) để chống tàng hình
+            var backBtn = new Button
             {
-                RowDefinitions = new RowDefinitionCollection
-                {
-                    new RowDefinition { Height = 50 },
-                    new RowDefinition { Height = GridLength.Star },
-                    new RowDefinition { Height = 80 }
-                }
+                Text = "←",
+                FontSize = 28,
+                TextColor = Colors.White,
+                BackgroundColor = Colors.Transparent,
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Center,
+                Padding = new Thickness(0),
+                WidthRequest = 50,
+                HeightRequest = 50
             };
-
-            // --- HÀNG 1: HEADER ---
-            var headerGrid = new Grid
-            {
-                BackgroundColor = Color.FromArgb("#E68A00"),
-                ColumnDefinitions = new ColumnDefinitionCollection
-                {
-                    new ColumnDefinition { Width = 50 },
-                    new ColumnDefinition { Width = GridLength.Star },
-                    new ColumnDefinition { Width = 50 }
-                }
-            };
-
-            var backBtn = new ImageButton { Source = "icon_back_white.png", WidthRequest = 24, HeightRequest = 24, HorizontalOptions = LayoutOptions.Center };
-            backBtn.Clicked += async (s, e) =>
-            {
-                StopAudio(); // Dừng đọc khi bấm Back thoát trang
+            backBtn.Clicked += async (s, e) => {
+                NarrationEngine.Instance.CancelCurrentNarration(); // Tắt audio khi thoát
                 await Navigation.PopAsync();
             };
-            Grid.SetColumn(backBtn, 0);
             headerGrid.Children.Add(backBtn);
 
-            // BINDING Tiêu đề
-            var titleLabel = new Label { TextColor = Colors.White, FontAttributes = FontAttributes.Bold, FontSize = 18, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
-            titleLabel.SetBinding(Label.TextProperty, "Name");
-            Grid.SetColumn(titleLabel, 1);
+            var titleLabel = new Label { Text = place.Name, TextColor = Colors.White, FontSize = 18, FontAttributes = FontAttributes.Bold, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
             headerGrid.Children.Add(titleLabel);
-
-            Grid.SetRow(headerGrid, 0);
-            mainGrid.Children.Add(headerGrid);
-
-            // --- HÀNG 2: NỘI DUNG CHÍNH ---
-            var contentScrollView = new ScrollView();
-            var contentStack = new VerticalStackLayout { Padding = new Thickness(15), Spacing = 20 };
-
-            // 1. Ảnh món ăn
-            var imageGrid = new Grid { HeightRequest = 220 };
-            var mainImage = new Image { Aspect = Aspect.AspectFill };
-            mainImage.SetBinding(Image.SourceProperty, "ImageUrl");
-
-            imageGrid.Children.Add(new Border
+            mainStack.Children.Add(headerGrid);
+            // 2. TRÌNH PHÁT AUDIO (Thẻ màu hồng nhạt)
+            var playerCard = new Border
             {
+                BackgroundColor = Color.FromArgb("#FFF5F2"),
+                StrokeThickness = 0,
                 StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 },
-                Stroke = Colors.Transparent,
-                Content = mainImage
-            });
-            contentStack.Children.Add(imageGrid);
-
-            // 2. Khu vực Audio Player
-            var playerBorder = new Border
-            {
-                BackgroundColor = Color.FromArgb("#4A1508"),
-                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 },
-                Stroke = Colors.Transparent,
-                Padding = new Thickness(15, 20)
+                Margin = new Thickness(20, 20, 20, 0),
+                Padding = new Thickness(20, 30)
             };
 
-            var playerStack = new VerticalStackLayout { Spacing = 15 };
+            var playerStack = new VerticalStackLayout { Spacing = 25 };
 
-            // Cụm nút bấm
-            var controlButtonsStack = new HorizontalStackLayout { HorizontalOptions = LayoutOptions.Center, Spacing = 30, VerticalOptions = LayoutOptions.Center };
+            // Thanh trượt (Slider)
+            var slider = new Slider { MinimumTrackColor = Color.FromArgb("#FF5C0F"), MaximumTrackColor = Color.FromArgb("#FFDAB9"), ThumbColor = Color.FromArgb("#FF5C0F") };
+            playerStack.Children.Add(slider);
 
-            _playPauseBtn = new ImageButton { Source = "icon_play_orange_circle.png", WidthRequest = 60, HeightRequest = 60 };
-            _playPauseBtn.Clicked += OnPlayPauseButtonClicked; // Gắn sự kiện đọc Audio
+            // CÁC NÚT ĐIỀU KHIỂN (Đã được thêm vào)
+            var controlLayout = new HorizontalStackLayout { HorizontalOptions = LayoutOptions.Center, Spacing = 30, VerticalOptions = LayoutOptions.Center };
 
-            controlButtonsStack.Children.Add(new ImageButton { Source = "icon_rewind_10s.png", WidthRequest = 35, HeightRequest = 35 });
-            controlButtonsStack.Children.Add(_playPauseBtn);
-            controlButtonsStack.Children.Add(new ImageButton { Source = "icon_forward_10s.png", WidthRequest = 35, HeightRequest = 35 });
-            playerStack.Children.Add(controlButtonsStack);
+            // Nút Stop (Dừng)
+            var stopBtn = new Button { Text = "⏹", FontSize = 24, BackgroundColor = Colors.Transparent, TextColor = Color.FromArgb("#FF5C0F"), WidthRequest = 50, HeightRequest = 50 };
+            stopBtn.Clicked += (s, e) => {
+                _isPlaying = false;
+                _playPauseBtn.Text = "▶";
+                NarrationEngine.Instance.CancelCurrentNarration();
+            };
 
-            // Thanh tiến trình (ĐÃ FIX LỖI)
-            var timeGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = 40 }, new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = 40 } }, ColumnSpacing = 10 };
-            var timeSlider = new Slider { Minimum = 0, Maximum = 100, Value = 0, MinimumTrackColor = Color.FromArgb("#E68A00"), ThumbColor = Colors.White };
-            Grid.SetColumn(timeSlider, 1);
-            timeGrid.Children.Add(timeSlider);
-            playerStack.Children.Add(timeGrid);
+            // Nút Play / Pause
+            _playPauseBtn = new Button { Text = "▶", FontSize = 32, BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, WidthRequest = 64, HeightRequest = 64, CornerRadius = 32, Padding = 0 };
+            _playPauseBtn.Clicked += async (s, e) => {
+                if (_isPlaying)
+                {
+                    _isPlaying = false;
+                    _playPauseBtn.Text = "▶";
+                    NarrationEngine.Instance.CancelCurrentNarration();
+                }
+                else
+                {
+                    _isPlaying = true;
+                    _playPauseBtn.Text = "⏸";
+                    await NarrationEngine.Instance.PlayNarrationAsync(_currentPlace, isManual: true);
 
-            playerBorder.Content = playerStack;
-            contentStack.Children.Add(playerBorder);
+                    // Reset lại nút Play khi đọc xong
+                    _isPlaying = false;
+                    _playPauseBtn.Text = "▶";
+                }
+            };
 
-            // 3. Text Mô tả
-            var aboutTitle = new Label { TextColor = Colors.White, FontAttributes = FontAttributes.Bold, FontSize = 18 };
-            string formatString = LocalizationResourceManager.Instance["Giới thiệu về {0}"] ?? "Giới thiệu về {0}";
-            aboutTitle.SetBinding(Label.TextProperty, new Binding("Name", stringFormat: formatString));
-            contentStack.Children.Add(aboutTitle);
+            // Nút Next (Giả lập)
+            var nextBtn = new Button { Text = "⏭", FontSize = 24, BackgroundColor = Colors.Transparent, TextColor = Color.FromArgb("#FF5C0F"), WidthRequest = 50, HeightRequest = 50 };
 
-            var descLabel = new Label { TextColor = Color.FromArgb("#F0D6D0"), FontSize = 14, LineHeight = 1.4 };
-            descLabel.SetBinding(Label.TextProperty, "NarrationText");
+            controlLayout.Children.Add(stopBtn);
+            controlLayout.Children.Add(_playPauseBtn);
+            controlLayout.Children.Add(nextBtn);
+
+            playerStack.Children.Add(controlLayout);
+            playerCard.Content = playerStack;
+            mainStack.Children.Add(playerCard);
+
+            // 3. THÔNG TIN QUÁN
+            var contentStack = new VerticalStackLayout { Padding = new Thickness(20, 0), Spacing = 10 };
+
+            var infoTitle = new Label { FontSize = 18, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
+            infoTitle.SetBinding(Label.TextProperty, new Binding(
+                path: "CurrentLanguageCode",
+                source: LocalizationResourceManager.Instance,
+                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                converterParameter: $"Giới thiệu về {_currentPlace.Name}"
+            ));
+            contentStack.Children.Add(infoTitle);
+
+            var descLabel = new Label { Text = _currentPlace.NarrationText, FontSize = 14, TextColor = Colors.Gray, LineHeight = 1.4 };
             contentStack.Children.Add(descLabel);
+            mainStack.Children.Add(contentStack);
 
-            // 4. CÁC NÚT HÀNH ĐỘNG
-            var actionGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, ColumnSpacing = 15, Margin = new Thickness(0, 10, 0, 20) };
+            // 4. HAI NÚT CHỨC NĂNG (Chỉ đường & Thực đơn)
+            var actionGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, ColumnSpacing = 15, Padding = new Thickness(20) };
 
-            var routeBtn = new Button { BackgroundColor = Color.FromArgb("#D9801A"), TextColor = Colors.White, CornerRadius = 25, HeightRequest = 50 };
+            var routeBtn = new Button { BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 15, HeightRequest = 50 };
             routeBtn.SetBinding(Button.TextProperty, new Binding(
                 path: "CurrentLanguageCode",
                 source: LocalizationResourceManager.Instance,
-                converter: TranslateConverter.Instance,
+                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
                 converterParameter: "Chỉ Đường",
                 stringFormat: "📍 {0}"
             ));
-
-            // THÊM SỰ KIỆN CLICK VÀO ĐÂY ĐỂ MỞ GOOGLE MAPS
-            routeBtn.Clicked += async (s, e) =>
-            {
-                try 
-                {
-                    string nameQuery = Uri.EscapeDataString(_currentPlace.Name + " Phố Vĩnh Khánh, Quận 4");
-                    string googleMapUrl = $"https://www.google.com/maps/search/?api=1&query={nameQuery}";
-                    await Launcher.Default.OpenAsync(googleMapUrl);
-                }
-                catch { await Application.Current.MainPage.DisplayAlert("Lỗi", "Không thể mở ứng dụng bản đồ Google Maps.", "OK"); }
+            routeBtn.Clicked += async (s, e) => {
+                var options = new MapLaunchOptions { Name = _currentPlace.Name, NavigationMode = NavigationMode.Driving };
+                // Truyền tọa độ gốc của quán (Giả lập tạm thời, nếu bạn có truyền kinh/vĩ độ qua FoodPlace thì thay vào đây)
+                var location = new Location(10.761622, 106.661172);
+                try { await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options); }
+                catch { await DisplayAlert("Lỗi", "Không thể mở ứng dụng bản đồ.", "OK"); }
             };
-
             Grid.SetColumn(routeBtn, 0);
             actionGrid.Children.Add(routeBtn);
 
-            var menuBtn = new Button { BackgroundColor = Color.FromArgb("#7B4335"), TextColor = Colors.White, BorderColor = Color.FromArgb("#D9801A"), BorderWidth = 1, CornerRadius = 25, HeightRequest = 50 };
+            var menuBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 15, HeightRequest = 50 };
             menuBtn.SetBinding(Button.TextProperty, new Binding(
                 path: "CurrentLanguageCode",
                 source: LocalizationResourceManager.Instance,
-                converter: TranslateConverter.Instance,
+                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
                 converterParameter: "Xem Thực Đơn",
                 stringFormat: "📋 {0}"
             ));
-            menuBtn.Clicked += async (s, e) => await Navigation.PushAsync(new MenuPage(place));
+            menuBtn.Clicked += async (s, e) => await Navigation.PushAsync(new MenuPage(_currentPlace));
             Grid.SetColumn(menuBtn, 1);
             actionGrid.Children.Add(menuBtn);
 
-            contentStack.Children.Add(actionGrid);
+            mainStack.Children.Add(actionGrid);
 
-            // --- KẾT THÚC HÀNG 2 ---
-            contentScrollView.Content = contentStack;
-            Grid.SetRow(contentScrollView, 1);
-            mainGrid.Children.Add(contentScrollView);
-
-            Content = mainGrid;
-        }
-
-        // HÀM XỬ LÝ PLAY/PAUSE TEXT-TO-SPEECH
-        private async void OnPlayPauseButtonClicked(object sender, EventArgs e)
-        {
-            if (_isPlaying)
-            {
-                StopAudio();
-                return;
-            }
-
-            _isPlaying = true;
-            _playPauseBtn.Opacity = 0.5;
-
-            try
-            {
-                // Truyền isManual = true vì người dùng tự bấm tay
-                await NarrationEngine.Instance.PlayNarrationAsync(_currentPlace, isManual: true);
-            }
-            catch (Exception ex)
-            {
-                ModalErrorHandler.Instance.HandleError(ex);
-            }
-            finally
-            {
-                // Khi đọc xong (hoặc bị hủy), tự động khôi phục lại nút bấm
-                _isPlaying = false;
-                _playPauseBtn.Opacity = 1.0;
-            }
-        }
-
-        private void StopAudio()
-        {
-            NarrationEngine.Instance.CancelCurrentNarration();
-            _isPlaying = false;
-            _playPauseBtn.Opacity = 1.0;
+            Content = new ScrollView { Content = mainStack };
         }
     }
 }

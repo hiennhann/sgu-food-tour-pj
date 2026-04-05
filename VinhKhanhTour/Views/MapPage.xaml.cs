@@ -454,30 +454,81 @@ namespace VinhKhanhTour.Views
             if (!_isPlaying) NarrationEngine.Instance.CancelCurrentNarration();
         }
 
+        // ========================================================
+        // TẠO TAB BAR BẰNG CODE (GIAO DIỆN FLOATING PILL HIỆN ĐẠI)
+        // ========================================================
         private Border CreateTabBar()
         {
-            var tabBarGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, BackgroundColor = Colors.White, Padding = new Thickness(0, 5, 0, 5) };
-            var tab1 = CreateTabItem("Trang chủ", "icon_home.png", false);
-            var tapHome = new TapGestureRecognizer(); tapHome.Tapped += async (s, e) => await Navigation.PushAsync(new HomePage(), false); tab1.GestureRecognizers.Add(tapHome);
-            Grid.SetColumn(tab1, 0); tabBarGrid.Children.Add(tab1);
+            var tabBarGrid = new Grid
+            {
+                ColumnDefinitions = new ColumnDefinitionCollection
+                {
+                    new ColumnDefinition { Width = GridLength.Star },
+                    new ColumnDefinition { Width = GridLength.Star },
+                    new ColumnDefinition { Width = GridLength.Star }
+                },
+                BackgroundColor = Colors.Transparent,
+                Padding = new Thickness(0, 10, 0, 10)
+            };
 
-            var tab2 = CreateTabItem("Bản đồ", "icon_map.png", true);
-            Grid.SetColumn(tab2, 1); tabBarGrid.Children.Add(tab2);
+            var tab1 = CreateTabItem("Trang chủ", "🏠", false);
+            var tapHome = new TapGestureRecognizer();
+            tapHome.Tapped += async (s, e) => await Navigation.PushAsync(new HomePage(), false);
+            tab1.GestureRecognizers.Add(tapHome);
+            Grid.SetColumn(tab1, 0);
+            tabBarGrid.Children.Add(tab1);
 
-            var tab3 = CreateTabItem("Cài đặt", "icon_settings.png", false);
-            var tapSettings = new TapGestureRecognizer(); tapSettings.Tapped += async (s, e) => await Navigation.PushAsync(new SettingsPage(), false); tab3.GestureRecognizers.Add(tapSettings);
-            Grid.SetColumn(tab3, 2); tabBarGrid.Children.Add(tab3);
+            // BẬT SÁNG NÚT BẢN ĐỒ VÀ BỎ SỰ KIỆN CLICK
+            var tab2 = CreateTabItem("Bản đồ", "🗺️", true);
+            Grid.SetColumn(tab2, 1);
+            tabBarGrid.Children.Add(tab2);
 
-            return new Border { StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(15, 15, 0, 0) }, BackgroundColor = Colors.White, Content = tabBarGrid, Stroke = Color.FromArgb("#E0E0E0") };
+            var tab3 = CreateTabItem("Cài đặt", "⚙️", false);
+            var tapSettings = new TapGestureRecognizer();
+            tapSettings.Tapped += async (s, e) => await Navigation.PushAsync(new SettingsPage(), false);
+            tab3.GestureRecognizers.Add(tapSettings);
+            Grid.SetColumn(tab3, 2);
+            tabBarGrid.Children.Add(tab3);
+
+            return new Border
+            {
+                Margin = new Thickness(20, 0, 20, 15),
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 25 },
+                BackgroundColor = Colors.White,
+                Content = tabBarGrid,
+                Stroke = Colors.Transparent,
+                Shadow = new Shadow { Brush = Colors.Black, Opacity = 0.15f, Offset = new Point(0, 5), Radius = 15 }
+            };
         }
 
-        private View CreateTabItem(string text, string icon, bool isSelected = false)
+        private View CreateTabItem(string text, string iconText, bool isSelected = false)
         {
-            var layout = new VerticalStackLayout { Spacing = 2, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
-            layout.Children.Add(new Image { Source = icon, HeightRequest = 24, WidthRequest = 24, Opacity = isSelected ? 1.0 : 0.5 });
-            var textLabel = new Label { TextColor = isSelected ? Color.FromArgb("#FF5C0F") : Color.FromArgb("#808080"), FontSize = 10, HorizontalOptions = LayoutOptions.Center };
-            textLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: text));
+            var layout = new VerticalStackLayout { Spacing = 4, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
+
+            var iconLabel = new Label
+            {
+                Text = iconText,
+                FontSize = 22,
+                HorizontalOptions = LayoutOptions.Center,
+                Opacity = isSelected ? 1.0 : 0.4
+            };
+            layout.Children.Add(iconLabel);
+
+            var textLabel = new Label
+            {
+                TextColor = isSelected ? Color.FromArgb("#FF5C0F") : Color.FromArgb("#808080"),
+                FontSize = 11,
+                FontAttributes = isSelected ? FontAttributes.Bold : FontAttributes.None,
+                HorizontalOptions = LayoutOptions.Center
+            };
+            textLabel.SetBinding(Label.TextProperty, new Binding(
+                path: "CurrentLanguageCode",
+                source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                converterParameter: text
+            ));
             layout.Children.Add(textLabel);
+
             return layout;
         }
     }
