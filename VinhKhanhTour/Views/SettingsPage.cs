@@ -1,6 +1,7 @@
 ﻿using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using System;
+using System.Threading.Tasks;
 using System.Globalization;
 using VinhKhanhTour.Helpers;
 using VinhKhanhTour.Services;
@@ -9,18 +10,21 @@ namespace VinhKhanhTour.Views
 {
     public class SettingsPage : ContentPage
     {
+        // Khai báo biến toàn cục để vẽ lại thẻ Profile
+        private Border _profileCard;
+
         public SettingsPage()
         {
             NavigationPage.SetHasNavigationBar(this, false);
-            BackgroundColor = Color.FromArgb("#F4F4F6"); // Nền xám nhạt để làm nổi bật các thẻ trắng
+            BackgroundColor = Color.FromArgb("#F4F4F6");
 
             var mainGrid = new Grid
             {
                 RowDefinitions = new RowDefinitionCollection
                 {
-                    new RowDefinition { Height = 60 }, // Header
-                    new RowDefinition { Height = GridLength.Star }, // Content
-                    new RowDefinition { Height = 80 }  // Tab Bar
+                    new RowDefinition { Height = 60 },
+                    new RowDefinition { Height = GridLength.Star },
+                    new RowDefinition { Height = 80 }
                 }
             };
 
@@ -30,7 +34,6 @@ namespace VinhKhanhTour.Views
             var headerGrid = new Grid { BackgroundColor = Colors.White, Padding = new Thickness(20, 0) };
             var titleLabel = new Label { FontAttributes = FontAttributes.Bold, FontSize = 20, TextColor = Colors.Black, VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.Center };
 
-            // Trói buộc Tiêu đề
             titleLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Cài đặt"));
             headerGrid.Children.Add(titleLabel);
 
@@ -43,8 +46,8 @@ namespace VinhKhanhTour.Views
             var scrollContent = new ScrollView();
             var contentStack = new VerticalStackLayout { Spacing = 20, Padding = new Thickness(15, 20) };
 
-            // --- THẺ PROFILE KHÁCH VÃNG LAI (GUEST) ---
-            var profileCard = new Border
+            // 🔴 KHUNG CHỨA PROFILE (Sẽ được điền nội dung động bằng hàm UpdateProfileCard)
+            _profileCard = new Border
             {
                 BackgroundColor = Colors.White,
                 StrokeThickness = 0,
@@ -52,42 +55,7 @@ namespace VinhKhanhTour.Views
                 Padding = new Thickness(15),
                 Shadow = new Shadow { Brush = Colors.Black, Opacity = 0.05f, Offset = new Point(0, 2), Radius = 5 }
             };
-
-            var profileGrid = new Grid
-            {
-                ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = 60 }, new ColumnDefinition { Width = GridLength.Star } },
-                RowDefinitions = new RowDefinitionCollection { new RowDefinition { Height = GridLength.Auto }, new RowDefinition { Height = GridLength.Auto }, new RowDefinition { Height = GridLength.Auto } },
-                ColumnSpacing = 15,
-                RowSpacing = 5
-            };
-
-            // Avatar ẩn danh
-            var avatar = new Border { WidthRequest = 60, HeightRequest = 60, StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 30 }, BackgroundColor = Color.FromArgb("#E0E0E0"), StrokeThickness = 0, Content = new Label { Text = "👤", FontSize = 30, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center } };
-            Grid.SetRowSpan(avatar, 2);
-            Grid.SetColumn(avatar, 0);
-            profileGrid.Children.Add(avatar);
-
-            // Tên Khách
-            var nameLabel = new Label { Text = "Khách du lịch", FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, VerticalOptions = LayoutOptions.End };
-            Grid.SetRow(nameLabel, 0);
-            Grid.SetColumn(nameLabel, 1);
-            profileGrid.Children.Add(nameLabel);
-
-            // Dòng mời gọi
-            var hintLabel = new Label { Text = "Đăng nhập để lưu địa điểm yêu thích", FontSize = 13, TextColor = Colors.Gray, VerticalOptions = LayoutOptions.Start };
-            Grid.SetRow(hintLabel, 1);
-            Grid.SetColumn(hintLabel, 1);
-            profileGrid.Children.Add(hintLabel);
-
-            // Nút Đăng nhập / Đăng ký
-            var loginBtn = new Button { Text = "Đăng Nhập / Đăng Ký", BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 10, HeightRequest = 40, Margin = new Thickness(0, 10, 0, 0) };
-            loginBtn.Clicked += async (s, e) => await DisplayAlert("Thông báo", "Tính năng Đăng nhập đang được phát triển!", "Đóng");
-            Grid.SetRow(loginBtn, 2);
-            Grid.SetColumn(loginBtn, 1);
-            profileGrid.Children.Add(loginBtn);
-
-            profileCard.Content = profileGrid;
-            contentStack.Children.Add(profileCard);
+            contentStack.Children.Add(_profileCard);
 
             // --- CỤM CÀI ĐẶT CHUNG ---
             var generalSection = new VerticalStackLayout { Spacing = 10 };
@@ -97,19 +65,14 @@ namespace VinhKhanhTour.Views
             var generalCard = new Border { BackgroundColor = Colors.White, StrokeThickness = 0, StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 } };
             var generalList = new VerticalStackLayout();
 
-            // Mục Đổi Ngôn Ngữ
             var langRow = CreateSettingsRow("🌐", "Ngôn ngữ / Language", "Chạm để đổi", true);
             var tapLang = new TapGestureRecognizer();
             tapLang.Tapped += async (s, e) => await ChangeLanguageAsync();
             langRow.GestureRecognizers.Add(tapLang);
             generalList.Children.Add(langRow);
 
-            // Đường kẻ ngang
             generalList.Children.Add(new BoxView { HeightRequest = 1, BackgroundColor = Color.FromArgb("#F0F0F0"), Margin = new Thickness(45, 0, 15, 0) });
-
-            // Mục Âm thanh
-            var audioRow = CreateSettingsRow("🎧", "Âm thanh & Giọng đọc", "Mặc định", true);
-            generalList.Children.Add(audioRow);
+            generalList.Children.Add(CreateSettingsRow("🎧", "Âm thanh & Giọng đọc", "Mặc định", true));
 
             generalCard.Content = generalList;
             generalSection.Children.Add(generalCard);
@@ -131,7 +94,6 @@ namespace VinhKhanhTour.Views
             aboutSection.Children.Add(aboutCard);
             contentStack.Children.Add(aboutSection);
 
-            // Bản quyền
             var footerLabel = new Label { Text = "Thiết kế ❤️ bởi Nhân Nguyễn", FontSize = 12, TextColor = Colors.Gray, HorizontalOptions = LayoutOptions.Center, Margin = new Thickness(0, 20) };
             contentStack.Children.Add(footerLabel);
 
@@ -147,6 +109,73 @@ namespace VinhKhanhTour.Views
             mainGrid.Children.Add(tabBarBorder);
 
             Content = mainGrid;
+        }
+
+        // 🔴 TỰ ĐỘNG CHẠY MỖI KHI MỞ TRANG CÀI ĐẶT
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            UpdateProfileCard();
+        }
+
+        // 🔴 HÀM VẼ LẠI PROFILE DỰA THEO TRẠNG THÁI ĐĂNG NHẬP
+        private void UpdateProfileCard()
+        {
+            var profileGrid = new Grid
+            {
+                ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = 60 }, new ColumnDefinition { Width = GridLength.Star } },
+                RowDefinitions = new RowDefinitionCollection { new RowDefinition { Height = GridLength.Auto }, new RowDefinition { Height = GridLength.Auto }, new RowDefinition { Height = GridLength.Auto } },
+                ColumnSpacing = 15,
+                RowSpacing = 5
+            };
+
+            var avatar = new Border { WidthRequest = 60, HeightRequest = 60, StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 30 }, BackgroundColor = Color.FromArgb("#E0E0E0"), StrokeThickness = 0 };
+            Grid.SetRowSpan(avatar, 2); Grid.SetColumn(avatar, 0);
+
+            if (AppState.IsLoggedIn)
+            {
+                // GIAO DIỆN KHI ĐÃ ĐĂNG NHẬP
+                avatar.Content = new Label { Text = "😎", FontSize = 30, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
+                profileGrid.Children.Add(avatar);
+
+                var nameLabel = new Label { Text = AppState.UserName, FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, VerticalOptions = LayoutOptions.End };
+                Grid.SetRow(nameLabel, 0); Grid.SetColumn(nameLabel, 1);
+                profileGrid.Children.Add(nameLabel);
+
+                var emailLabel = new Label { Text = AppState.UserEmail, FontSize = 13, TextColor = Colors.Gray, VerticalOptions = LayoutOptions.Start };
+                Grid.SetRow(emailLabel, 1); Grid.SetColumn(emailLabel, 1);
+                profileGrid.Children.Add(emailLabel);
+
+                var logoutBtn = new Button { Text = "Đăng Xuất", BackgroundColor = Color.FromArgb("#F4F4F6"), TextColor = Colors.Red, FontAttributes = FontAttributes.Bold, CornerRadius = 10, HeightRequest = 40, Margin = new Thickness(0, 10, 0, 0) };
+                logoutBtn.Clicked += (s, e) =>
+                {
+                    AppState.Logout();
+                    UpdateProfileCard(); // Cập nhật giao diện ngay lập tức
+                };
+                Grid.SetRow(logoutBtn, 2); Grid.SetColumn(logoutBtn, 1);
+                profileGrid.Children.Add(logoutBtn);
+            }
+            else
+            {
+                // GIAO DIỆN CHO KHÁCH VÃNG LAI
+                avatar.Content = new Label { Text = "👤", FontSize = 30, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
+                profileGrid.Children.Add(avatar);
+
+                var nameLabel = new Label { Text = "Khách du lịch", FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, VerticalOptions = LayoutOptions.End };
+                Grid.SetRow(nameLabel, 0); Grid.SetColumn(nameLabel, 1);
+                profileGrid.Children.Add(nameLabel);
+
+                var hintLabel = new Label { Text = "Đăng nhập để lưu địa điểm yêu thích", FontSize = 13, TextColor = Colors.Gray, VerticalOptions = LayoutOptions.Start };
+                Grid.SetRow(hintLabel, 1); Grid.SetColumn(hintLabel, 1);
+                profileGrid.Children.Add(hintLabel);
+
+                var loginBtn = new Button { Text = "Đăng Nhập / Đăng Ký", BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 10, HeightRequest = 40, Margin = new Thickness(0, 10, 0, 0) };
+                loginBtn.Clicked += async (s, e) => await Navigation.PushAsync(new LoginPage());
+                Grid.SetRow(loginBtn, 2); Grid.SetColumn(loginBtn, 1);
+                profileGrid.Children.Add(loginBtn);
+            }
+
+            _profileCard.Content = profileGrid;
         }
 
         // HÀM TẠO 1 DÒNG CÀI ĐẶT
@@ -169,7 +198,6 @@ namespace VinhKhanhTour.Views
             if (!string.IsNullOrEmpty(valueText))
             {
                 var valueLabel = new Label { TextColor = Colors.Gray, FontSize = 14, VerticalOptions = LayoutOptions.Center };
-                // Trói buộc dữ liệu cho phần valueText (Ví dụ: "Chạm để đổi")
                 valueLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: valueText));
                 Grid.SetColumn(valueLabel, 2);
                 grid.Children.Add(valueLabel);
@@ -213,13 +241,9 @@ namespace VinhKhanhTour.Views
                 _ => new CultureInfo("vi-VN")
             };
 
-            // Gửi lệnh cập nhật ngôn ngữ cho toàn bộ App
             LocalizationResourceManager.Instance.SetCulture(culture);
         }
 
-        // ========================================================
-        // TẠO TAB BAR BẰNG CODE
-        // ========================================================
         // ========================================================
         // TẠO TAB BAR BẰNG CODE (GIAO DIỆN FLOATING PILL HIỆN ĐẠI)
         // ========================================================
@@ -251,7 +275,6 @@ namespace VinhKhanhTour.Views
             Grid.SetColumn(tab2, 1);
             tabBarGrid.Children.Add(tab2);
 
-            // BẬT SÁNG NÚT CÀI ĐẶT VÀ BỎ SỰ KIỆN CLICK (Vì đang ở trang này rồi)
             var tab3 = CreateTabItem("Cài đặt", "⚙️", true);
             Grid.SetColumn(tab3, 2);
             tabBarGrid.Children.Add(tab3);
