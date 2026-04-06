@@ -1,5 +1,12 @@
 # Hệ Thống Du Lịch Ẩm Thực Phố Vĩnh Khánh Quận 4
 
+<p align="center">
+  <img src="https://img.shields.io/badge/PROJECT-VINH%20KHANH%20TOUR-FF7327?style=for-the-badge" alt="Project Badge">
+  <img src="https://img.shields.io/badge/.NET-9.0-512bd4?style=for-the-badge&logo=dotnet" alt=".NET 9.0">
+  <img src="https://img.shields.io/badge/.NET%20MAUI-MOBILE%20APP-008ACA?style=for-the-badge&logo=dotnet" alt=".NET MAUI">
+  <img src="https://img.shields.io/badge/SQLITE-DATABASE-003B57?style=for-the-badge&logo=sqlite" alt="SQLite">
+</p>
+
 ## 1. Mô tả ứng dụng
 Ứng dụng di động đa nền tảng đóng vai trò như một "hướng dẫn viên cá nhân" tại khu phố ẩm thực Vĩnh Khánh (Quận 4). Ứng dụng cung cấp bản đồ tương tác, tự động phát âm thanh (Text-to-Speech) giới thiệu các quán ăn theo vị trí thực (GPS) và được tối ưu hóa để hoạt động tốt với dữ liệu lưu trữ cục bộ.
 
