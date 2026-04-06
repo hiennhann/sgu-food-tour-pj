@@ -1,11 +1,19 @@
-# Hệ Thống Du Lịch Ẩm Thực Phố Vĩnh Khánh Quận 4
+<div align="center">
 
-<p align="center">
-  <img src="https://img.shields.io/badge/PROJECT-VINH%20KHANH%20TOUR-FF7327?style=for-the-badge" alt="Project Badge">
-  <img src="https://img.shields.io/badge/.NET-9.0-512bd4?style=for-the-badge&logo=dotnet" alt=".NET 9.0">
-  <img src="https://img.shields.io/badge/.NET%20MAUI-MOBILE%20APP-008ACA?style=for-the-badge&logo=dotnet" alt=".NET MAUI">
-  <img src="https://img.shields.io/badge/SQLITE-DATABASE-003B57?style=for-the-badge&logo=sqlite" alt="SQLite">
-</p>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=FF5C0F&height=220&section=header&text=Vinh%20Khanh%20Tour&fontSize=70&fontColor=ffffff&fontAlignY=35&animation=fadeIn" alt="Vinh Khanh Tour Header" />
+
+  <h2>📍 Hệ Thống Du Lịch Ẩm Thực Phố Vĩnh Khánh Quận 4</h2>
+  <p><i>Hướng dẫn viên ảo đa nền tảng bằng âm thanh và bản đồ tương tác</i></p>
+
+  <p>
+    <img src="https://img.shields.io/badge/Platform-.NET_MAUI_9.0-512BD4?style=flat-square&logo=dotnet&logoColor=white" alt=".NET MAUI" />
+    <img src="https://img.shields.io/badge/Language-C%23-239120?style=flat-square&logo=csharp&logoColor=white" alt="C#" />
+    <img src="https://img.shields.io/badge/Database-SQLite-07405E?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite" />
+    <img src="https://img.shields.io/badge/Maps-Leaflet.js-199900?style=flat-square&logo=leaflet&logoColor=white" alt="Leaflet" />
+    <img src="https://img.shields.io/badge/Status-Offline_First-FF5C0F?style=flat-square&logo=offline&logoColor=white" alt="Offline First" />
+  </p>
+
+</div>
 
 ## 1. Mô tả ứng dụng
 Ứng dụng di động đa nền tảng đóng vai trò như một "hướng dẫn viên cá nhân" tại khu phố ẩm thực Vĩnh Khánh (Quận 4). Ứng dụng cung cấp bản đồ tương tác, tự động phát âm thanh (Text-to-Speech) giới thiệu các quán ăn theo vị trí thực (GPS) và được tối ưu hóa để hoạt động tốt với dữ liệu lưu trữ cục bộ.
