@@ -2,8 +2,7 @@
 
   <img src="https://capsule-render.vercel.app/api?type=waving&color=FF5C0F&height=220&section=header&text=Vinh%20Khanh%20Tour&fontSize=70&fontColor=ffffff&fontAlignY=35&animation=fadeIn" alt="Vinh Khanh Tour Header" />
 
-  <h2>📍 Hệ Thống Du Lịch Ẩm Thực Phố Vĩnh Khánh Quận 4</h2>
-  <p><i>Hướng dẫn viên ảo đa nền tảng bằng âm thanh và bản đồ tương tác</i></p>
+  <h2>📍 THUYẾT MINH TỰ ĐỘNG CHO PHỐ ẨM THỰC VĨNH KHÁNH</h2>
 
   <p>
     <img src="https://img.shields.io/badge/Platform-.NET_MAUI_9.0-512BD4?style=flat-square&logo=dotnet&logoColor=white" alt=".NET MAUI" />
