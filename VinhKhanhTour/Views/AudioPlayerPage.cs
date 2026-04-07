@@ -16,24 +16,23 @@ namespace VinhKhanhTour.Views
         public AudioPlayerPage(FoodPlace place)
         {
             _currentPlace = place;
-            BindingContext = _currentPlace; // Gắn context để load ảnh
+            BindingContext = _currentPlace;
             NavigationPage.SetHasNavigationBar(this, false);
             BackgroundColor = Colors.White;
 
-            // Dùng Grid chia màn hình: Phần trên là nội dung, Phần dưới là Thanh nút bấm cố định
             var rootGrid = new Grid
             {
                 RowDefinitions = new RowDefinitionCollection
                 {
-                    new RowDefinition { Height = GridLength.Star }, // Vùng cuộn
-                    new RowDefinition { Height = GridLength.Auto }  // Thanh công cụ đáy
+                    new RowDefinition { Height = GridLength.Star },
+                    new RowDefinition { Height = GridLength.Auto }
                 }
             };
 
             var scrollContent = new ScrollView();
             var mainStack = new VerticalStackLayout { Spacing = 15 };
 
-            // 1. THANH TOP BAR & NÚT BACK (Viên thuốc)
+            // 1. THANH TOP BAR & NÚT BACK (Đã gắn Binding)
             var topBar = new HorizontalStackLayout
             {
                 Padding = new Thickness(20, 15, 20, 5)
@@ -41,7 +40,6 @@ namespace VinhKhanhTour.Views
 
             var backBtn = new Button
             {
-                Text = "Back",
                 FontSize = 15,
                 FontAttributes = FontAttributes.Bold,
                 TextColor = Color.FromArgb("#FF5C0F"),
@@ -51,8 +49,9 @@ namespace VinhKhanhTour.Views
                 Padding = new Thickness(20, 0),
                 HorizontalOptions = LayoutOptions.Start
             };
+            backBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Quay lại"));
             backBtn.Clicked += async (s, e) => {
-                NarrationEngine.Instance.CancelCurrentNarration(); // Tắt audio khi thoát
+                NarrationEngine.Instance.CancelCurrentNarration();
                 await Navigation.PopAsync();
             };
             topBar.Children.Add(backBtn);
@@ -75,13 +74,16 @@ namespace VinhKhanhTour.Views
             // 3. TIÊU ĐỀ QUÁN
             var titleStack = new VerticalStackLayout { Spacing = 5, Margin = new Thickness(30, 0) };
             var titleLabel = new Label { Text = _currentPlace.Name, FontSize = 26, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black, HorizontalOptions = LayoutOptions.Center, HorizontalTextAlignment = TextAlignment.Center };
-            var metaLabel = new Label { Text = "🎧 Thuyết minh tự động", FontSize = 14, TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, HorizontalOptions = LayoutOptions.Center };
+
+            // NHÃN THUYẾT MINH TỰ ĐỘNG (Đã gắn Binding)
+            var metaLabel = new Label { FontSize = 14, TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, HorizontalOptions = LayoutOptions.Center };
+            metaLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Thuyết minh tự động", stringFormat: "🎧 {0}"));
 
             titleStack.Children.Add(titleLabel);
             titleStack.Children.Add(metaLabel);
             mainStack.Children.Add(titleStack);
 
-            // 4. TRÌNH PHÁT AUDIO (Đã bổ sung chuẩn Try...Finally)
+            // 4. TRÌNH PHÁT AUDIO 
             var playerStack = new VerticalStackLayout { Margin = new Thickness(30, 15, 30, 10) };
 
             _playPauseBtn = new Button
@@ -99,7 +101,6 @@ namespace VinhKhanhTour.Views
             _playPauseBtn.Clicked += async (s, e) => {
                 if (_isPlaying)
                 {
-                    // Đang phát -> Bấm để Dừng
                     _isPlaying = false;
                     _playPauseBtn.BackgroundColor = Color.FromArgb("#FF5C0F");
                     _playPauseBtn.Shadow.Brush = Color.FromArgb("#FF5C0F");
@@ -108,7 +109,6 @@ namespace VinhKhanhTour.Views
                 }
                 else
                 {
-                    // Bấm để Phát -> Chuyển nút sang màu đỏ (Trạng thái Dừng)
                     _isPlaying = true;
                     _playPauseBtn.BackgroundColor = Color.FromArgb("#E53935");
                     _playPauseBtn.Shadow.Brush = Color.FromArgb("#E53935");
@@ -116,12 +116,10 @@ namespace VinhKhanhTour.Views
 
                     try
                     {
-                        // Chờ đọc xong Audio
                         await NarrationEngine.Instance.PlayNarrationAsync(_currentPlace, isManual: true);
                     }
                     finally
                     {
-                        // FINALLY: Tự động nhả nút về màu cam khi kết thúc (hoặc lỗi)
                         if (_isPlaying)
                         {
                             _isPlaying = false;
@@ -139,16 +137,11 @@ namespace VinhKhanhTour.Views
             playerStack.Children.Add(_playPauseBtn);
             mainStack.Children.Add(playerStack);
 
-            // 5. THÔNG TIN QUÁN (Văn bản thuyết minh)
+            // 5. THÔNG TIN QUÁN (Đã gắn Binding Tiêu đề)
             var contentStack = new VerticalStackLayout { Padding = new Thickness(30, 10, 30, 40), Spacing = 10 };
 
             var infoTitle = new Label { FontSize = 18, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
-            infoTitle.SetBinding(Label.TextProperty, new Binding(
-                path: "CurrentLanguageCode",
-                source: LocalizationResourceManager.Instance,
-                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
-                converterParameter: $"Nội dung thuyết minh"
-            ));
+            infoTitle.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Nội dung thuyết minh"));
             contentStack.Children.Add(infoTitle);
 
             var descLabel = new Label { Text = _currentPlace.NarrationText, FontSize = 15, TextColor = Color.FromArgb("#505050"), LineHeight = 1.6 };
@@ -173,30 +166,18 @@ namespace VinhKhanhTour.Views
             var actionGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, ColumnSpacing = 15 };
 
             var routeBtn = new Button { BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
-            routeBtn.SetBinding(Button.TextProperty, new Binding(
-                path: "CurrentLanguageCode",
-                source: LocalizationResourceManager.Instance,
-                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
-                converterParameter: "Chỉ Đường",
-                stringFormat: "📍 {0}"
-            ));
+            routeBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Chỉ Đường", stringFormat: "📍 {0}"));
             routeBtn.Clicked += async (s, e) => {
                 var options = new MapLaunchOptions { Name = _currentPlace.Name, NavigationMode = NavigationMode.Driving };
-                var location = new Location(10.761622, 106.661172); // Tọa độ mẫu
+                var location = new Location(10.761622, 106.661172);
                 try { await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options); }
-                catch { await DisplayAlert("Lỗi", "Không thể mở ứng dụng bản đồ.", "OK"); }
+                catch { await DisplayAlert("Lỗi", LocalizationResourceManager.Instance["Không thể mở ứng dụng bản đồ."] ?? "Không thể mở ứng dụng bản đồ.", "OK"); }
             };
             Grid.SetColumn(routeBtn, 0);
             actionGrid.Children.Add(routeBtn);
 
             var menuBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
-            menuBtn.SetBinding(Button.TextProperty, new Binding(
-                path: "CurrentLanguageCode",
-                source: LocalizationResourceManager.Instance,
-                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
-                converterParameter: "Xem Thực Đơn",
-                stringFormat: "📋 {0}"
-            ));
+            menuBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Xem Thực Đơn", stringFormat: "📋 {0}"));
             menuBtn.Clicked += async (s, e) => await Navigation.PushAsync(new MenuPage(_currentPlace));
             Grid.SetColumn(menuBtn, 1);
             actionGrid.Children.Add(menuBtn);

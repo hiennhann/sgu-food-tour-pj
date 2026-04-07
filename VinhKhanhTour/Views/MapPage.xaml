@@ -23,7 +23,9 @@
                         StrokeShape="RoundRectangle 24" StrokeThickness="0">
                     <HorizontalStackLayout Spacing="10">
                         <Border StrokeShape="RoundRectangle 5" WidthRequest="10" HeightRequest="10" BackgroundColor="#27AE60" StrokeThickness="0" VerticalOptions="Center" />
-                        <Label x:Name="DebugLabel" Text="Radar đang quét..." FontSize="{OnIdiom Phone=13, Tablet=15}" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label x:Name="DebugLabel" 
+                               Text="GPS Radar" 
+                               FontSize="{OnIdiom Phone=13, Tablet=15}" FontAttributes="Bold" VerticalOptions="Center" />
                     </HorizontalStackLayout>
                 </Border>
 
@@ -32,23 +34,33 @@
                         HorizontalOptions="Fill" InputTransparent="False">
 
                     <Border.Shadow>
-                        <Shadow Brush="Black" Offset="0,4" Radius="15" Opacity="0.2" />
+                        <Shadow Brush="Black" Offset="0,4" Radius="12" Opacity="0.15" />
                     </Border.Shadow>
 
-                    <Grid ColumnDefinitions="*, Auto" Padding="20,18" ColumnSpacing="15" VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="BottomInfoCard_Tapped" />
+                    </Border.GestureRecognizers>
 
-                        <VerticalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="Center" BackgroundColor="Transparent">
-                            <VerticalStackLayout.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="BottomInfoCard_Tapped" />
-                            </VerticalStackLayout.GestureRecognizers>
+                    <Grid ColumnDefinitions="*, Auto" Padding="20,16" ColumnSpacing="12" VerticalOptions="Center">
 
-                            <Label x:Name="CardStatusLabel" Text="BẠN ĐANG Ở GẦN" FontSize="11" FontAttributes="Bold" TextColor="#FF5C0F" CharacterSpacing="1" />
-                            <Label x:Name="PoiNameLabel" Text="Đang dò tìm..." FontSize="22" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation" TextColor="{AppThemeBinding Light=Black, Dark=White}" Margin="0,2,0,2"/>
-                            <Label x:Name="DistanceLabel" Text="Khoảng cách: -- m" FontSize="14" TextColor="#707070" MaxLines="1" LineBreakMode="TailTruncation"/>
+                        <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+
+                            <Label x:Name="CardStatusLabel" 
+                                   Text="{Binding CurrentLanguageCode, Source={x:Static services:LocalizationResourceManager.Instance}, Converter={StaticResource Translate}, ConverterParameter='BẠN ĐANG Ở GẦN'}" 
+                                   FontSize="10" FontAttributes="Bold" TextColor="#FF5C0F" CharacterSpacing="1" />
+
+                            <Label x:Name="PoiNameLabel" 
+                                   Text="{Binding CurrentLanguageCode, Source={x:Static services:LocalizationResourceManager.Instance}, Converter={StaticResource Translate}, ConverterParameter='Đang dò tìm...'}" 
+                                   FontSize="20" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation" TextColor="{AppThemeBinding Light=Black, Dark=White}" Margin="0,2,0,2"/>
+
+                            <Label x:Name="DistanceLabel" 
+                                   Text="{Binding CurrentLanguageCode, Source={x:Static services:LocalizationResourceManager.Instance}, Converter={StaticResource Translate}, ConverterParameter='Đang theo dõi Radar GPS...'}" 
+                                   FontSize="13" TextColor="#808080" MaxLines="1" LineBreakMode="TailTruncation"/>
 
                             <HorizontalStackLayout Spacing="6" Margin="0,6,0,0">
                                 <Label Text="👆" FontSize="12" VerticalOptions="Center"/>
-                                <Label Text="Chạm để xem chi tiết" FontSize="13" TextColor="#27AE60" FontAttributes="Bold" VerticalOptions="Center"/>
+                                <Label Text="{Binding CurrentLanguageCode, Source={x:Static services:LocalizationResourceManager.Instance}, Converter={StaticResource Translate}, ConverterParameter='Chọn một điểm trên map'}" 
+                                       FontSize="13" TextColor="#27AE60" FontAttributes="Bold" VerticalOptions="Center"/>
                             </HorizontalStackLayout>
                         </VerticalStackLayout>
 

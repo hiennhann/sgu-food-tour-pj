@@ -79,7 +79,7 @@ namespace VinhKhanhTour.Models
                     Latitude = 10.761427,
                     Longitude = 106.702463,
                     Radius = 50,
-                    Priority = 1,
+                    Priority = 6,
                     ImageUrl = "featured_food_2.jpg"
                 },
 

@@ -2,6 +2,8 @@
 using Microsoft.Maui.Graphics;
 using VinhKhanhTour.Models;
 using VinhKhanhTour.Data;
+using VinhKhanhTour.Services;
+using VinhKhanhTour.Helpers;
 
 namespace VinhKhanhTour.Views
 {
@@ -16,8 +18,13 @@ namespace VinhKhanhTour.Views
 
             var stack = new VerticalStackLayout { Spacing = 15, Padding = 30, VerticalOptions = LayoutOptions.Center };
 
-            stack.Children.Add(new Label { Text = "Tạo tài khoản mới", FontSize = 28, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black });
-            stack.Children.Add(new Label { Text = "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", FontSize = 15, TextColor = Colors.Gray, Margin = new Thickness(0, 0, 0, 20) });
+            var titleLabel = new Label { FontSize = 28, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
+            titleLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Tạo tài khoản mới"));
+            stack.Children.Add(titleLabel);
+
+            var subtitleLabel = new Label { FontSize = 15, TextColor = Colors.Gray, Margin = new Thickness(0, 0, 0, 20) };
+            subtitleLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay."));
+            stack.Children.Add(subtitleLabel);
 
             _nameEntry = CreateStyledEntry("Họ và tên", "👤");
             stack.Children.Add(_nameEntry);
@@ -28,11 +35,13 @@ namespace VinhKhanhTour.Views
             _passEntry = CreateStyledEntry("Mật khẩu", "🔒", isPassword: true);
             stack.Children.Add(_passEntry);
 
-            var regBtn = new Button { Text = "ĐĂNG KÝ NGAY", BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 12, HeightRequest = 55, Margin = new Thickness(0, 20, 0, 0) };
+            var regBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 12, HeightRequest = 55, Margin = new Thickness(0, 20, 0, 0) };
+            regBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "ĐĂNG KÝ NGAY"));
             regBtn.Clicked += OnRegisterClicked;
             stack.Children.Add(regBtn);
 
-            var loginLink = new Label { Text = "Đã có tài khoản? Đăng nhập", HorizontalOptions = LayoutOptions.Center, TextColor = Color.FromArgb("#FF5C0F"), Margin = 10 };
+            var loginLink = new Label { HorizontalOptions = LayoutOptions.Center, TextColor = Color.FromArgb("#FF5C0F"), Margin = 10 };
+            loginLink.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Đã có tài khoản? Đăng nhập"));
             var tap = new TapGestureRecognizer(); tap.Tapped += async (s, e) => await Navigation.PopAsync();
             loginLink.GestureRecognizers.Add(tap);
             stack.Children.Add(loginLink);
@@ -40,9 +49,11 @@ namespace VinhKhanhTour.Views
             Content = new ScrollView { Content = stack };
         }
 
-        private Entry CreateStyledEntry(string placeholder, string icon, Keyboard k = null, bool isPassword = false)
+        private Entry CreateStyledEntry(string placeholderKey, string icon, Keyboard k = null, bool isPassword = false)
         {
-            return new Entry { Placeholder = $"{icon}  {placeholder}", IsPassword = isPassword, Keyboard = k ?? Keyboard.Default, BackgroundColor = Color.FromArgb("#F4F4F6"), HeightRequest = 55, Margin = new Thickness(0, 5) };
+            var entry = new Entry { IsPassword = isPassword, Keyboard = k ?? Keyboard.Default, BackgroundColor = Color.FromArgb("#F4F4F6"), HeightRequest = 55, Margin = new Thickness(0, 5) };
+            entry.SetBinding(Entry.PlaceholderProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: placeholderKey, stringFormat: $"{icon}  {{0}}"));
+            return entry;
         }
 
         private async void OnRegisterClicked(object sender, EventArgs e)
