@@ -28,7 +28,7 @@ namespace VinhKhanhTour.Views
 
         private int _playingPoiId = 0;
         private int _currentDwellingPoiId = 0;
-        private bool _isPlaying = true;
+        private bool _isPlaying = false; // Mặc định tắt audio
         private List<Poi> _cachedPois = new();
 
         private Poi _nearestPoi;
@@ -73,7 +73,7 @@ namespace VinhKhanhTour.Views
         }
 
         // ========================================================
-        // HTML BẢN ĐỒ (ĐÃ FIX LỖI NUỐT SỰ KIỆN VÀ XUNG ĐỘT GIAO DIỆN)
+        // HTML BẢN ĐỒ
         // ========================================================
         private static string TaoHtmlBanDo(List<Poi> danhSach, int selectedId)
         {
@@ -129,7 +129,6 @@ namespace VinhKhanhTour.Views
         var allCircles = {{}};
         var userMarker = null;
         
-        // CÁC BIẾN QUẢN LÝ TRẠNG THÁI CỦA JAVASCRIPT
         var isClickingMarker = false; 
         var currentSelectedId = 0;
         var currentPlayingId = 0;
@@ -149,7 +148,6 @@ namespace VinhKhanhTour.Views
             var popupHtml = `<div class='popup-ten' style='margin-bottom:8px;'>${{ten}}</div><button onclick='window.location.href=""openmap://${{lat}},${{lng}}"";' style='background-color:#FF5C0F; color:white; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; cursor:pointer;'>📍 Mở GG Map</button>`;
             marker.bindPopup(popupHtml);
             
-            // 🔴 FIX LỖI CHẠM XUYÊN: Khóa sự kiện Click nền Map khi chạm vào Ghim
             marker.on('click', function(e) {{
                 isClickingMarker = true;
                 window.location.href = 'tappin://' + id;
@@ -159,31 +157,26 @@ namespace VinhKhanhTour.Views
             allMarkers[id] = marker;
         }}
 
-        // 🔴 CHỈ HỦY CHỌN NẾU NGƯỜI DÙNG THỰC SỰ BẤM VÀO KHOẢNG TRỐNG
         map.on('click', function(e) {{
             if (isClickingMarker) return; 
             window.location.href = 'mapclick://clear';
         }});
 
-        // 🔴 FIX LỖI RADAR ĐÈ MÀU: Quản lý riêng biệt 2 trạng thái Selected (Cam) và Playing (Vàng)
         function updateMarkerState(id, state) {{
             if (state === 'selected') currentSelectedId = id;
             if (state === 'playing') currentPlayingId = id;
-            if (state === 'normal' && id === 0) currentSelectedId = 0; // Hủy chọn
+            if (state === 'normal' && id === 0) currentSelectedId = 0;
 
-            // Reset toàn bộ về xám
             for (let key in allMarkers) {{
                 allMarkers[key].setIcon(taoIcon('normal'));
                 allCircles[key].setStyle({{ color: '#A9A9A9', fillColor: '#A9A9A9', fillOpacity: 0.2 }});
             }}
             
-            // Áp dụng màu Vàng cho quán Radar đang quét
             if (currentPlayingId > 0 && allMarkers[currentPlayingId]) {{
                 allMarkers[currentPlayingId].setIcon(taoIcon('playing'));
                 allCircles[currentPlayingId].setStyle({{ color: '#FFD700', fillColor: '#FFD700', fillOpacity: 0.4 }});
             }}
 
-            // Áp dụng màu Cam cho quán người dùng bấm chọn (Đè lên màu Vàng nếu trùng)
             if (currentSelectedId > 0 && allMarkers[currentSelectedId]) {{
                 allMarkers[currentSelectedId].setIcon(taoIcon('selected'));
                 allCircles[currentSelectedId].setStyle({{ color: '#FF5C0F', fillColor: '#FF5C0F', fillOpacity: 0.3 }});
@@ -240,7 +233,16 @@ namespace VinhKhanhTour.Views
                         {
                             CardStatusLabel.Text = "ĐỊA ĐIỂM ĐÃ CHỌN";
                             PoiNameLabel.Text = selectedPoi.Name;
-                            DistanceLabel.Text = "👆 Chạm vào thẻ này để xem Menu";
+                            DistanceLabel.Text = "Chọn Nghe Audio hoặc Chỉ đường";
+
+                            // Tắt audio đang phát và đổi giao diện nút
+                            _isPlaying = false;
+                            NarrationEngine.Instance.CancelCurrentNarration();
+                            if (PlayPauseButton != null)
+                            {
+                                PlayPauseButton.Text = "▶️";
+                                PlayPauseButton.BackgroundColor = Color.FromArgb("#FF5C0F");
+                            }
 
                             try { await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState({_selectedPoiId}, 'selected');"); }
                             catch { }
@@ -399,12 +401,6 @@ namespace VinhKhanhTour.Views
                             if (_currentDwellingPoiId != nearestTriggeredPoi.Id)
                             {
                                 _currentDwellingPoiId = nearestTriggeredPoi.Id;
-                                if (_isPlaying)
-                                {
-                                    _playingPoiId = nearestTriggeredPoi.Id;
-                                    await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState({_playingPoiId}, 'playing');");
-                                    await NarrationEngine.Instance.PlayNarrationAsync(ConvertPoiToFoodPlace(nearestTriggeredPoi), isManual: false);
-                                }
                             }
                         }
                         else
@@ -413,7 +409,6 @@ namespace VinhKhanhTour.Views
                             {
                                 _currentDwellingPoiId = 0;
                                 _playingPoiId = 0;
-                                // Không cần gọi JS reset về 0 ở đây nữa vì hàm updateMarkerState đã tách biệt 2 luồng
                             }
                         }
                     }
@@ -447,15 +442,68 @@ namespace VinhKhanhTour.Views
             }
         }
 
-        private void OnPlayPauseClicked(object sender, EventArgs e)
+        // ========================================================
+        // LOGIC CHẠY AUDIO KHI BẤM NÚT TRÊN THẺ (ĐÃ CẬP NHẬT TRY...FINALLY)
+        // ========================================================
+        private async void OnPlayPauseClicked(object sender, EventArgs e)
         {
-            _isPlaying = !_isPlaying;
-            MainThread.BeginInvokeOnMainThread(() => { if (PlayPauseButton != null) PlayPauseButton.Text = _isPlaying ? "⏸" : "▶"; });
-            if (!_isPlaying) NarrationEngine.Instance.CancelCurrentNarration();
+            Poi targetPoi = (_selectedPoiId > 0) ? _cachedPois.FirstOrDefault(p => p.Id == _selectedPoiId) : _nearestPoi;
+
+            if (targetPoi == null)
+            {
+                await DisplayAlert("Thông báo", "Vui lòng chọn một quán trên bản đồ để nghe.", "OK");
+                return;
+            }
+
+            if (_isPlaying)
+            {
+                _isPlaying = false;
+                if (PlayPauseButton != null)
+                {
+                    PlayPauseButton.Text = "▶️";
+                    PlayPauseButton.BackgroundColor = Color.FromArgb("#FF5C0F");
+                }
+                NarrationEngine.Instance.CancelCurrentNarration();
+                await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState({targetPoi.Id}, '{(_selectedPoiId == targetPoi.Id ? "selected" : "normal")}');");
+            }
+            else
+            {
+                _isPlaying = true;
+                if (PlayPauseButton != null)
+                {
+                    PlayPauseButton.Text = "⏹";
+                    PlayPauseButton.BackgroundColor = Color.FromArgb("#E53935");
+                }
+                await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState({targetPoi.Id}, 'playing');");
+
+                try
+                {
+                    var foodPlace = ConvertPoiToFoodPlace(targetPoi);
+                    await NarrationEngine.Instance.PlayNarrationAsync(foodPlace, isManual: true);
+                }
+                finally
+                {
+                    // Đảm bảo nút luôn trả về màu Cam sau khi đọc xong
+                    if (_isPlaying)
+                    {
+                        _isPlaying = false;
+                        MainThread.BeginInvokeOnMainThread(async () =>
+                        {
+                            if (PlayPauseButton != null)
+                            {
+                                PlayPauseButton.Text = "▶️";
+                                PlayPauseButton.BackgroundColor = Color.FromArgb("#FF5C0F");
+                            }
+                            try { await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState({targetPoi.Id}, '{(_selectedPoiId == targetPoi.Id ? "selected" : "normal")}');"); }
+                            catch { }
+                        });
+                    }
+                }
+            }
         }
 
         // ========================================================
-        // TẠO TAB BAR BẰNG CODE (GIAO DIỆN FLOATING PILL HIỆN ĐẠI)
+        // TẠO TAB BAR BẰNG CODE (ĐẢM BẢO KHÔNG BỊ MẤT NÚT)
         // ========================================================
         private Border CreateTabBar()
         {
@@ -471,22 +519,15 @@ namespace VinhKhanhTour.Views
                 Padding = new Thickness(0, 10, 0, 10)
             };
 
-            var tab1 = CreateTabItem("Trang chủ", "🏠", false);
-            var tapHome = new TapGestureRecognizer();
-            tapHome.Tapped += async (s, e) => await Navigation.PushAsync(new HomePage(), false);
-            tab1.GestureRecognizers.Add(tapHome);
+            var tab1 = CreateTabItem("Trang chủ", "🏠", false, async () => await Navigation.PushAsync(new HomePage(), false));
             Grid.SetColumn(tab1, 0);
             tabBarGrid.Children.Add(tab1);
 
-            // BẬT SÁNG NÚT BẢN ĐỒ VÀ BỎ SỰ KIỆN CLICK
-            var tab2 = CreateTabItem("Bản đồ", "🗺️", true);
+            var tab2 = CreateTabItem("Bản đồ", "🗺️", true, null);
             Grid.SetColumn(tab2, 1);
             tabBarGrid.Children.Add(tab2);
 
-            var tab3 = CreateTabItem("Cài đặt", "⚙️", false);
-            var tapSettings = new TapGestureRecognizer();
-            tapSettings.Tapped += async (s, e) => await Navigation.PushAsync(new SettingsPage(), false);
-            tab3.GestureRecognizers.Add(tapSettings);
+            var tab3 = CreateTabItem("Cài đặt", "⚙️", false, async () => await Navigation.PushAsync(new SettingsPage(), false));
             Grid.SetColumn(tab3, 2);
             tabBarGrid.Children.Add(tab3);
 
@@ -501,7 +542,7 @@ namespace VinhKhanhTour.Views
             };
         }
 
-        private View CreateTabItem(string text, string iconText, bool isSelected = false)
+        private View CreateTabItem(string text, string iconText, bool isSelected, Action action)
         {
             var layout = new VerticalStackLayout { Spacing = 4, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
 
@@ -528,6 +569,12 @@ namespace VinhKhanhTour.Views
                 converterParameter: text
             ));
             layout.Children.Add(textLabel);
+
+            // Chỉ thêm tính năng bấm chuyển trang nếu có gán Action (Nút Map đang được chọn nên bỏ qua)
+            if (action != null)
+            {
+                layout.GestureRecognizers.Add(new TapGestureRecognizer { Command = new Command(action) });
+            }
 
             return layout;
         }

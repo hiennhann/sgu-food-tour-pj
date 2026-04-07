@@ -54,12 +54,39 @@ namespace VinhKhanhTour
 
             // --- NỘI DUNG CUỘN ---
             var contentScrollView = new ScrollView();
-            var contentStack = new VerticalStackLayout { Spacing = 15, Padding = new Thickness(15, 15, 15, 0) };
+            // Thêm padding dưới cùng là 100 để không bị Tab Bar đè thẻ cuối
+            var contentStack = new VerticalStackLayout { Spacing = 15, Padding = new Thickness(15, 15, 15, 100) };
 
-            var searchEntry = new Entry { BackgroundColor = Color.FromArgb("#F2F2F2"), HeightRequest = 45 };
+            // 1. THANH TÌM KIẾM ĐƯỢC NÂNG CẤP
+            var searchBorder = new Border
+            {
+                Stroke = Color.FromArgb("#E5E5E5"),
+                StrokeThickness = 1,
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 },
+                BackgroundColor = Color.FromArgb("#F9F9F9"),
+                Margin = new Thickness(0, 0, 0, 5),
+                Padding = new Thickness(15, 0, 15, 0)
+            };
+            var searchGrid = new Grid
+            {
+                ColumnDefinitions = new ColumnDefinitionCollection
+                {
+                    new ColumnDefinition { Width = GridLength.Auto },
+                    new ColumnDefinition { Width = GridLength.Star }
+                }
+            };
+            searchGrid.Children.Add(new Label { Text = "🔍", TextColor = Colors.Gray, VerticalOptions = LayoutOptions.Center, FontSize = 16, Margin = new Thickness(0, 0, 10, 0) });
+
+            var searchEntry = new Entry { BackgroundColor = Colors.Transparent, HeightRequest = 45 };
             searchEntry.SetBinding(Entry.PlaceholderProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Tìm quán ốc, lẩu, sushi..."));
+            Grid.SetColumn(searchEntry, 1);
+            searchGrid.Children.Add(searchEntry);
 
-            contentStack.Children.Add(CreateCategoryList()); // Nút bấm lọc
+            searchBorder.Content = searchGrid;
+            contentStack.Children.Add(searchBorder);
+
+            // Nút bấm lọc
+            contentStack.Children.Add(CreateCategoryList());
 
             var ctaButton = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 50, Margin = new Thickness(0, 10) };
             ctaButton.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Bắt Đầu Tour Ngay", stringFormat: "🗺️ {0} →"));
@@ -79,6 +106,14 @@ namespace VinhKhanhTour
             var placesCollectionView = new CollectionView();
             placesCollectionView.SetBinding(ItemsView.ItemsSourceProperty, "FeaturedPlaces");
 
+            // 4. TRẠNG THÁI TRỐNG (EMPTY STATE)
+            var emptyLayout = new VerticalStackLayout { HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center, Spacing = 10, Margin = new Thickness(0, 40, 0, 0) };
+            emptyLayout.Children.Add(new Label { Text = "🍽️", FontSize = 40, HorizontalOptions = LayoutOptions.Center });
+            var emptyLabel = new Label { TextColor = Colors.Gray, FontSize = 14, HorizontalOptions = LayoutOptions.Center };
+            emptyLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Khu vực này chưa có quán nào"));
+            emptyLayout.Children.Add(emptyLabel);
+            placesCollectionView.EmptyView = emptyLayout;
+
             placesCollectionView.ItemTemplate = new DataTemplate(() =>
             {
                 var cardGrid = new Grid { HeightRequest = 180, Margin = new Thickness(0, 0, 0, 15) };
@@ -88,25 +123,27 @@ namespace VinhKhanhTour
                 cardGrid.Children.Add(new Border { StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 }, Content = bgImage, Stroke = Colors.Transparent });
                 cardGrid.Children.Add(new BoxView { BackgroundColor = Color.FromArgb("#30000000") });
 
-                var titleLabel = new Label { TextColor = Colors.White, FontAttributes = FontAttributes.Bold, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.End, Margin = new Thickness(15, 0, 0, 15) };
+                // Tên quán được đưa lên góc trên cùng bên trái
+                var titleLabel = new Label { TextColor = Colors.White, FontAttributes = FontAttributes.Bold, FontSize = 18, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Start, Margin = new Thickness(15, 15, 0, 0) };
                 titleLabel.SetBinding(Label.TextProperty, "Name");
                 cardGrid.Children.Add(titleLabel);
 
-                var infoGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Auto }, new ColumnDefinition { Width = GridLength.Star } }, HorizontalOptions = LayoutOptions.End, VerticalOptions = LayoutOptions.End, Margin = new Thickness(0, 0, 15, 15), ColumnSpacing = 5 };
-
-                var ratingStack = new HorizontalStackLayout { VerticalOptions = LayoutOptions.Center, Spacing = 3 };
-                ratingStack.Children.Add(new Label { Text = "⭐", TextColor = Colors.White, FontSize = 12 });
-                var rateVal = new Label { TextColor = Colors.White, FontSize = 12 };
-                rateVal.SetBinding(Label.TextProperty, "Rating");
-                ratingStack.Children.Add(rateVal);
-                var revCount = new Label { TextColor = Colors.White, FontSize = 12 };
-                revCount.SetBinding(Label.TextProperty, new Binding("ReviewCount", stringFormat: "({0})"));
-                ratingStack.Children.Add(revCount);
-
-                Grid.SetColumn(ratingStack, 0);
-                infoGrid.Children.Add(ratingStack);
-
-                var playBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontSize = 10, Padding = new Thickness(10, 5), CornerRadius = 10, HeightRequest = 30 };
+                // 2. NÚT PLAY CHUYỂN SANG SECONDARY BUTTON (Viền cam, chữ cam, nền trắng)
+                var playBtn = new Button
+                {
+                    BackgroundColor = Colors.White,
+                    TextColor = Color.FromArgb("#FF5C0F"),
+                    BorderColor = Color.FromArgb("#FF5C0F"),
+                    BorderWidth = 1,
+                    FontSize = 10,
+                    FontAttributes = FontAttributes.Bold,
+                    Padding = new Thickness(10, 5),
+                    CornerRadius = 10,
+                    HeightRequest = 30,
+                    HorizontalOptions = LayoutOptions.End,
+                    VerticalOptions = LayoutOptions.End,
+                    Margin = new Thickness(0, 0, 15, 15)
+                };
                 playBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Nghe Audio", stringFormat: "▶️ {0}"));
 
                 playBtn.Clicked += async (s, e) =>
@@ -120,9 +157,7 @@ namespace VinhKhanhTour
                     }
                 };
 
-                Grid.SetColumn(playBtn, 1);
-                infoGrid.Children.Add(playBtn);
-                cardGrid.Children.Add(infoGrid);
+                cardGrid.Children.Add(playBtn);
 
                 var headphoneIcon = new Image { Source = "icon_headphone.png", HeightRequest = 25, WidthRequest = 25, HorizontalOptions = LayoutOptions.End, VerticalOptions = LayoutOptions.Start, Margin = new Thickness(0, 15, 15, 0) };
                 cardGrid.Children.Add(headphoneIcon);
@@ -145,7 +180,7 @@ namespace VinhKhanhTour
             mainGrid.Children.Add(contentScrollView);
 
             // ========================================================
-            // 3. TAB BAR HIỆN ĐẠI (Đã gộp vào gọn gàng)
+            // 3. TAB BAR HIỆN ĐẠI
             // ========================================================
             var tabBarBorder = CreateTabBar();
             Grid.SetRow(tabBarBorder, 2);
@@ -155,16 +190,14 @@ namespace VinhKhanhTour
         }
 
         // ============================================================
-        // CÁC HÀM XỬ LÝ BỘ LỌC CATEGORY (GIAO DIỆN CHIPS HIỆN ĐẠI)
+        // CÁC HÀM XỬ LÝ BỘ LỌC CATEGORY
         // ============================================================
         private View CreateCategoryList()
         {
-            // Thêm Padding 2 bên để khi cuộn không bị sát viền màn hình
             var stack = new HorizontalStackLayout { Spacing = 12, Padding = new Thickness(5, 5, 20, 15) };
             _categoryButtons.Clear();
 
             string[] names = { "Tất cả", "Ốc & Hải sản", "Đồ nướng", "Đồ uống" };
-            // SỬ DỤNG EMOJI THAY VÌ FILE ẢNH ĐỂ CHỐNG TÀNG HÌNH
             string[] icons = { "🔥", "🐚", "🍖", "🍹" };
 
             for (int i = 0; i < names.Length; i++)
@@ -190,7 +223,6 @@ namespace VinhKhanhTour
             {
                 bool isSelected = (btn == selectedBtn);
 
-                // Cập nhật nền, viền và Đổ bóng (Glow) cho nút được chọn
                 btn.BackgroundColor = isSelected ? Color.FromArgb("#FF5C0F") : Colors.White;
                 btn.Stroke = isSelected ? Colors.Transparent : Color.FromArgb("#E5E5E5");
                 btn.StrokeThickness = isSelected ? 0 : 1;
@@ -212,7 +244,6 @@ namespace VinhKhanhTour
         {
             var layout = new HorizontalStackLayout { Spacing = 6, Padding = new Thickness(16, 8) };
 
-            // Dùng Label để chứa Emoji
             layout.Children.Add(new Label { Text = icon, FontSize = 16, VerticalOptions = LayoutOptions.Center });
 
             var textLabel = new Label
@@ -229,16 +260,15 @@ namespace VinhKhanhTour
             {
                 Stroke = isSelected ? Colors.Transparent : Color.FromArgb("#E5E5E5"),
                 StrokeThickness = isSelected ? 0 : 1,
-                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 20 }, // Bo tròn mạnh thành hình viên thuốc
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 20 },
                 BackgroundColor = isSelected ? Color.FromArgb("#FF5C0F") : Colors.White,
                 Content = layout,
-                // Thêm bóng đổ phát sáng cho nút đang được chọn
                 Shadow = isSelected ? new Shadow { Brush = Color.FromArgb("#FF5C0F"), Opacity = 0.3f, Offset = new Point(0, 4), Radius = 8 } : null
             };
         }
 
         // ========================================================
-        // TẠO TAB BAR BẰNG CODE (GIAO DIỆN FLOATING PILL HIỆN ĐẠI)
+        // TẠO TAB BAR BẰNG CODE
         // ========================================================
         private Border CreateTabBar()
         {
@@ -254,7 +284,7 @@ namespace VinhKhanhTour
                 Padding = new Thickness(0, 10, 0, 10)
             };
 
-            var tab1 = CreateTabItem("Trang chủ", "🏠", true); // Bật sáng Trang chủ
+            var tab1 = CreateTabItem("Trang chủ", "🏠", true);
             var tapHome = new TapGestureRecognizer();
             tab1.GestureRecognizers.Add(tapHome);
             Grid.SetColumn(tab1, 0);
