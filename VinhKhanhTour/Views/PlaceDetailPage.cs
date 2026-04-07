@@ -29,75 +29,80 @@ namespace VinhKhanhTour.Views
             var mainStack = new VerticalStackLayout { Spacing = 0 };
 
             // --- ẢNH COVER TRÀN VIỀN ---
-            var coverGrid = new Grid { HeightRequest = 320 }; // Tăng chiều cao ảnh bìa
+            var coverGrid = new Grid { HeightRequest = 340 }; // Tăng nhẹ chiều cao để ảnh nhìn thoáng hơn
 
             var coverImage = new Image { Aspect = Aspect.AspectFill };
             coverImage.SetBinding(Image.SourceProperty, "ImageUrl");
             coverGrid.Children.Add(coverImage);
 
             // Hiệu ứng Gradient mờ dần từ trên xuống để làm nổi bật nút Back
-            coverGrid.Children.Add(new BoxView { BackgroundColor = Color.FromArgb("#40000000"), VerticalOptions = LayoutOptions.Start, HeightRequest = 100 });
+            coverGrid.Children.Add(new BoxView
+            {
+                BackgroundColor = Color.FromArgb("#60000000"), // Tăng độ tối lên 1 chút để chữ Back dễ đọc hơn
+                VerticalOptions = LayoutOptions.Start,
+                HeightRequest = 120
+            });
 
-            // NÚT BACK (Dùng ký tự ← để chống tàng hình)
+            // NÚT BACK (Chuyển sang dạng hình viên thuốc chứa chữ "Back")
             var backBtn = new Button
             {
-                Text = "←",
-                FontSize = 28,
+                Text = "Back",
+                FontSize = 16,
+                FontAttributes = FontAttributes.Bold,
                 TextColor = Colors.White,
-                BackgroundColor = Color.FromArgb("#40000000"),
-                WidthRequest = 44,
-                HeightRequest = 44,
-                CornerRadius = 22,
-                Padding = 0,
+                BackgroundColor = Color.FromArgb("#80000000"),
+                HeightRequest = 40,
+                CornerRadius = 20,
+                Padding = new Thickness(20, 0), // Tạo khoảng không gian 2 bên chữ
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Start,
-                Margin = new Thickness(15, 40, 0, 0)
+                Margin = new Thickness(15, 50, 0, 0) // Đẩy xuống 50 để an toàn với tai thỏ/Status bar
             };
             backBtn.Clicked += async (s, e) => await Navigation.PopAsync();
             coverGrid.Children.Add(backBtn);
             mainStack.Children.Add(coverGrid);
 
             // --- KHUNG THÔNG TIN CHI TIẾT (KÉO LÊN CHỒNG VÀO ẢNH BÌA) ---
-            var infoLayout = new VerticalStackLayout { Spacing = 15, Padding = new Thickness(25, 30, 25, 30) };
+            var infoLayout = new VerticalStackLayout { Spacing = 18, Padding = new Thickness(25, 30, 25, 40) };
 
             // Tên Quán siêu to khổng lồ
-            var nameLabel = new Label { FontSize = 30, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
+            var nameLabel = new Label { FontSize = 28, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
             nameLabel.SetBinding(Label.TextProperty, "Name");
             infoLayout.Children.Add(nameLabel);
 
             // Khung Đánh giá & Địa chỉ
-            var metaStack = new VerticalStackLayout { Spacing = 8 };
+            var metaStack = new VerticalStackLayout { Spacing = 10 };
 
-            var ratingStack = new HorizontalStackLayout { Spacing = 5 };
+            var ratingStack = new HorizontalStackLayout { Spacing = 6 };
             ratingStack.Children.Add(new Label { Text = "⭐⭐⭐⭐⭐", FontSize = 16, TextColor = Color.FromArgb("#FFC107"), VerticalOptions = LayoutOptions.Center });
             var ratingLabel = new Label { FontSize = 15, FontAttributes = FontAttributes.Bold, TextColor = Colors.Gray, VerticalOptions = LayoutOptions.Center };
             ratingLabel.SetBinding(Label.TextProperty, new Binding("Rating"));
             ratingStack.Children.Add(ratingLabel);
             metaStack.Children.Add(ratingStack);
 
-            var addressLabel = new Label { TextColor = Color.FromArgb("#808080"), FontSize = 14 };
+            var addressLabel = new Label { TextColor = Color.FromArgb("#707070"), FontSize = 15 };
             addressLabel.SetBinding(Label.TextProperty, new Binding("Address", stringFormat: "📍 {0}"));
             metaStack.Children.Add(addressLabel);
 
-            metaStack.Children.Add(new Label { Text = "🕒 Mở cửa: 15:00 - 23:30", TextColor = Color.FromArgb("#808080"), FontSize = 14 });
+            metaStack.Children.Add(new Label { Text = "🕒 Mở cửa: 15:00 - 23:30", TextColor = Color.FromArgb("#707070"), FontSize = 15 });
             infoLayout.Children.Add(metaStack);
 
             // Đường kẻ ngang phân cách
-            infoLayout.Children.Add(new BoxView { HeightRequest = 1, BackgroundColor = Color.FromArgb("#F0F0F0"), Margin = new Thickness(0, 15) });
+            infoLayout.Children.Add(new BoxView { HeightRequest = 1, BackgroundColor = Color.FromArgb("#EAEAEA"), Margin = new Thickness(0, 5) });
 
             // Phần Giới Thiệu
-            var introLabel = new Label { FontSize = 18, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
+            var introLabel = new Label { FontSize = 20, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
             introLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Giới thiệu"));
             infoLayout.Children.Add(introLabel);
 
-            var descLabel = new Label { TextColor = Color.FromArgb("#505050"), LineHeight = 1.6, FontSize = 15 };
+            var descLabel = new Label { TextColor = Color.FromArgb("#4A4A4A"), LineHeight = 1.5, FontSize = 16 };
             descLabel.SetBinding(Label.TextProperty, "NarrationText");
             infoLayout.Children.Add(descLabel);
 
             // Kéo nguyên khối infoLayout lên 40px để đè lên ảnh Cover
             var infoBorder = new Border
             {
-                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(30, 30, 0, 0) },
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(35, 35, 0, 0) }, // Bo góc tròn trịa hơn
                 BackgroundColor = Colors.White,
                 Content = infoLayout,
                 Stroke = Colors.Transparent,
@@ -116,19 +121,19 @@ namespace VinhKhanhTour.Views
             {
                 BackgroundColor = Colors.White,
                 StrokeThickness = 0,
-                Padding = new Thickness(20, 15, 20, 25),
-                Shadow = new Shadow { Brush = Colors.Black, Radius = 15, Opacity = 0.1f, Offset = new Point(0, -5) }
+                Padding = new Thickness(20, 15, 20, 25), // Đẩy bottom padding cao hơn để chống lẹm thanh điều hướng iOS/Android
+                Shadow = new Shadow { Brush = Colors.Black, Radius = 10, Opacity = 0.08f, Offset = new Point(0, -4) }
             };
 
             var actionGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, ColumnSpacing = 15 };
 
-            var menuBtn = new Button { BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 50 };
+            var menuBtn = new Button { BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
             menuBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Thực Đơn", stringFormat: "📋 {0}"));
             menuBtn.Clicked += async (s, e) => await Navigation.PushAsync(new MenuPage(place));
             Grid.SetColumn(menuBtn, 0);
             actionGrid.Children.Add(menuBtn);
 
-            var audioBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 50 };
+            var audioBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
             audioBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Nghe Audio", stringFormat: "🎧 {0}"));
             audioBtn.Clicked += async (s, e) => await Navigation.PushAsync(new AudioPlayerPage(place));
             Grid.SetColumn(audioBtn, 1);
