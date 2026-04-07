@@ -52,7 +52,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.702081,
                     Radius = 60,
                     Priority = 1,
-                    ImageUrl = "featured_food_1.jpg"
+                    ImageUrl = "hauhap.png"
                 },
 
 
