@@ -38,31 +38,9 @@ namespace VinhKhanhTour.Models
         {
             return new List<Poi>
             {
-                new Poi
-                {
-                    Id = 1,
-                    Name = "Quán Ốc Vũ",
-                    DisplayName = "Quán Ốc Vũ",
-                    DisplayTtsScript = "Quán Ốc Vũ là một trong những quán ốc lâu đời và nổi tiếng nhất tại Vĩnh Khánh.",
-                    Latitude = 10.762622,
-                    Longitude = 106.660172,
-                    Radius = 80,
-                    Priority = 1,
-                    ImageUrl = "oc_vu_dish.jpg"
-                },
+               
 
-                new Poi
-                {
-                    Id = 2,
-                    Name = "Ốc Oanh",
-                    DisplayName = "Ốc Oanh",
-                    DisplayTtsScript = "Ốc Oanh nổi bật với không gian rộng rãi và món ốc hương rang muối ớt trứ danh.",
-                    Latitude = 10.761622,
-                    Longitude = 106.661172,
-                    Radius = 60,
-                    Priority = 1,
-                    ImageUrl = "featured_food_1.jpg"
-                },
+                
 
                  new Poi
                 {
@@ -78,18 +56,6 @@ namespace VinhKhanhTour.Models
                 },
 
 
-                new Poi
-                {
-                    Id = 4,
-                    Name = "Sò Điệp Chú Tèo",
-                    DisplayName = "Sò Điệp Chú Tèo",
-                    DisplayTtsScript = "Chuyên các món nướng mỡ hành thơm nức mũi.",
-                    Latitude = 10.763622,
-                    Longitude = 106.659172,
-                    Radius = 50,
-                    Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
-                },
 
                 new Poi
                 {
@@ -311,6 +277,7 @@ namespace VinhKhanhTour.Models
                     Priority = 1,
                     ImageUrl = "featured_food_2.jpg"
                 },
+
                 new Poi
                 {
                     Id = 6,

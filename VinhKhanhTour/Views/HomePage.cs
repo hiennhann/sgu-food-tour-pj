@@ -88,25 +88,13 @@ namespace VinhKhanhTour
                 cardGrid.Children.Add(new Border { StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 }, Content = bgImage, Stroke = Colors.Transparent });
                 cardGrid.Children.Add(new BoxView { BackgroundColor = Color.FromArgb("#30000000") });
 
-                var titleLabel = new Label { TextColor = Colors.White, FontAttributes = FontAttributes.Bold, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.End, Margin = new Thickness(15, 0, 0, 15) };
+                // Tên quán được đưa lên góc trên cùng bên trái
+                var titleLabel = new Label { TextColor = Colors.White, FontAttributes = FontAttributes.Bold, FontSize = 18, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Start, Margin = new Thickness(15, 15, 0, 0) };
                 titleLabel.SetBinding(Label.TextProperty, "Name");
                 cardGrid.Children.Add(titleLabel);
 
-                var infoGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Auto }, new ColumnDefinition { Width = GridLength.Star } }, HorizontalOptions = LayoutOptions.End, VerticalOptions = LayoutOptions.End, Margin = new Thickness(0, 0, 15, 15), ColumnSpacing = 5 };
-
-                var ratingStack = new HorizontalStackLayout { VerticalOptions = LayoutOptions.Center, Spacing = 3 };
-                ratingStack.Children.Add(new Label { Text = "⭐", TextColor = Colors.White, FontSize = 12 });
-                var rateVal = new Label { TextColor = Colors.White, FontSize = 12 };
-                rateVal.SetBinding(Label.TextProperty, "Rating");
-                ratingStack.Children.Add(rateVal);
-                var revCount = new Label { TextColor = Colors.White, FontSize = 12 };
-                revCount.SetBinding(Label.TextProperty, new Binding("ReviewCount", stringFormat: "({0})"));
-                ratingStack.Children.Add(revCount);
-
-                Grid.SetColumn(ratingStack, 0);
-                infoGrid.Children.Add(ratingStack);
-
-                var playBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontSize = 10, Padding = new Thickness(10, 5), CornerRadius = 10, HeightRequest = 30 };
+                // Nút Play được gắn trực tiếp vào góc dưới cùng bên phải
+                var playBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontSize = 10, Padding = new Thickness(10, 5), CornerRadius = 10, HeightRequest = 30, HorizontalOptions = LayoutOptions.End, VerticalOptions = LayoutOptions.End, Margin = new Thickness(0, 0, 15, 15) };
                 playBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Nghe Audio", stringFormat: "▶️ {0}"));
 
                 playBtn.Clicked += async (s, e) =>
@@ -120,9 +108,7 @@ namespace VinhKhanhTour
                     }
                 };
 
-                Grid.SetColumn(playBtn, 1);
-                infoGrid.Children.Add(playBtn);
-                cardGrid.Children.Add(infoGrid);
+                cardGrid.Children.Add(playBtn);
 
                 var headphoneIcon = new Image { Source = "icon_headphone.png", HeightRequest = 25, WidthRequest = 25, HorizontalOptions = LayoutOptions.End, VerticalOptions = LayoutOptions.Start, Margin = new Thickness(0, 15, 15, 0) };
                 cardGrid.Children.Add(headphoneIcon);
