@@ -1,0 +1,48 @@
+﻿@model IEnumerable<VinhKhanhTour.CMS.Models.Tour>
+@{
+    ViewData["Title"] = "Tour Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-dark"><i class="bi bi-map text-warning me-2"></i> Tour Management</h3>
+    <a asp-action="Create" class="btn btn-primary fw-bold shadow-sm" style="border-radius: 8px;">
+        <i class="bi bi-plus-lg me-1"></i> Add Tour
+    </a>
+</div>
+
+<div class="card shadow-sm border-0" style="border-radius: 10px;">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="border-0">ID</th>
+                        <th class="border-0">Tên Tour</th>
+                        <th class="border-0">Mô Tả</th>
+                        <th class="border-0">DS Quán (PoiIds)</th>
+                        <th class="border-0 text-end">Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="5" class="text-center text-muted py-4">Chưa có dữ liệu.</td></tr>
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-muted fw-bold">#@item.Id</td>
+                            <td class="fw-bold text-dark">@item.TourName</td>
+                            <td class="text-muted">@item.Description</td>
+                            <td><span class="badge bg-light text-dark border">@item.PoiIds</span></td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-light text-warning shadow-sm me-1"><i class="bi bi-pencil-square"></i></button>
+                                <button class="btn btn-sm btn-light text-danger shadow-sm"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

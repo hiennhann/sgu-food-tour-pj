@@ -1,0 +1,43 @@
+﻿@model IEnumerable<VinhKhanhTour.CMS.Models.UsageHistory>
+@{
+    ViewData["Title"] = "System History";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-dark"><i class="bi bi-clock-history text-danger me-2"></i> System History</h3>
+</div>
+
+<div class="card shadow-sm border-0" style="border-radius: 10px;">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="border-0">Thời Gian</th>
+                        <th class="border-0">Người Dùng</th>
+                        <th class="border-0">Hành Động</th>
+                        <th class="border-0">Chi Tiết</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="4" class="text-center text-muted py-4">Chưa có dữ liệu lịch sử.</td></tr>
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-muted">@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="fw-bold text-dark">
+                                <i class="bi bi-person-circle me-1 text-muted"></i>
+                                @(string.IsNullOrEmpty(item.UserEmail) ? "Khách Ẩn Danh" : item.UserEmail)
+                            </td>
+                            <td><span class="badge bg-danger bg-opacity-10 text-danger border border-danger">@item.ActionType</span></td>
+                            <td class="text-muted">@item.Details</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

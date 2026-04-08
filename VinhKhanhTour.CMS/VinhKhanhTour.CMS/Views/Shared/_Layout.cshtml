@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VinhKhanhTour.CMS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+            body { background-color: #f4f6f9; overflow-x: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+            #wrapper { display: flex; width: 100%; align-items: stretch; min-height: 100vh; }
+        
+            /* Cột Sidebar bên trái */
+            #sidebar-wrapper { min-width: 260px; max-width: 260px; background-color: #2c3e50; color: #fff; transition: all 0.3s; }
+            .sidebar-heading { padding: 20px; font-size: 1.3rem; font-weight: bold; text-align: center; border-bottom: 1px solid #34495e; letter-spacing: 1px; }
+            .list-group-item { background-color: transparent; color: #b8c7ce; border: none; padding: 15px 25px; font-size: 1.05rem; transition: 0.2s; }
+            .list-group-item i { margin-right: 10px; font-size: 1.2rem; }
+            .list-group-item:hover, .list-group-item.active { background-color: #1a252f; color: #fff; border-left: 4px solid #3498db; }
+        
+            /* Cột Nội dung bên phải */
+            #page-content-wrapper { width: 100%; display: flex; flex-direction: column; }
+        
+            /* Thanh Topbar màu trắng */
+            .top-navbar { background: #fff; padding: 15px 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+            .search-bar { background: #f1f3f4; border-radius: 20px; padding: 8px 20px; border: none; width: 300px; outline: none; }
+            .user-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-left: 10px; }
+        
+            /* Khu vực hiển thị bảng dữ liệu */
+            .main-content { padding: 30px; flex-grow: 1; }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="sidebar-wrapper">
+            <div class="sidebar-heading">
+                VinhKhanhTour.CMS
+            </div>
+            <div class="list-group list-group-flush mt-3">
+                <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                    <i class="bi bi-house-door"></i> Dashboard
+                </a>
+                <a asp-controller="Poi" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Poi" ? "active" : "")">
+                    <i class="bi bi-geo-alt"></i> POI Management
+                </a>
+                <a asp-controller="Translation" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Translation" ? "active" : "")">
+                    <i class="bi bi-translate"></i> Translations
+                </a>
+                <a asp-controller="AudioTrack" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"]?.ToString() == "AudioTrack" ? "active" : "")">
+                    <i class="bi bi-headphones"></i> Audio
+                </a>
+                <a asp-controller="Tour" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Tour" ? "active" : "")">
+                    <i class="bi bi-map"></i> Tour Management
+                </a>
+                <a asp-controller="UsageHistory" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Controller"]?.ToString() == "UsageHistory" ? "active" : "")">
+                    <i class="bi bi-clock-history"></i> History
+                </a>
+            </div>
+        </div>
+
+        <div id="page-content-wrapper">
+            <div class="top-navbar">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-list fs-4 me-3 text-muted" style="cursor:pointer;"></i>
+                    <div class="position-relative">
+                        <i class="bi bi-search position-absolute text-muted" style="top: 10px; left: 15px;"></i>
+                        <input type="text" class="search-bar ps-5" placeholder="Search...">
+                    </div>
+                </div>
+                <div class="user-profile d-flex align-items-center cursor-pointer">
+                    <i class="bi bi-bell fs-5 text-muted position-relative me-4">
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                    </i>
+                    <span class="fw-bold text-dark">Admin <i class="bi bi-chevron-down ms-1 fs-6"></i></span>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="User">
+                </div>
+            </div>
+
+            <div class="main-content">
+                <main role="main">
+                    @RenderBody()
+                </main>
+            </div>
+            
+            <footer class="border-top footer text-muted bg-white p-3 mt-auto">
+                <div class="container-fluid">
+                    &copy; 2026 - VinhKhanhTour.CMS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

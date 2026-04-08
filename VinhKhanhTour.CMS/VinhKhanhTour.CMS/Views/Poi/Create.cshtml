@@ -1,0 +1,63 @@
+﻿@model VinhKhanhTour.CMS.Models.Poi
+
+@{
+    ViewData["Title"] = "Add New POI";
+}
+
+<div class="d-flex align-items-center mb-4">
+    <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+    <h3 class="fw-bold text-dark mb-0">Add New POI</h3>
+</div>
+
+<div class="card shadow-sm border-0" style="border-radius: 10px;">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Name" class="form-label text-muted fw-bold">Tên Quán (Bắt buộc)</label>
+                    <input asp-for="Name" class="form-control bg-light border-0" placeholder="Nhập tên quán..." required />
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DisplayName" class="form-label text-muted fw-bold">Tên Hiển Thị (Mở rộng)</label>
+                    <input asp-for="DisplayName" class="form-control bg-light border-0" />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Latitude" class="form-label text-muted fw-bold">Vĩ độ (Lat)</label>
+                    <input asp-for="Latitude" class="form-control bg-light border-0" value="10.761622" />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Longitude" class="form-label text-muted fw-bold">Kinh độ (Lng)</label>
+                    <input asp-for="Longitude" class="form-control bg-light border-0" value="106.661172" />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Priority" class="form-label text-muted fw-bold">Độ ưu tiên</label>
+                    <input asp-for="Priority" type="number" class="form-control bg-light border-0" value="1" />
+                </div>
+
+                <div class="col-12 mb-3">
+                    <label asp-for="ImageUrl" class="form-label text-muted fw-bold">Tên file hình ảnh</label>
+                    <input asp-for="ImageUrl" class="form-control bg-light border-0" placeholder="Ví dụ: oc_oanh.jpg" />
+                </div>
+
+                <div class="col-12 mb-4">
+                    <label asp-for="DisplayTtsScript" class="form-label text-muted fw-bold">Kịch bản Thuyết minh (Dành cho Audio)</label>
+                    <textarea asp-for="DisplayTtsScript" class="form-control bg-light border-0" rows="3" placeholder="Nhập nội dung giới thiệu quán để máy đọc..."></textarea>
+                </div>
+            </div>
+
+            <hr class="text-muted my-4" />
+
+            <div class="d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm" style="border-radius: 8px;">
+                    <i class="bi bi-save me-1"></i> Save POI
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

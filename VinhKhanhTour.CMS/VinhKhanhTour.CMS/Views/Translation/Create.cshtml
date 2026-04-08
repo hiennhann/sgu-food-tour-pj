@@ -1,0 +1,34 @@
+﻿@model VinhKhanhTour.CMS.Models.Translation
+@{
+    ViewData["Title"] = "Add Translation";
+}
+
+<div class="d-flex align-items-center mb-4">
+    <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;"><i class="bi bi-arrow-left"></i> Back</a>
+    <h3 class="fw-bold text-dark mb-0">Add New Translation</h3>
+</div>
+
+<div class="card shadow-sm border-0" style="border-radius: 10px;">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="LanguageCode" class="form-label text-muted fw-bold">Mã Ngôn Ngữ (vd: en, fr, ja)</label>
+                    <input asp-for="LanguageCode" class="form-control bg-light border-0" required />
+                </div>
+                <div class="col-md-8 mb-3">
+                    <label asp-for="KeyName" class="form-label text-muted fw-bold">Từ Khóa Gốc (Tiếng Việt)</label>
+                    <input asp-for="KeyName" class="form-control bg-light border-0" required />
+                </div>
+                <div class="col-12 mb-4">
+                    <label asp-for="TranslatedValue" class="form-label text-muted fw-bold">Nội Dung Đã Dịch</label>
+                    <textarea asp-for="TranslatedValue" class="form-control bg-light border-0" rows="3" required></textarea>
+                </div>
+            </div>
+            <hr class="text-muted my-4" />
+            <div class="d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm" style="border-radius: 8px;"><i class="bi bi-save me-1"></i> Save Data</button>
+            </div>
+        </form>
+    </div>
+</div>

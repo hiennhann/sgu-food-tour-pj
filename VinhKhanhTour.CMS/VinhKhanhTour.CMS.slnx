@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../VinhKhanhTour/VinhKhanhTour.csproj" />
+  <Project Path="VinhKhanhTour.CMS/VinhKhanhTour.CMS.csproj" />
+</Solution>
