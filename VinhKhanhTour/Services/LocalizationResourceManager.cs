@@ -74,7 +74,6 @@ namespace VinhKhanhTour.Services
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        // --- CÁC TỪ ĐIỂN NGÔN NGỮ ĐÃ ĐƯỢC BỔ SUNG ĐẦY ĐỦ ---
         private readonly Dictionary<string, string> _englishResources = new(StringComparer.OrdinalIgnoreCase) {
             { "Trang chủ", "Home" }, { "Bản đồ", "Map" }, { "Khám phá", "Explore" }, { "Cài đặt", "Settings" },
             { "Khám phá Ẩm thực", "Explore Cuisine" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "Saigon Snail Paradise — District 4" },
@@ -91,10 +90,25 @@ namespace VinhKhanhTour.Services
             { "Đang tìm kiếm vệ tinh GPS...", "Searching for GPS satellites..." }, { "BẠN ĐANG Ở GẦN", "YOU ARE NEAR" },
             { "Chọn một điểm trên map", "Select a point on the map" }, { "Cách quán gần nhất", "Nearest place" },
             { "Chưa tìm thấy quán ốc", "No snail stall found" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "About" }, { "Xem Thực Đơn", "View Menu" }, { "Chỉ Đường", "Directions" },
             { "Giới thiệu về {0}", "About {0}" }, { "Lỗi Audio", "Audio Error" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Your device does not support TTS for this language." }, { "Đóng", "Close" }
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Your device does not support TTS for this language." }, { "Đóng", "Close" },
+            { "Thực Đơn", "Menu" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 Prices are for reference only and subject to change." },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ Updating menu..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "SELECTED LOCATION" },
+            { "Đang dò tìm...", "Searching..." }, { "Đang theo dõi Radar GPS...", "Tracking GPS Radar..." },
+            { "CÀI ĐẶT CHUNG", "GENERAL SETTINGS" }, { "THÔNG TIN & HỖ TRỢ", "INFO & SUPPORT" },
+            { "Khách du lịch", "Tourist" }, { "Đăng nhập để lưu địa điểm yêu thích", "Login to save favorite places" },
+            { "Đăng Nhập / Đăng Ký", "Login / Register" }, { "Đăng Xuất", "Logout" },
+            { "Chào mừng trở lại!", "Welcome back!" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "Login to continue exploring District 4." },
+            { "Email", "Email" }, { "Mật khẩu", "Password" }, { "ĐĂNG NHẬP", "LOGIN" },
+            { "Chưa có tài khoản? Đăng ký mới", "Don't have an account? Register" }, { "Tạo tài khoản mới", "Create new account" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "Join the Vinh Khanh food community now." },
+            { "Họ và tên", "Full Name" }, { "ĐĂNG KÝ NGAY", "REGISTER NOW" },
+            { "Đã có tài khoản? Đăng nhập", "Already have an account? Login" }, { "Chính sách bảo mật", "Privacy Policy" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "About Vinh Khanh Tour App" }, { "Chạm để đổi", "Tap to change" },
+            { "Mặc định", "Default" }, { "Phiên bản 1.0.0", "Version 1.0.0" },
+            { "Quay lại", "Back" }, { "Mở cửa", "Open" }, { "Thuyết minh tự động", "Auto Narration" },
+            { "Nội dung thuyết minh", "Narration Content" }, { "Dừng Audio", "Stop Audio" }
         };
 
         private readonly Dictionary<string, string> _spanishResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -113,10 +127,25 @@ namespace VinhKhanhTour.Services
             { "Đang tìm kiếm vệ tinh GPS...", "Buscando satélites GPS..." }, { "BẠN ĐANG Ở GẦN", "ESTÁS CERCA" },
             { "Chọn một điểm trên map", "Selecciona un punto" }, { "Cách quán gần nhất", "Lugar más cercano" },
             { "Chưa tìm thấy quán ốc", "No se encontró ningún puesto" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "Acerca de" }, { "Xem Thực Đơn", "Ver Menú" }, { "Chỉ Đường", "Direcciones" },
             { "Giới thiệu về {0}", "Acerca de {0}" }, { "Lỗi Audio", "Error de Audio" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Su dispositivo no soporta TTS para este idioma." }, { "Đóng", "Cerrar" }
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Su dispositivo no soporta TTS para este idioma." }, { "Đóng", "Cerrar" },
+            { "Thực Đơn", "Menú" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 Los precios son solo de referencia y pueden cambiar." },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ Actualizando menú..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "UBICACIÓN SELECCIONADA" },
+            { "Đang dò tìm...", "Buscando..." }, { "Đang theo dõi Radar GPS...", "Rastreando radar GPS..." },
+            { "CÀI ĐẶT CHUNG", "AJUSTES GENERALES" }, { "THÔNG TIN & HỖ TRỢ", "INFO Y SOPORTE" },
+            { "Khách du lịch", "Turista" }, { "Đăng nhập để lưu địa điểm yêu thích", "Inicia sesión para guardar lugares" },
+            { "Đăng Nhập / Đăng Ký", "Iniciar sesión / Registrarse" }, { "Đăng Xuất", "Cerrar sesión" },
+            { "Chào mừng trở lại!", "¡Bienvenido de nuevo!" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "Inicia sesión para explorar el Distrito 4." },
+            { "Email", "Correo electrónico" }, { "Mật khẩu", "Contraseña" }, { "ĐĂNG NHẬP", "INICIAR SESIÓN" },
+            { "Chưa có tài khoản? Đăng ký mới", "¿No tienes cuenta? Regístrate" }, { "Tạo tài khoản mới", "Crear nueva cuenta" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "Únete a la comunidad gastronómica de Vinh Khanh." },
+            { "Họ và tên", "Nombre completo" }, { "ĐĂNG KÝ NGAY", "REGÍSTRATE AHORA" },
+            { "Đã có tài khoản? Đăng nhập", "¿Ya tienes cuenta? Iniciar sesión" }, { "Chính sách bảo mật", "Política de privacidad" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "Acerca de la app Vinh Khanh Tour" }, { "Chạm để đổi", "Toca para cambiar" },
+            { "Mặc định", "Por defecto" }, { "Phiên bản 1.0.0", "Versión 1.0.0" },
+            { "Quay lại", "Atrás" }, { "Mở cửa", "Abierto" }, { "Thuyết minh tự động", "Narración automática" },
+            { "Nội dung thuyết minh", "Contenido de narración" }, { "Dừng Audio", "Detener Audio" }
         };
 
         private readonly Dictionary<string, string> _frenchResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -135,10 +164,25 @@ namespace VinhKhanhTour.Services
             { "Đang tìm kiếm vệ tinh GPS...", "Recherche de satellites GPS..." }, { "BẠN ĐANG Ở GẦN", "VOUS ÊTES PROCHE" },
             { "Chọn một điểm trên map", "Sélectionnez un point" }, { "Cách quán gần nhất", "Lieu le plus proche" },
             { "Chưa tìm thấy quán ốc", "Aucun stand trouvé" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "À propos" }, { "Xem Thực Đơn", "Voir le Menu" }, { "Chỉ Đường", "Itinéraire" },
             { "Giới thiệu về {0}", "À propos de {0}" }, { "Lỗi Audio", "Erreur Audio" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Votre appareil ne prend pas en charge la synthèse vocale pour cette langue." }, { "Đóng", "Fermer" }
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Votre appareil ne prend pas en charge la synthèse vocale pour cette langue." }, { "Đóng", "Fermer" },
+            { "Thực Đơn", "Menu" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 Les prix sont à titre indicatif et peuvent changer." },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ Mise à jour du menu..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "LIEU SÉLECTIONNÉ" },
+            { "Đang dò tìm...", "Recherche..." }, { "Đang theo dõi Radar GPS...", "Suivi du radar GPS..." },
+            { "CÀI ĐẶT CHUNG", "PARAMÈTRES GÉNÉRAUX" }, { "THÔNG TIN & HỖ TRỢ", "INFO & SUPPORT" },
+            { "Khách du lịch", "Touriste" }, { "Đăng nhập để lưu địa điểm yêu thích", "Connectez-vous pour enregistrer des lieux" },
+            { "Đăng Nhập / Đăng Ký", "Connexion / S'inscrire" }, { "Đăng Xuất", "Déconnexion" },
+            { "Chào mừng trở lại!", "Bon retour !" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "Connectez-vous pour explorer le District 4." },
+            { "Email", "E-mail" }, { "Mật khẩu", "Mot de passe" }, { "ĐĂNG NHẬP", "CONNEXION" },
+            { "Chưa có tài khoản? Đăng ký mới", "Pas de compte ? S'inscrire" }, { "Tạo tài khoản mới", "Créer un nouveau compte" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "Rejoignez la communauté culinaire de Vinh Khanh." },
+            { "Họ và tên", "Nom complet" }, { "ĐĂNG KÝ NGAY", "S'INSCRIRE MAINTENANT" },
+            { "Đã có tài khoản? Đăng nhập", "Déjà un compte ? Connexion" }, { "Chính sách bảo mật", "Politique de confidentialité" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "À propos de l'app Vinh Khanh Tour" }, { "Chạm để đổi", "Appuyez pour changer" },
+            { "Mặc định", "Par défaut" }, { "Phiên bản 1.0.0", "Version 1.0.0" },
+            { "Quay lại", "Retour" }, { "Mở cửa", "Ouvert" }, { "Thuyết minh tự động", "Narration automatique" },
+            { "Nội dung thuyết minh", "Contenu de la narration" }, { "Dừng Audio", "Arrêter l'Audio" }
         };
 
         private readonly Dictionary<string, string> _germanResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -157,10 +201,25 @@ namespace VinhKhanhTour.Services
             { "Đang tìm kiếm vệ tinh GPS...", "GPS-Satelliten werden gesucht..." }, { "BẠN ĐANG Ở GẦN", "DU BIST IN DER NÄHE" },
             { "Chọn một điểm trên map", "Wähle einen Punkt" }, { "Cách quán gần nhất", "Nächster Ort" },
             { "Chưa tìm thấy quán ốc", "Kein Stand gefunden" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "Über" }, { "Xem Thực Đơn", "Menü Ansehen" }, { "Chỉ Đường", "Wegbeschreibung" },
             { "Giới thiệu về {0}", "Über {0}" }, { "Lỗi Audio", "Audiofehler" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Ihr Gerät unterstützt kein TTS für diese Sprache." }, { "Đóng", "Schließen" }
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Ihr Gerät unterstützt kein TTS für diese Sprache." }, { "Đóng", "Schließen" },
+            { "Thực Đơn", "Menü" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 Preise dienen nur als Referenz und können sich ändern." },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ Menü wird aktualisiert..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "AUSGEWÄHLTER ORT" },
+            { "Đang dò tìm...", "Suchen..." }, { "Đang theo dõi Radar GPS...", "GPS-Radar wird verfolgt..." },
+            { "CÀI ĐẶT CHUNG", "ALLGEMEINE EINSTELLUNGEN" }, { "THÔNG TIN & HỖ TRỢ", "INFO & SUPPORT" },
+            { "Khách du lịch", "Tourist" }, { "Đăng nhập để lưu địa điểm yêu thích", "Anmelden, um Orte zu speichern" },
+            { "Đăng Nhập / Đăng Ký", "Anmelden / Registrieren" }, { "Đăng Xuất", "Abmelden" },
+            { "Chào mừng trở lại!", "Willkommen zurück!" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "Melden Sie sich an, um Distrikt 4 zu erkunden." },
+            { "Email", "E-Mail" }, { "Mật khẩu", "Passwort" }, { "ĐĂNG NHẬP", "ANMELDEN" },
+            { "Chưa có tài khoản? Đăng ký mới", "Kein Konto? Registrieren" }, { "Tạo tài khoản mới", "Neues Konto erstellen" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "Treten Sie der Vinh Khanh Food-Community bei." },
+            { "Họ và tên", "Vollständiger Name" }, { "ĐĂNG KÝ NGAY", "JETZT REGISTRIEREN" },
+            { "Đã có tài khoản? Đăng nhập", "Bereits ein Konto? Anmelden" }, { "Chính sách bảo mật", "Datenschutzrichtlinie" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "Über die Vinh Khanh Tour App" }, { "Chạm để đổi", "Zum Ändern tippen" },
+            { "Mặc định", "Standard" }, { "Phiên bản 1.0.0", "Version 1.0.0" },
+            { "Quay lại", "Zurück" }, { "Mở cửa", "Geöffnet" }, { "Thuyết minh tự động", "Automatische Erzählung" },
+            { "Nội dung thuyết minh", "Inhalt der Erzählung" }, { "Dừng Audio", "Audio stoppen" }
         };
 
         private readonly Dictionary<string, string> _chineseResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -179,10 +238,25 @@ namespace VinhKhanhTour.Services
             { "Đang tìm kiếm vệ tinh GPS...", "正在搜索GPS卫星..." }, { "BẠN ĐANG Ở GẦN", "您在附近" },
             { "Chọn một điểm trên map", "在地图上选择一个点" }, { "Cách quán gần nhất", "最近的地方" },
             { "Chưa tìm thấy quán ốc", "未找到摊位" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "关于" }, { "Xem Thực Đơn", "查看菜单" }, { "Chỉ Đường", "路线" },
             { "Giới thiệu về {0}", "关于 {0}" }, { "Lỗi Audio", "音频错误" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "您的设备不支持该语言的语音朗读。" }, { "Đóng", "关闭" }
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "您的设备不支持该语言的语音朗读。" }, { "Đóng", "关闭" },
+            { "Thực Đơn", "菜单" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 价格仅供参考，可能会有所变动。" },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ 菜单更新中..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "已选地点" },
+            { "Đang dò tìm...", "搜索中..." }, { "Đang theo dõi Radar GPS...", "正在追踪 GPS 雷达..." },
+            { "CÀI ĐẶT CHUNG", "常规设置" }, { "THÔNG TIN & HỖ TRỢ", "信息与支持" },
+            { "Khách du lịch", "游客" }, { "Đăng nhập để lưu địa điểm yêu thích", "登录以保存喜爱的地点" },
+            { "Đăng Nhập / Đăng Ký", "登录 / 注册" }, { "Đăng Xuất", "登出" },
+            { "Chào mừng trở lại!", "欢迎回来！" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "登录以继续探索第四郡。" },
+            { "Email", "电子邮件" }, { "Mật khẩu", "密码" }, { "ĐĂNG NHẬP", "登录" },
+            { "Chưa có tài khoản? Đăng ký mới", "没有帐户？注册新帐户" }, { "Tạo tài khoản mới", "创建新帐户" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "立即加入永庆美食社区。" },
+            { "Họ và tên", "全名" }, { "ĐĂNG KÝ NGAY", "立即注册" },
+            { "Đã có tài khoản? Đăng nhập", "已有帐户？登录" }, { "Chính sách bảo mật", "隐私政策" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "关于永庆旅游应用" }, { "Chạm để đổi", "点击更改" },
+            { "Mặc định", "默认" }, { "Phiên bản 1.0.0", "版本 1.0.0" },
+            { "Quay lại", "返回" }, { "Mở cửa", "营业" }, { "Thuyết minh tự động", "自动解说" },
+            { "Nội dung thuyết minh", "解说内容" }, { "Dừng Audio", "停止音频" }
         };
 
         private readonly Dictionary<string, string> _japaneseResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -201,10 +275,25 @@ namespace VinhKhanhTour.Services
             { "Đang tìm kiếm vệ tinh GPS...", "GPS衛星を検索中..." }, { "BẠN ĐANG Ở GẦN", "あなたの近く" },
             { "Chọn một điểm trên map", "マップ上のポイントを選択" }, { "Cách quán gần nhất", "最も近い場所" },
             { "Chưa tìm thấy quán ốc", "屋台が見つかりません" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "概要" }, { "Xem Thực Đơn", "メニューを見る" }, { "Chỉ Đường", "ルート" },
             { "Giới thiệu về {0}", "{0} について" }, { "Lỗi Audio", "オーディオエラー" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "お使いのデバイスはこの言語の音声読み上げをサポートしていません。" }, { "Đóng", "閉じる" }
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "お使いのデバイスはこの言語の音声読み上げをサポートしていません。" }, { "Đóng", "閉じる" },
+            { "Thực Đơn", "メニュー" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 価格は参考用であり、変更される場合があります。" },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ メニューを更新中..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "選択された場所" },
+            { "Đang dò tìm...", "検索中..." }, { "Đang theo dõi Radar GPS...", "GPSレーダーを追跡中..." },
+            { "CÀI ĐẶT CHUNG", "一般設定" }, { "THÔNG TIN & HỖ TRỢ", "情報とサポート" },
+            { "Khách du lịch", "観光客" }, { "Đăng nhập để lưu địa điểm yêu thích", "ログインしてお気に入りの場所を保存" },
+            { "Đăng Nhập / Đăng Ký", "ログイン / 登録" }, { "Đăng Xuất", "ログアウト" },
+            { "Chào mừng trở lại!", "お帰りなさい！" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "ログインして4区の探索を続ける。" },
+            { "Email", "Eメール" }, { "Mật khẩu", "パスワード" }, { "ĐĂNG NHẬP", "ログイン" },
+            { "Chưa có tài khoản? Đăng ký mới", "アカウントをお持ちでないですか？新規登録" }, { "Tạo tài khoản mới", "新しいアカウントを作成" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "ヴィンカンフードコミュニティに今すぐ参加。" },
+            { "Họ và tên", "氏名" }, { "ĐĂNG KÝ NGAY", "今すぐ登録" },
+            { "Đã có tài khoản? Đăng nhập", "すでにアカウントをお持ちですか？ログイン" }, { "Chính sách bảo mật", "プライバシーポリシー" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "ヴィンカンツアーアプリについて" }, { "Chạm để đổi", "タップして変更" },
+            { "Mặc định", "デフォルト" }, { "Phiên bản 1.0.0", "バージョン 1.0.0" },
+            { "Quay lại", "戻る" }, { "Mở cửa", "営業" }, { "Thuyết minh tự động", "自動音声案内" },
+            { "Nội dung thuyết minh", "ナレーション内容" }, { "Dừng Audio", "オーディオを停止" }
         };
 
         private readonly Dictionary<string, string> _koreanResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -223,10 +312,25 @@ namespace VinhKhanhTour.Services
             { "Đang tìm kiếm vệ tinh GPS...", "GPS 위성 검색 중..." }, { "BẠN ĐANG Ở GẦN", "당신은 근처에 있습니다" },
             { "Chọn một điểm trên map", "지도에서 지점을 선택하세요" }, { "Cách quán gần nhất", "가장 가까운 곳" },
             { "Chưa tìm thấy quán ốc", "노점을 찾을 수 없습니다" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "소개" }, { "Xem Thực Đơn", "메뉴 보기" }, { "Chỉ Đường", "길찾기" },
             { "Giới thiệu về {0}", "{0} 소개" }, { "Lỗi Audio", "오디오 오류" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "기기에서 이 언어의 음성 낭독을 지원하지 않습니다." }, { "Đóng", "닫기" }
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "기기에서 이 언어의 음성 낭독을 지원하지 않습니다." }, { "Đóng", "닫기" },
+            { "Thực Đơn", "메뉴" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 가격은 참고용이며 변경될 수 있습니다." },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ 메뉴 업데이트 중..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "선택된 위치" },
+            { "Đang dò tìm...", "검색 중..." }, { "Đang theo dõi Radar GPS...", "GPS 레이더 추적 중..." },
+            { "CÀI ĐẶT CHUNG", "일반 설정" }, { "THÔNG TIN & HỖ TRỢ", "정보 및 지원" },
+            { "Khách du lịch", "관광객" }, { "Đăng nhập để lưu địa điểm yêu thích", "로그인하여 즐겨찾는 장소 저장" },
+            { "Đăng Nhập / Đăng Ký", "로그인 / 가입" }, { "Đăng Xuất", "로그아웃" },
+            { "Chào mừng trở lại!", "다시 오신 것을 환영합니다!" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "로그인하여 4군 탐색을 계속하세요." },
+            { "Email", "이메일" }, { "Mật khẩu", "비밀번호" }, { "ĐĂNG NHẬP", "로그인" },
+            { "Chưa có tài khoản? Đăng ký mới", "계정이 없으신가요? 새로 등록" }, { "Tạo tài khoản mới", "새 계정 만들기" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "지금 빈칸 음식 커뮤니티에 참여하세요." },
+            { "Họ và tên", "성명" }, { "ĐĂNG KÝ NGAY", "지금 등록" },
+            { "Đã có tài khoản? Đăng nhập", "이미 계정이 있으신가요? 로그인" }, { "Chính sách bảo mật", "개인정보 처리방침" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "빈칸 투어 앱 정보" }, { "Chạm để đổi", "탭하여 변경" },
+            { "Mặc định", "기본값" }, { "Phiên bản 1.0.0", "버전 1.0.0" },
+            { "Quay lại", "뒤로" }, { "Mở cửa", "영업" }, { "Thuyết minh tự động", "자동 나레이션" },
+            { "Nội dung thuyết minh", "나레이션 내용" }, { "Dừng Audio", "오디오 중지" }
         };
 
         private readonly Dictionary<string, string> _russianResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -245,10 +349,25 @@ namespace VinhKhanhTour.Services
             { "Đang tìm kiếm vệ tinh GPS...", "Поиск спутников GPS..." }, { "BẠN ĐANG Ở GẦN", "ВЫ РЯДОМ" },
             { "Chọn một điểm trên map", "Выберите точку" }, { "Cách quán gần nhất", "Ближайшее место" },
             { "Chưa tìm thấy quán ốc", "Киоск не найден" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "О нас" }, { "Xem Thực Đơn", "Посмотреть Меню" }, { "Chỉ Đường", "Маршрут" },
             { "Giới thiệu về {0}", "О {0}" }, { "Lỗi Audio", "Ошибка Аудио" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Ваше устройство не поддерживает TTS для этого языка." }, { "Đóng", "Закрыть" }
+            { "Thiết bị của bạn не hỗ trợ đọc ngôn ngữ này.", "Ваше устройство не поддерживает TTS для этого языка." }, { "Đóng", "Закрыть" },
+            { "Thực Đơn", "Меню" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 Цены указаны только для справки и могут быть изменены." },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ Меню обновляется..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "ВЫБРАННОЕ МЕСТО" },
+            { "Đang dò tìm...", "Поиск..." }, { "Đang theo dõi Radar GPS...", "Отслеживание GPS-радара..." },
+            { "CÀI ĐẶT CHUNG", "ОБЩИЕ НАСТРОЙКИ" }, { "THÔNG TIN & HỖ TRỢ", "ИНФОРМАЦИЯ И ПОДДЕРЖКА" },
+            { "Khách du lịch", "Турист" }, { "Đăng nhập để lưu địa điểm yêu thích", "Войдите, чтобы сохранить любимые места" },
+            { "Đăng Nhập / Đăng Ký", "Войти / Регистрация" }, { "Đăng Xuất", "Выйти" },
+            { "Chào mừng trở lại!", "С возвращением!" }, { "Đăng nhập để tiếp tục khám phá Район 4.", "Войдите, чтобы продолжить исследовать Район 4." },
+            { "Email", "Email" }, { "Mật khẩu", "Пароль" }, { "ĐĂNG NHẬP", "ВОЙТИ" },
+            { "Chưa có tài khoản? Đăng ký mới", "Нет аккаунта? Зарегистрироваться" }, { "Tạo tài khoản mới", "Создать новый аккаунт" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "Присоединяйтесь к кулинарному сообществу Винь Кхань." },
+            { "Họ và tên", "Полное имя" }, { "ĐĂNG KÝ NGAY", "ЗАРЕГИСТРИРОВАТЬСЯ" },
+            { "Đã có tài khoản? Đăng nhập", "Уже есть аккаунт? Войти" }, { "Chính sách bảo mật", "Политика конфиденциальности" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "О приложении Vinh Khanh Tour" }, { "Chạm để đổi", "Нажмите, чтобы изменить" },
+            { "Mặc định", "По умолчанию" }, { "Phiên bản 1.0.0", "Версия 1.0.0" },
+            { "Quay lại", "Назад" }, { "Mở cửa", "Открыто" }, { "Thuyết minh tự động", "Автоматическое повествование" },
+            { "Nội dung thuyết minh", "Содержание повествования" }, { "Dừng Audio", "Остановить аудио" }
         };
 
         private readonly Dictionary<string, string> _italianResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -265,12 +384,27 @@ namespace VinhKhanhTour.Services
             { "Thiết kế ❤️ bởi đội ngũ phát triển", "Progettato con ❤️ dal team di sviluppo" }, { "Bình thường", "Normale" },
             { "Tốc độ", "Velocità" }, { "Bán kính", "Raggio" }, { "Bản Đồ Phố Vĩnh Khánh", "Mappa di Vinh Khanh" },
             { "Đang tìm kiếm vệ tinh GPS...", "Ricerca satelliti GPS..." }, { "BẠN ĐANG Ở GẦN", "SEI VICINO" },
-            { "Chọn un điểm trên map", "Seleziona un punto" }, { "Cách quán gần nhất", "Luogo più vicino" },
+            { "Chọn một điểm trên map", "Seleziona un punto" }, { "Cách quán gần nhất", "Luogo più vicino" },
             { "Chưa tìm thấy quán ốc", "Nessuna bancarella" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "Informazioni" }, { "Xem Thực Đơn", "Vedi Menu" }, { "Chỉ Đường", "Indicazioni" },
             { "Giới thiệu về {0}", "Informazioni su {0}" }, { "Lỗi Audio", "Errore Audio" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Il tuo dispositivo non supporta il TTS per questa lingua." }, { "Đóng", "Chiudi" }
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Il tuo dispositivo non supporta il TTS per questa lingua." }, { "Đóng", "Chiudi" },
+            { "Thực Đơn", "Menu" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 I prezzi sono solo indicativi e soggetti a modifiche." },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ Aggiornamento menu..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "LUOGO SELEZIONATO" },
+            { "Đang dò tìm...", "Ricerca..." }, { "Đang theo dõi Radar GPS...", "Tracciamento radar GPS..." },
+            { "CÀI ĐẶT CHUNG", "IMPOSTAZIONI GENERALI" }, { "THÔNG TIN & HỖ TRỢ", "INFO E SUPPORTO" },
+            { "Khách du lịch", "Turista" }, { "Đăng nhập để lưu địa điểm yêu thích", "Accedi per salvare i luoghi" },
+            { "Đăng Nhập / Đăng Ký", "Accedi / Registrati" }, { "Đăng Xuất", "Esci" },
+            { "Chào mừng trở lại!", "Bentornato!" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "Accedi per continuare a esplorare il Distretto 4." },
+            { "Email", "Email" }, { "Mật khẩu", "Password" }, { "ĐĂNG NHẬP", "ACCEDI" },
+            { "Chưa có tài khoản? Đăng ký mới", "Non hai un account? Registrati" }, { "Tạo tài khoản mới", "Crea un nuovo account" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "Unisciti alla comunità gastronomica di Vinh Khanh." },
+            { "Họ và tên", "Nome e cognome" }, { "ĐĂNG KÝ NGAY", "REGISTRATI ORA" },
+            { "Đã có tài khoản? Đăng nhập", "Hai già un account? Accedi" }, { "Chính sách bảo mật", "Informativa sulla privacy" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "Informazioni sull'app Vinh Khanh Tour" }, { "Chạm để đổi", "Tocca per cambiare" },
+            { "Mặc định", "Predefinito" }, { "Phiên bản 1.0.0", "Versione 1.0.0" },
+            { "Quay lại", "Indietro" }, { "Mở cửa", "Aperto" }, { "Thuyết minh tự động", "Narrazione automatica" },
+            { "Nội dung thuyết minh", "Contenuto della narrazione" }, { "Dừng Audio", "Ferma Audio" }
         };
 
         private readonly Dictionary<string, string> _portugueseResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -289,10 +423,25 @@ namespace VinhKhanhTour.Services
             { "Đang tìm kiếm vệ tinh GPS...", "Buscando satélites GPS..." }, { "BẠN ĐANG Ở GẦN", "VOCÊ ESTÁ PERTO" },
             { "Chọn một điểm trên map", "Selecione um ponto" }, { "Cách quán gần nhất", "Lugar mais próximo" },
             { "Chưa tìm thấy quán ốc", "Nenhuma banca" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "Sobre" }, { "Xem Thực Đơn", "Ver Menu" }, { "Chỉ Đường", "Rotas" },
             { "Giới thiệu về {0}", "Sobre {0}" }, { "Lỗi Audio", "Erro de Áudio" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Seu dispositivo não suporta TTS para este idioma." }, { "Đóng", "Fechar" }
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Seu dispositivo não suporta TTS para este idioma." }, { "Đóng", "Fechar" },
+            { "Thực Đơn", "Cardápio" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 Os preços são apenas para referência e podem mudar." },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ Atualizando cardápio..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "LOCAL SELECIONADO" },
+            { "Đang dò tìm...", "Buscando..." }, { "Đang theo dõi Radar GPS...", "Rastreando radar GPS..." },
+            { "CÀI ĐẶT CHUNG", "CONFIGURAÇÕES GERAIS" }, { "THÔNG TIN & HỖ TRỢ", "INFO E SUPORTO" },
+            { "Khách du lịch", "Turista" }, { "Đăng nhập để lưu địa điểm yêu thích", "Faça login para salvar lugares" },
+            { "Đăng Nhập / Đăng Ký", "Login / Registrar" }, { "Đăng Xuất", "Sair" },
+            { "Chào mừng trở lại!", "Bem-vindo de volta!" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "Faça login para explorar o Distrito 4." },
+            { "Email", "Email" }, { "Mật khẩu", "Senha" }, { "ĐĂNG NHẬP", "LOGIN" },
+            { "Chưa có tài khoản? Đăng ký mới", "Não tem uma conta? Registre-se" }, { "Tạo tài khoản mới", "Criar nova conta" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "Junte-se à comunidade gastronômica de Vinh Khanh." },
+            { "Họ và tên", "Nome completo" }, { "ĐĂNG KÝ NGAY", "REGISTRE-SE AGORA" },
+            { "Đã có tài khoản? Đăng nhập", "Já tem uma conta? Login" }, { "Chính sách bảo mật", "Política de Privacidade" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "Sobre o app Vinh Khanh Tour" }, { "Chạm để đổi", "Toque para mudar" },
+            { "Mặc định", "Padrão" }, { "Phiên bản 1.0.0", "Versão 1.0.0" },
+            { "Quay lại", "Voltar" }, { "Mở cửa", "Aberto" }, { "Thuyết minh tự động", "Narração Automática" },
+            { "Nội dung thuyết minh", "Conteúdo da Narração" }, { "Dừng Audio", "Parar Áudio" }
         };
 
         private readonly Dictionary<string, string> _hindiResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -311,10 +460,25 @@ namespace VinhKhanhTour.Services
             { "Đang tìm kiếm vệ tinh GPS...", "GPS उपग्रह खोज रहा है..." }, { "BẠN ĐANG Ở GẦN", "आप पास हैं" },
             { "Chọn một điểm trên map", "मानचित्र पर एक बिंदु चुनें" }, { "Cách quán gần nhất", "निकटतम स्थान" },
             { "Chưa tìm thấy quán ốc", "कोई स्टॉल नहीं मिला" },
-            // TỪ VỰNG MỚI
             { "Giới thiệu", "के बारे में" }, { "Xem Thực Đơn", "मेनू देखें" }, { "Chỉ Đường", "दिशा-निर्देश" },
             { "Giới thiệu về {0}", "{0} के बारे में" }, { "Lỗi Audio", "ऑडियो त्रुटि" },
-            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "आपका उपकरण इस भाषा के लिए टीटीएस का समर्थन नहीं करता है।" }, { "Đóng", "बंद करें" }
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "आपका उपकरण इस भाषा के लिए टीटीएस का समर्थन नहीं करता है।" }, { "Đóng", "बंद करें" },
+            { "Thực Đơn", "मेनू" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 कीमतें केवल संदर्भ के लिए हैं और बदल सकती हैं।" },
+            { "🍽️ Đang cập nhật thực đơn...", "🍽️ मेनू अपडेट हो रहा है..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "चयनित स्थान" },
+            { "Đang dò tìm...", "खोज रहा है..." }, { "Đang theo dõi Radar GPS...", "जीपीएस रडार को ट्रैक किया जा रहा है..." },
+            { "CÀI ĐẶT CHUNG", "सामान्य सेटिंग्स" }, { "THÔNG TIN & HỖ TRỢ", "जानकारी और सहायता" },
+            { "Khách du lịch", "पर्यटक" }, { "Đăng nhập để lưu địa điểm yêu thích", "पसंदीदा स्थानों को सहेजने के लिए लॉगिन करें" },
+            { "Đăng Nhập / Đăng Ký", "लॉगिन / रजिस्टर" }, { "Đăng Xuất", "लॉगआउट" },
+            { "Chào mừng trở lại!", "वापसी पर स्वागत है!" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "जिला 4 का अन्वेषण जारी रखने के लिए लॉगिन करें।" },
+            { "Email", "ईमेल" }, { "Mật khẩu", "पासवर्ड" }, { "ĐĂNG NHẬP", "लॉगिन" },
+            { "Chưa có tài khoản? Đăng ký mới", "खाता नहीं है? रजिस्टर करें" }, { "Tạo tài khoản mới", "नया खाता बनाएँ" },
+            { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "विन्ह खान खाद्य समुदाय में शामिल हों।" },
+            { "Họ và tên", "पूरा नाम" }, { "ĐĂNG KÝ NGAY", "अभी रजिस्टर करें" },
+            { "Đã có tài khoản? Đăng nhập", "क्या आपके पास पहले से खाता है? लॉगिन करें" }, { "Chính sách bảo mật", "गोपनीयता नीति" },
+            { "Về ứng dụng Vĩnh Khánh Tour", "विन्ह खान टूर ऐप के बारे में" }, { "Chạm để đổi", "बदलने के लिए टैप करें" },
+            { "Mặc định", "डिफ़ॉल्ट" }, { "Phiên bản 1.0.0", "संस्करण 1.0.0" },
+            { "Quay lại", "वापस" }, { "Mở cửa", "खुला है" }, { "Thuyết minh tự động", "ऑटो नरेशन" },
+            { "Nội dung thuyết minh", "कथा सामग्री" }, { "Dừng Audio", "ऑडियो रोकें" }
         };
     }
 }

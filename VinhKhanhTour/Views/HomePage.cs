@@ -121,36 +121,12 @@ namespace VinhKhanhTour
                 var bgImage = new Image { Aspect = Aspect.AspectFill };
                 bgImage.SetBinding(Image.SourceProperty, "ImageUrl");
                 cardGrid.Children.Add(new Border { StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 }, Content = bgImage, Stroke = Colors.Transparent });
+                cardGrid.Children.Add(new BoxView { BackgroundColor = Color.FromArgb("#30000000") });
 
-                // Lớp phủ tối nhẹ toàn bộ thẻ (để làm nổi bật các nút bấm hơn)
-                cardGrid.Children.Add(new BoxView { BackgroundColor = Color.FromArgb("#20000000") });
-
-                // ====================================================================
-                // PHẦN THÊM SHAPE LÓT NỀN CHỮ Ở GÓC TRÊN BÊN TRÁI
-                // ====================================================================
-                var titleLabel = new Label
-                {
-                    TextColor = Colors.White,
-                    FontAttributes = FontAttributes.Bold,
-                    FontSize = 18,
-                    VerticalOptions = LayoutOptions.Center
-                };
+                // Tên quán được đưa lên góc trên cùng bên trái
+                var titleLabel = new Label { TextColor = Colors.White, FontAttributes = FontAttributes.Bold, FontSize = 18, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Start, Margin = new Thickness(15, 15, 0, 0) };
                 titleLabel.SetBinding(Label.TextProperty, "Name");
-
-                var textBackgroundBorder = new Border
-                {
-                    BackgroundColor = Color.FromArgb("#99000000"), // Nền đen trong suốt 60%
-                    StrokeThickness = 0,
-                    StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 }, // Bo góc nền
-                    Padding = new Thickness(12, 6, 12, 6), // Khoảng cách từ viền đến chữ
-                    HorizontalOptions = LayoutOptions.Start,
-                    VerticalOptions = LayoutOptions.Start,
-                    Margin = new Thickness(15, 15, 0, 0),
-                    Content = titleLabel
-                };
-
-                // Đưa khối nền chữ vào Grid
-                cardGrid.Children.Add(textBackgroundBorder);
+                cardGrid.Children.Add(titleLabel);
 
                 // 2. NÚT PLAY CHUYỂN SANG SECONDARY BUTTON (Viền cam, chữ cam, nền trắng)
                 var playBtn = new Button

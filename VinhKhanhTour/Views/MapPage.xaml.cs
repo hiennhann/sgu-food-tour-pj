@@ -217,6 +217,9 @@ namespace VinhKhanhTour.Views
 
             string url = e.Url.ToLower();
 
+            // ===============================================
+            // KHI CLICK VÀO 1 QUÁN ỐC TRÊN BẢN ĐỒ
+            // ===============================================
             if (url.StartsWith("tappin://"))
             {
                 e.Cancel = true;
@@ -231,9 +234,17 @@ namespace VinhKhanhTour.Views
                     {
                         MainThread.BeginInvokeOnMainThread(async () =>
                         {
-                            CardStatusLabel.Text = "ĐỊA ĐIỂM ĐÃ CHỌN";
+                            // Dùng SetBinding để thẻ này lập tức dịch lại khi thay đổi ngôn ngữ
+                            CardStatusLabel.RemoveBinding(Label.TextProperty);
+                            CardStatusLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "ĐỊA ĐIỂM ĐÃ CHỌN"));
+
+                            // Tên quán thì giữ nguyên không dịch
+                            PoiNameLabel.RemoveBinding(Label.TextProperty);
                             PoiNameLabel.Text = selectedPoi.Name;
-                            DistanceLabel.Text = "Chọn Nghe Audio hoặc Chỉ đường";
+
+                            // Gắn binding cho mô tả chức năng
+                            DistanceLabel.RemoveBinding(Label.TextProperty);
+                            DistanceLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Chọn Nghe Audio hoặc Chỉ đường"));
 
                             // Tắt audio đang phát và đổi giao diện nút
                             _isPlaying = false;
@@ -250,6 +261,9 @@ namespace VinhKhanhTour.Views
                     }
                 }
             }
+            // ===============================================
+            // KHI CLICK RA KHOẢNG TRỐNG (HỦY CHỌN QUÁN)
+            // ===============================================
             else if (url.StartsWith("mapclick://"))
             {
                 e.Cancel = true;
@@ -257,14 +271,29 @@ namespace VinhKhanhTour.Views
 
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    CardStatusLabel.Text = "BẠN ĐANG Ở GẦN";
-                    PoiNameLabel.Text = _nearestPoi?.Name ?? "Đang dò tìm...";
-                    DistanceLabel.Text = "Đang theo dõi Radar GPS...";
+                    CardStatusLabel.RemoveBinding(Label.TextProperty);
+                    CardStatusLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "BẠN ĐANG Ở GẦN"));
+
+                    PoiNameLabel.RemoveBinding(Label.TextProperty);
+                    if (_nearestPoi != null)
+                    {
+                        PoiNameLabel.Text = _nearestPoi.Name;
+                    }
+                    else
+                    {
+                        PoiNameLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Đang dò tìm..."));
+                    }
+
+                    DistanceLabel.RemoveBinding(Label.TextProperty);
+                    DistanceLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Đang theo dõi Radar GPS..."));
 
                     try { await BanDoWebView.EvaluateJavaScriptAsync($"updateMarkerState(0, 'normal');"); }
                     catch { }
                 });
             }
+            // ===============================================
+            // KHI BẤM NÚT MỞ GOOGLE MAP TỪ POPUP
+            // ===============================================
             else if (url.StartsWith("openmap://"))
             {
                 e.Cancel = true;
@@ -278,7 +307,7 @@ namespace VinhKhanhTour.Views
                         var location = new Location(lat, lng);
                         var options = new MapLaunchOptions { NavigationMode = NavigationMode.Driving };
                         try { await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options); }
-                        catch { await DisplayAlert("Lỗi", "Không thể mở bản đồ", "OK"); }
+                        catch { await DisplayAlert("Lỗi", LocalizationResourceManager.Instance["Không thể mở ứng dụng bản đồ."], "OK"); }
                     });
                 }
             }
@@ -299,7 +328,7 @@ namespace VinhKhanhTour.Views
             }
             else
             {
-                await DisplayAlert("Thông báo", "Vui lòng chạm chọn một quán trên bản đồ, hoặc đợi Radar quét vị trí của bạn.", "OK");
+                await DisplayAlert("Thông báo", LocalizationResourceManager.Instance["Chọn một điểm trên map"] ?? "Vui lòng chạm chọn một quán trên bản đồ.", "OK");
             }
         }
 
@@ -348,6 +377,9 @@ namespace VinhKhanhTour.Views
             catch { }
         }
 
+        // ========================================================
+        // SỰ KIỆN QUÉT RADAR GPS CHẠY NGẦM
+        // ========================================================
         private void Geolocation_LocationChanged(object sender, GeolocationLocationChangedEventArgs e)
         {
             _currentUserLocation = e.Location;
@@ -391,9 +423,21 @@ namespace VinhKhanhTour.Views
 
                         if (_selectedPoiId == 0)
                         {
-                            CardStatusLabel.Text = "BẠN ĐANG Ở GẦN";
-                            if (DistanceLabel != null) DistanceLabel.Text = $"{Services.LocalizationResourceManager.Instance["Cách quán gần nhất"] ?? "Cách quán gần nhất"}: {nearestDistance:F0}m";
-                            if (PoiNameLabel != null) PoiNameLabel.Text = nearestTriggeredPoi != null ? nearestTriggeredPoi.Name : (closestPoi?.Name ?? "Chưa tìm thấy");
+                            CardStatusLabel.RemoveBinding(Label.TextProperty);
+                            CardStatusLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "BẠN ĐANG Ở GẦN"));
+
+                            if (DistanceLabel != null)
+                            {
+                                DistanceLabel.RemoveBinding(Label.TextProperty);
+                                DistanceLabel.Text = $"{Services.LocalizationResourceManager.Instance["Cách quán gần nhất"] ?? "Cách quán gần nhất"}: {nearestDistance:F0}m";
+                            }
+
+                            if (PoiNameLabel != null)
+                            {
+                                PoiNameLabel.RemoveBinding(Label.TextProperty);
+                                string notFoundText = Services.LocalizationResourceManager.Instance["Chưa tìm thấy quán ốc"] ?? "Chưa tìm thấy quán ốc";
+                                PoiNameLabel.Text = nearestTriggeredPoi != null ? nearestTriggeredPoi.Name : (closestPoi?.Name ?? notFoundText);
+                            }
                         }
 
                         if (nearestTriggeredPoi != null)
@@ -434,16 +478,16 @@ namespace VinhKhanhTour.Views
                     var options = new MapLaunchOptions { Name = target.Name, NavigationMode = NavigationMode.Driving };
                     await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options);
                 }
-                catch { await DisplayAlert("Lỗi", "Không thể mở ứng dụng bản đồ.", "OK"); }
+                catch { await DisplayAlert("Lỗi", LocalizationResourceManager.Instance["Không thể mở ứng dụng bản đồ."] ?? "Lỗi", "OK"); }
             }
             else
             {
-                await DisplayAlert("Chú ý", "Vui lòng chạm vào một quán trên bản đồ trước khi bấm Chỉ đường!", "OK");
+                await DisplayAlert("Chú ý", LocalizationResourceManager.Instance["Chọn một điểm trên map"] ?? "Vui lòng chọn 1 điểm", "OK");
             }
         }
 
         // ========================================================
-        // LOGIC CHẠY AUDIO KHI BẤM NÚT TRÊN THẺ (ĐÃ CẬP NHẬT TRY...FINALLY)
+        // LOGIC CHẠY AUDIO KHI BẤM NÚT TRÊN THẺ 
         // ========================================================
         private async void OnPlayPauseClicked(object sender, EventArgs e)
         {
@@ -451,7 +495,7 @@ namespace VinhKhanhTour.Views
 
             if (targetPoi == null)
             {
-                await DisplayAlert("Thông báo", "Vui lòng chọn một quán trên bản đồ để nghe.", "OK");
+                await DisplayAlert("Thông báo", LocalizationResourceManager.Instance["Chọn một điểm trên map"] ?? "Vui lòng chọn 1 điểm", "OK");
                 return;
             }
 
@@ -503,7 +547,7 @@ namespace VinhKhanhTour.Views
         }
 
         // ========================================================
-        // TẠO TAB BAR BẰNG CODE (ĐẢM BẢO KHÔNG BỊ MẤT NÚT)
+        // TẠO TAB BAR BẰNG CODE 
         // ========================================================
         private Border CreateTabBar()
         {
@@ -570,7 +614,6 @@ namespace VinhKhanhTour.Views
             ));
             layout.Children.Add(textLabel);
 
-            // Chỉ thêm tính năng bấm chuyển trang nếu có gán Action (Nút Map đang được chọn nên bỏ qua)
             if (action != null)
             {
                 layout.GestureRecognizers.Add(new TapGestureRecognizer { Command = new Command(action) });
