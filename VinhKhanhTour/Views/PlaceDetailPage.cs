@@ -29,19 +29,32 @@ namespace VinhKhanhTour.Views
             var mainStack = new VerticalStackLayout { Spacing = 0 };
 
             // --- ẢNH COVER TRÀN VIỀN ---
-            var coverGrid = new Grid { HeightRequest = 340 }; // Tăng nhẹ chiều cao để ảnh nhìn thoáng hơn
+            var coverGrid = new Grid { HeightRequest = 340 };
 
             var coverImage = new Image { Aspect = Aspect.AspectFill };
             coverImage.SetBinding(Image.SourceProperty, "ImageUrl");
             coverGrid.Children.Add(coverImage);
 
-            // Hiệu ứng Gradient mờ dần từ trên xuống để làm nổi bật nút Back
-            coverGrid.Children.Add(new BoxView
+            // =====================================================================
+            // ĐÃ SỬA: Hiệu ứng Gradient mờ dần cực mượt, không bị cắt ngang hình
+            // =====================================================================
+            var gradientOverlay = new Grid
             {
-                BackgroundColor = Color.FromArgb("#60000000"), // Tăng độ tối lên 1 chút để chữ Back dễ đọc hơn
+                HeightRequest = 140, // Độ dài vùng bóng đổ (có thể tăng giảm tùy ý)
                 VerticalOptions = LayoutOptions.Start,
-                HeightRequest = 120
-            });
+                HorizontalOptions = LayoutOptions.Fill,
+                Background = new LinearGradientBrush
+                {
+                    StartPoint = new Point(0, 0), // Bắt đầu từ mép trên
+                    EndPoint = new Point(0, 1),   // Kéo xuống dưới
+                    GradientStops = new GradientStopCollection
+                    {
+                        new GradientStop { Color = Color.FromArgb("#90000000"), Offset = 0.0f }, // Đen đậm ở sát mép trên
+                        new GradientStop { Color = Colors.Transparent, Offset = 1.0f }           // Trong suốt hoàn toàn ở phía dưới
+                    }
+                }
+            };
+            coverGrid.Children.Add(gradientOverlay);
 
             // NÚT BACK (Chuyển sang dạng hình viên thuốc chứa chữ "Back")
             var backBtn = new Button

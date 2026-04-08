@@ -52,7 +52,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.702081,
                     Radius = 60,
                     Priority = 1,
-                    ImageUrl = "hauhap.png"
+                    ImageUrl = "oc_phat_a.png"
                 },
 
 
@@ -67,7 +67,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.702354,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "octhao1.png"
                 },
 
                 new Poi
@@ -80,7 +80,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.702463,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "hkmg.png"
                 },
 
                 new Poi
@@ -93,7 +93,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.702506,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "tpq.png"
                 },
 
                 new Poi
@@ -106,7 +106,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.702681,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "ov.png"
                 },
 
                 new Poi
@@ -119,7 +119,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.703024,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "htd.png"
                 },
 
                 new Poi
@@ -132,7 +132,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.703257,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "ooa.png"
                 },
 
                 new Poi
@@ -145,7 +145,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.703500,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "lntv.png"
                 },
 
                 new Poi
@@ -158,7 +158,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.703600,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "od.png"
                 },
 
                 new Poi
@@ -171,20 +171,20 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.702200,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "mls.png"
                 },
 
                 new Poi
                 {
                     Id = 15,
-                    Name = "Ốc Sáu Giàu",
-                    DisplayName = "Ốc Sáu Giàu",
+                    Name = "Ốc Anh Sáu",
+                    DisplayName = "Ốc Anh Sáu",
                     DisplayTtsScript = "Quán ốc bình dân với thực đơn phong phú, được nhiều người dân địa phương yêu thích.",
                     Latitude = 10.761200,
                     Longitude = 106.702900,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "oas.png"
                 },
 
                 new Poi
@@ -197,7 +197,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.703800,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "bccd.png"
                 },
 
                 new Poi
@@ -210,7 +210,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.701800,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "ssk.png"
                 },
 
                 new Poi
@@ -223,7 +223,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.703150,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "cht.png"
                 },
 
                 new Poi
@@ -236,7 +236,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.701500,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "bntt.png"
                 },
 
                 new Poi
@@ -249,7 +249,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.702450,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "plct.png"
                 },
 
                 new Poi
@@ -262,7 +262,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.702700,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "sch.png"
                 },
 
                 new Poi
@@ -275,7 +275,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.703350,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "bbhcg.png"
                 },
 
                 new Poi
@@ -288,7 +288,7 @@ namespace VinhKhanhTour.Models
                     Longitude = 106.702570,
                     Radius = 50,
                     Priority = 1,
-                    ImageUrl = "featured_food_2.jpg"
+                    ImageUrl = "balam.png"
                 }
 
 
