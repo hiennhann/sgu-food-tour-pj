@@ -1,0 +1,106 @@
+﻿@model VinhKhanhTour.CMS.Models.Poi
+
+@{
+    ViewData["Title"] = "Chỉnh sửa POI";
+}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<div class="d-flex align-items-center mb-4">
+    <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+    <h3 class="fw-bold text-dark mb-0">Cập nhật: @Model.Name</h3>
+</div>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ImageUrl" /> <div class="row">
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0 h-100" style="border-radius: 10px;">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3 text-warning"><i class="bi bi-pencil-square me-2"></i>Thông tin cập nhật</h5>
+                    
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label text-muted fw-bold small">Tên Quán</label>
+                    <input asp-for="Name" class="form-control bg-light border-0" required />
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label asp-for="Latitude" class="form-label text-muted fw-bold small">Vĩ độ (Lat)</label>
+                        <input asp-for="Latitude" id="latInput" class="form-control bg-light border-0 text-primary fw-bold" readonly />
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="Longitude" class="form-label text-muted fw-bold small">Kinh độ (Lng)</label>
+                        <input asp-for="Longitude" id="lngInput" class="form-control bg-light border-0 text-primary fw-bold" readonly />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted fw-bold small">Trạng thái hiển thị</label>
+                    <select asp-for="IsActive" class="form-select bg-light border-0">
+                        <option value="true">🟢 Đang hoạt động</option>
+                        <option value="false">🔴 Tạm ẩn</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted fw-bold small">Thay đổi Ảnh Đại Diện (Bỏ trống nếu giữ nguyên)</label>
+                    <input type="file" name="ImageFile" class="form-control bg-light border-0" accept="image/*" />
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div class="mt-2 text-muted small">Ảnh hiện tại: @Model.ImageUrl</div>
+                    }
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="DisplayTtsScript" class="form-label text-muted fw-bold small">Kịch bản Thuyết minh</label>
+                    <textarea asp-for="DisplayTtsScript" class="form-control bg-light border-0" rows="4"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-warning w-100 fw-bold py-2 shadow-sm text-dark" style="border-radius: 8px;">
+                    <i class="bi bi-save me-1"></i> Lưu Thay Đổi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0 h-100" style="border-radius: 10px; overflow: hidden;">
+            <div id="poiMap" style="height: 100%; min-height: 600px; width: 100%;"></div>
+        </div>
+    </div>
+</div>
+</form>
+
+<script>
+    // Dùng Razor để lấy toạ độ hiện tại của quán từ Database truyền xuống Javascript
+    // Dùng Replace để tránh lỗi dấu phẩy (,) thập phân ở một số máy
+    var currentLat = parseFloat('@Model.Latitude'.replace(',', '.'));
+    var currentLng = parseFloat('@Model.Longitude'.replace(',', '.'));
+
+    var map = L.map('poiMap').setView([currentLat, currentLng], 18);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    var marker = L.marker([currentLat, currentLng], { draggable: true }).addTo(map);
+
+    map.on('click', function (e) {
+    var lat = e.latlng.lat.toFixed(6);
+    var lng = e.latlng.lng.toFixed(6);
+    marker.setLatLng(e.latlng);
+    updateInputs(lat, lng);
+    });
+
+    marker.on('dragend', function (e) {
+    var position = marker.getLatLng();
+    updateInputs(position.lat.toFixed(6), position.lng.toFixed(6));
+    });
+
+    function updateInputs(lat, lng) {
+    document.getElementById('latInput').value = lat;
+    document.getElementById('lngInput').value = lng;
+    }
+</script>

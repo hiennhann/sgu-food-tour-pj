@@ -35,12 +35,43 @@
                     {
                         <tr>
                             <td class="text-muted fw-bold">#@item.Id</td>
-                            <td class="fw-bold text-dark">@item.Name</td>
-                            <td><span class="badge bg-light text-primary border">@item.ImageUrl</span></td>
-                            <td class="text-muted">@item.Latitude, @item.Longitude</td>
+                            <td class="fw-bold text-dark">
+                                @item.Name
+                                <br />
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success mt-1" style="font-size: 0.7rem;">Đang hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary mt-1" style="font-size: 0.7rem;">Đã ẩn</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="~/images/@item.ImageUrl" class="rounded border" style="width: 60px; height: 60px; object-fit: cover;" alt="Image" />
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-muted border">No Image</span>
+                                }
+                            </td>
+                            <td class="text-muted small">@item.Latitude <br /> @item.Longitude</td>
                             <td class="text-end">
-                                <button class="btn btn-sm btn-light text-warning shadow-sm me-1"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-sm btn-light text-danger shadow-sm"><i class="bi bi-trash"></i></button>
+                               
+
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-light text-info shadow-sm me-1" title="Xem chi tiết">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light text-warning shadow-sm me-1" title="Chỉnh sửa">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light text-danger shadow-sm" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </a>
                             </td>
                         </tr>
                     }
@@ -49,3 +80,26 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius: 15px; border: none;">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center pb-4">
+                <h5 class="fw-bold mb-1" id="qrPoiName">Tên Quán</h5>
+                <p class="text-muted small mb-3">Mã dán tại bàn</p>
+                <div class="bg-light p-3 rounded-3 d-inline-block mb-3 border">
+                    <img id="qrImage" src="" alt="QR Code" class="img-fluid" style="width: 150px; height: 150px;" />
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="downloadQR()">
+                        <i class="bi bi-download me-1"></i> Tải ảnh In
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

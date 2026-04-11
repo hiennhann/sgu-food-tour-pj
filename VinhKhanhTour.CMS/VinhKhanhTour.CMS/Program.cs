@@ -14,7 +14,12 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate(); // Lệnh tự động áp dụng các bảng vào Database
+
+    // 1. TẠM THỜI XÓA DATABASE CŨ BỊ LỆCH PHA
+    db.Database.EnsureDeleted();
+
+    // 2. TẠO LẠI DATABASE MỚI THEO ĐÚNG CẤU TRÚC CODE HIỆN TẠI (Không cần dùng Migrate nữa)
+    db.Database.EnsureCreated();
 }
 
 // Configure the HTTP request pipeline.

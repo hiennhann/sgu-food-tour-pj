@@ -10,10 +10,13 @@ namespace VinhKhanhTour.CMS.Models
         [Required]
         public string TourName { get; set; }
 
+        [Required]
         public string Description { get; set; }
 
+        [Required]
         public string PoiIds { get; set; }
 
+        [Required]
         public string CoverImageUrl { get; set; }
     }
 }

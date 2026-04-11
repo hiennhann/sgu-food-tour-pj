@@ -4,60 +4,111 @@
     ViewData["Title"] = "Add New POI";
 }
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <div class="d-flex align-items-center mb-4">
     <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;">
         <i class="bi bi-arrow-left"></i> Back
     </a>
-    <h3 class="fw-bold text-dark mb-0">Add New POI</h3>
+    <h3 class="fw-bold text-dark mb-0">Thêm Quán Mới (Interactive Map)</h3>
 </div>
 
-<div class="card shadow-sm border-0" style="border-radius: 10px;">
-    <div class="card-body p-4">
-        <form asp-action="Create" method="post">
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label asp-for="Name" class="form-label text-muted fw-bold">Tên Quán (Bắt buộc)</label>
-                    <input asp-for="Name" class="form-control bg-light border-0" placeholder="Nhập tên quán..." required />
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                    <label asp-for="DisplayName" class="form-label text-muted fw-bold">Tên Hiển Thị (Mở rộng)</label>
-                    <input asp-for="DisplayName" class="form-control bg-light border-0" />
-                </div>
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="alert alert-danger" style="border-radius: 8px;"></div>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 10px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3 text-primary"><i class="bi bi-info-circle me-2"></i>Thông tin cơ bản</h5>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label text-muted fw-bold small">Tên Quán (Bắt buộc)</label>
+                        <input asp-for="Name" class="form-control bg-light border-0" placeholder="Nhập tên quán..." required />
+                    </div>
 
-                <div class="col-md-4 mb-3">
-                    <label asp-for="Latitude" class="form-label text-muted fw-bold">Vĩ độ (Lat)</label>
-                    <input asp-for="Latitude" class="form-control bg-light border-0" value="10.761622" />
-                </div>
+                    <div class="mb-3">
+                        <label asp-for="DisplayName" class="form-label text-muted fw-bold small">Tên Hiển Thị (Mở rộng)</label>
+                        <input asp-for="DisplayName" class="form-control bg-light border-0" />
+                    </div>
 
-                <div class="col-md-4 mb-3">
-                    <label asp-for="Longitude" class="form-label text-muted fw-bold">Kinh độ (Lng)</label>
-                    <input asp-for="Longitude" class="form-control bg-light border-0" value="106.661172" />
-                </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label asp-for="Latitude" class="form-label text-muted fw-bold small">Vĩ độ (Lat)</label>
+                            <input asp-for="Latitude" id="latInput" class="form-control bg-light border-0 text-primary fw-bold" readonly value="10.761622" />
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Longitude" class="form-label text-muted fw-bold small">Kinh độ (Lng)</label>
+                            <input asp-for="Longitude" id="lngInput" class="form-control bg-light border-0 text-primary fw-bold" readonly value="106.661172" />
+                        </div>
+                        <small class="text-muted mt-1">💡 Click vào bản đồ bên phải để tự động lấy tọa độ.</small>
+                    </div>
 
-                <div class="col-md-4 mb-3">
-                    <label asp-for="Priority" class="form-label text-muted fw-bold">Độ ưu tiên</label>
-                    <input asp-for="Priority" type="number" class="form-control bg-light border-0" value="1" />
-                </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label asp-for="Priority" class="form-label text-muted fw-bold small">Độ ưu tiên</label>
+                            <input asp-for="Priority" type="number" class="form-control bg-light border-0" value="1" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-muted fw-bold small">Trạng thái</label>
+                            <select asp-for="IsActive" class="form-select bg-light border-0">
+                                <option value="true">🟢 Đang hoạt động</option>
+                                <option value="false">🔴 Tạm ẩn</option>
+                            </select>
+                        </div>
+                    </div>
 
-                <div class="col-12 mb-3">
-                    <label asp-for="ImageUrl" class="form-label text-muted fw-bold">Tên file hình ảnh</label>
-                    <input asp-for="ImageUrl" class="form-control bg-light border-0" placeholder="Ví dụ: oc_oanh.jpg" />
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted fw-bold small">Chọn Hình Ảnh Đại Diện</label>
+                        <input type="file" name="ImageFile" class="form-control bg-light border-0" accept="image/*" />
+                    </div>
 
-                <div class="col-12 mb-4">
-                    <label asp-for="DisplayTtsScript" class="form-label text-muted fw-bold">Kịch bản Thuyết minh (Dành cho Audio)</label>
-                    <textarea asp-for="DisplayTtsScript" class="form-control bg-light border-0" rows="3" placeholder="Nhập nội dung giới thiệu quán để máy đọc..."></textarea>
+                    <div class="mb-4">
+                        <label asp-for="DisplayTtsScript" class="form-label text-muted fw-bold small">Kịch bản Thuyết minh</label>
+                        <textarea asp-for="DisplayTtsScript" class="form-control bg-light border-0" rows="3" placeholder="Nhập nội dung giới thiệu quán..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2 shadow-sm" style="border-radius: 8px;">
+                        <i class="bi bi-save me-1"></i> Save POI
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <hr class="text-muted my-4" />
-
-            <div class="d-flex justify-content-end gap-2">
-                <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm" style="border-radius: 8px;">
-                    <i class="bi bi-save me-1"></i> Save POI
-                </button>
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 10px; overflow: hidden;">
+                <div id="poiMap" style="height: 100%; min-height: 600px; width: 100%;"></div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
+
+<script>
+    var defaultLat = 10.761622;
+    var defaultLng = 106.661172;
+
+    var map = L.map('poiMap').setView([defaultLat, defaultLng], 16);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    var marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+
+    map.on('click', function (e) {
+    var lat = e.latlng.lat.toFixed(6);
+    var lng = e.latlng.lng.toFixed(6);
+    marker.setLatLng(e.latlng);
+    updateInputs(lat, lng);
+    });
+
+    marker.on('dragend', function (e) {
+    var position = marker.getLatLng();
+    updateInputs(position.lat.toFixed(6), position.lng.toFixed(6));
+    });
+
+    function updateInputs(lat, lng) {
+    document.getElementById('latInput').value = lat;
+    document.getElementById('lngInput').value = lng;
+    }
+</script>

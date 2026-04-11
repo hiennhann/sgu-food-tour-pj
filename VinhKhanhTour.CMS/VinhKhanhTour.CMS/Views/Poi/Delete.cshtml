@@ -1,0 +1,35 @@
+﻿@model VinhKhanhTour.CMS.Models.Poi
+
+@{
+    ViewData["Title"] = "Xác nhận xóa";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card border-danger shadow" style="border-radius: 10px;">
+            <div class="card-header bg-danger text-white fw-bold text-center py-3" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                <i class="bi bi-exclamation-triangle-fill fs-4 d-block mb-1"></i>
+                CẢNH BÁO XÓA DỮ LIỆU
+            </div>
+            <div class="card-body p-4 text-center">
+                <h5 class="mb-3">Bạn có chắc chắn muốn xóa quán ăn này khỏi hệ thống?</h5>
+                <h3 class="text-danger fw-bold mb-4">@Model.Name</h3>
+                
+                <div class="alert alert-warning small text-start">
+                    <strong>Lưu ý:</strong> Hành động này không thể hoàn tác. Các Tour đang sử dụng quán này có thể bị lỗi trên App của người dùng. Khuyên dùng chức năng <strong>"Tạm ẩn"</strong> ở mục Chỉnh sửa thay vì Xóa vĩnh viễn.
+                </div>
+
+                <form asp-action="Delete" method="post" class="mt-4 d-flex justify-content-center gap-3">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <a asp-action="Index" class="btn btn-light fw-bold px-4" style="border-radius: 8px;">
+                        Hủy, quay lại
+                    </a>
+                    <button type="submit" class="btn btn-danger fw-bold px-4 shadow-sm" style="border-radius: 8px;">
+                        <i class="bi bi-trash me-1"></i> Vâng, Xóa Vĩnh Viễn
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
