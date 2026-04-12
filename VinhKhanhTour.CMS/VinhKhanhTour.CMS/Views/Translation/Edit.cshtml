@@ -1,21 +1,21 @@
 ﻿@model VinhKhanhTour.CMS.Models.Translation
 @{
-    ViewData["Title"] = "Add Translation";
+    ViewData["Title"] = "Edit Translation";
 }
 
 <div class="d-flex align-items-center mb-4">
     <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;"><i class="bi bi-arrow-left"></i> Back</a>
-    <h3 class="fw-bold text-dark mb-0">Add New Translation</h3>
+    <h3 class="fw-bold text-dark mb-0">Cập Nhật Bản Dịch</h3>
 </div>
 
 <div class="card shadow-sm border-0" style="border-radius: 10px;">
     <div class="card-body p-4">
-        <form asp-action="Create" method="post">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label asp-for="LanguageCode" class="form-label text-muted fw-bold">Mã Ngôn Ngữ</label>
                     <select asp-for="LanguageCode" class="form-select bg-light border-0" required>
-                        <option value="">-- Chọn --</option>
                         <option value="vi-VN">Tiếng Việt (vi-VN)</option>
                         <option value="en-US">English (en-US)</option>
                         <option value="zh-CN">Chinese (zh-CN)</option>
@@ -25,17 +25,16 @@
                 </div>
                 <div class="col-md-8 mb-3">
                     <label asp-for="KeyName" class="form-label text-muted fw-bold">Từ Khóa (Key)</label>
-                    <input asp-for="KeyName" class="form-control bg-light border-0" placeholder="vd: welcome_message" required />
+                    <input asp-for="KeyName" class="form-control bg-light border-0" required />
                 </div>
                 <div class="col-12 mb-4">
                     <label asp-for="TranslatedValue" class="form-label text-muted fw-bold">Nội Dung Đã Dịch (Value)</label>
-                    <textarea asp-for="TranslatedValue" class="form-control bg-light border-0" rows="3" required></textarea>
+                    <textarea asp-for="TranslatedValue" class="form-control bg-light border-0" rows="4" required></textarea>
                 </div>
             </div>
-            <hr class="text-muted my-4" />
             <div class="d-flex justify-content-end gap-2">
-                <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm" style="border-radius: 8px;">
-                    <i class="bi bi-save me-1"></i> Save Data
+                <button type="submit" class="btn btn-warning px-4 fw-bold shadow-sm" style="border-radius: 8px;">
+                    <i class="bi bi-save me-1"></i> Lưu Thay Đổi
                 </button>
             </div>
         </form>

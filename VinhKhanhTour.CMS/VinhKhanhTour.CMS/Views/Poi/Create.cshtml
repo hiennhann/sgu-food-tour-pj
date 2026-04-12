@@ -31,6 +31,21 @@
                         <label asp-for="DisplayName" class="form-label text-muted fw-bold small">Tên Hiển Thị (Mở rộng)</label>
                         <input asp-for="DisplayName" class="form-control bg-light border-0" />
                     </div>
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label text-muted fw-bold small">Địa chỉ quán (Bắt buộc)</label>
+                        <input asp-for="Address" class="form-control bg-light border-0" placeholder="VD: 40 Vĩnh Khánh, Phường 8, Quận 4..." required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Category" class="form-label text-muted fw-bold small">Phân loại quán (Danh mục)</label>
+                        <select asp-for="Category" class="form-select bg-light border-0">
+                            <option value="Quán Ốc">Quán Ốc</option>
+                            <option value="Hải Sản">Hải Sản</option>
+                            <option value="Ăn Vặt / Lẩu">Ăn Vặt / Lẩu</option>
+                            <option value="Đồ Uống / Trà Sữa">Đồ Uống / Trà Sữa</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
 
                     <div class="row mb-3">
                         <div class="col-6">

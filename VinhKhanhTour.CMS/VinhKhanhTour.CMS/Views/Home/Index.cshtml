@@ -10,7 +10,7 @@
     .stat-card.blue { border-bottom-color: #3498db; }
     .stat-card.orange { border-bottom-color: #f39c12; }
     .stat-card.purple { border-bottom-color: #9b59b6; }
-    .stat-card .icon-box { background: #f8f9fa; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .stat-card .icon-box { background: #f8f9fa; width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
     .green .icon-box { color: #2ecc71; background: #eafaf1; }
     .blue .icon-box { color: #3498db; background: #ebf5fb; }
     .orange .icon-box { color: #f39c12; background: #fef5e7; }
@@ -19,74 +19,31 @@
 
 <div class="row">
     <div class="col-md-3">
-        <div class="stat-card green">
-            <div><p class="text-muted mb-1 fw-bold">Total Tours:</p><h2 class="fw-bold mb-0">150</h2></div>
+        <div class="stat-card green shadow-sm">
+            <div><p class="text-muted mb-1 fw-bold">Tổng số Tour</p><h2 class="fw-bold mb-0">@ViewBag.TotalTours</h2></div>
             <div class="icon-box"><i class="bi bi-map"></i></div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card blue">
-            <div><p class="text-muted mb-1 fw-bold">Points of Interest:</p><h2 class="fw-bold mb-0">320</h2></div>
+        <div class="stat-card blue shadow-sm">
+            <div><p class="text-muted mb-1 fw-bold">Tổng Quán Ăn (POI)</p><h2 class="fw-bold mb-0">@ViewBag.TotalPois</h2></div>
             <div class="icon-box"><i class="bi bi-geo-alt"></i></div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card orange">
-            <div><p class="text-muted mb-1 fw-bold">Audio Guides:</p><h2 class="fw-bold mb-0">45</h2></div>
+        <div class="stat-card orange shadow-sm">
+            <div><p class="text-muted mb-1 fw-bold">File Âm Thanh</p><h2 class="fw-bold mb-0">@ViewBag.TotalAudios</h2></div>
             <div class="icon-box"><i class="bi bi-headphones"></i></div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card purple">
-            <div><p class="text-muted mb-1 fw-bold">Translation Status:</p><h2 class="fw-bold mb-0">95% Completed</h2></div>
+        <div class="stat-card purple shadow-sm">
+            <div><p class="text-muted mb-1 fw-bold">Bản Dịch Đa Ngôn Ngữ</p><h2 class="fw-bold mb-0">@ViewBag.TotalTranslations</h2></div>
             <div class="icon-box"><i class="bi bi-translate"></i></div>
         </div>
     </div>
 </div>
 
-<div class="card shadow-sm border-0 mt-2" style="border-radius: 10px;">
-    <div class="card-body p-4">
-        <h5 class="fw-bold mb-4">Tour Bookings Trend (Last 30 Days)</h5>
-        <canvas id="trendChart" height="80"></canvas>
-    </div>
+<div class="alert alert-info border-0 shadow-sm mt-3" style="border-radius: 10px;">
+    <i class="bi bi-info-circle-fill me-2"></i> Chào mừng bạn quay trở lại. Dữ liệu trên hệ thống đang được đồng bộ theo thời gian thực.
 </div>
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ctx = document.getElementById('trendChart').getContext('2d');
-        
-        // Tạo gradient màu xanh lấp lánh cho biểu đồ
-        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(52, 152, 219, 0.4)');
-        gradient.addColorStop(1, 'rgba(52, 152, 219, 0.0)');
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23', '25', '27', '29'],
-                datasets: [{
-                    label: 'Bookings',
-                    data: [30, 40, 45, 60, 65, 70, 95, 80, 105, 100, 125, 110, 145, 148, 160, 185, 192, 190, 212, 220, 245],
-                    borderColor: '#3498db',
-                    backgroundColor: gradient,
-                    borderWidth: 2,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#3498db',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    fill: true,
-                    tension: 0.4 // Làm cong đường line
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, grid: { borderDash: [5, 5], color: '#f0f0f0' } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-    </script>
-}

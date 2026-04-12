@@ -1,32 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using VinhKhanhTour.CMS.Models;
 
 namespace VinhKhanhTour.CMS.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly AppDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(AppDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            // Đếm số lượng thực tế từ Database
+            ViewBag.TotalTours = await _context.Tours.CountAsync();
+            ViewBag.TotalPois = await _context.Pois.CountAsync();
+            ViewBag.TotalAudios = await _context.Audios.CountAsync();
+            ViewBag.TotalTranslations = await _context.Translations.CountAsync();
+
             return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

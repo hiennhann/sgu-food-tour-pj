@@ -1,0 +1,22 @@
+﻿@model VinhKhanhTour.CMS.Models.Tour
+@{
+    ViewData["Title"] = "Tour Details";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center">
+        <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;"><i class="bi bi-arrow-left"></i> Back</a>
+        <h3 class="fw-bold text-dark mb-0">Chi Tiết Tour</h3>
+    </div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning fw-bold shadow-sm" style="border-radius: 8px;"><i class="bi bi-pencil-square"></i> Chỉnh sửa</a>
+</div>
+<div class="card shadow-sm border-0" style="border-radius: 10px;">
+    <div class="card-body p-4 text-center">
+        @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+        {
+            <img src="~/images/tours/@Model.CoverImageUrl" class="rounded mb-3 shadow-sm" style="max-width: 100%; height: 250px; object-fit: cover;" />
+        }
+        <h4 class="fw-bold text-primary">@Model.TourName</h4>
+        <p class="text-muted">@Model.Description</p>
+        <span class="badge bg-light text-dark border p-2">Các Quán (PoiIds): @Model.PoiIds</span>
+    </div>
+</div>

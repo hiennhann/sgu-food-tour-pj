@@ -1,0 +1,41 @@
+﻿@model VinhKhanhTour.CMS.Models.AudioTrack
+@{
+    ViewData["Title"] = "Audio Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center">
+        <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;"><i class="bi bi-arrow-left"></i> Back</a>
+        <h3 class="fw-bold text-dark mb-0">Chi Tiết Audio</h3>
+    </div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning fw-bold shadow-sm" style="border-radius: 8px;">
+        <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+    </a>
+</div>
+
+<div class="card shadow-sm border-0" style="border-radius: 10px;">
+    <div class="card-body p-5 text-center">
+        <div class="mb-4">
+            <div class="rounded-circle bg-info bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3 text-info" style="width: 80px; height: 80px;">
+                <i class="bi bi-soundwave" style="font-size: 2.5rem;"></i>
+            </div>
+            <h4 class="fw-bold mb-1">Âm thanh cho Quán #@Model.PoiId</h4>
+            <span class="badge bg-info bg-opacity-10 text-info border border-info fs-6 mt-2 px-3 py-2">
+                Ngôn ngữ: @Model.LanguageCode.ToUpper()
+            </span>
+        </div>
+
+        <div class="bg-light p-4 rounded-3 d-inline-block w-100" style="max-width: 600px;">
+            <p class="text-muted fw-bold mb-2 text-start">Nghe thử file âm thanh:</p>
+            <audio controls class="w-100 mb-3" style="outline: none;">
+                <source src="@Model.AudioUrl" type="audio/mpeg">
+                Trình duyệt của bạn không hỗ trợ thẻ audio.
+            </audio>
+            
+            <p class="text-muted fw-bold mb-1 text-start">Đường dẫn gốc:</p>
+            <div class="text-start">
+                <a href="@Model.AudioUrl" target="_blank" class="text-break text-decoration-none small">@Model.AudioUrl</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -40,16 +40,16 @@ namespace VinhKhanhTour.CMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Poi poi, IFormFile? ImageFile)
         {
-            // Bỏ qua kiểm tra lỗi của các trường không có trên Form
-            ModelState.Remove("ImageUrl");
-            ModelState.Remove("Address");
-            ModelState.Remove("Category");
-            ModelState.Remove("DisplayName");
+            //// Bỏ qua kiểm tra lỗi của các trường không có trên Form
+            //ModelState.Remove("ImageUrl");
+            //ModelState.Remove("Address");
+            //ModelState.Remove("Category");
+            //ModelState.Remove("DisplayName");
 
-            // Gán giá trị mặc định (chuỗi rỗng) để Database không bị lỗi "NOT NULL"
-            poi.Address ??= "";
-            poi.Category ??= "Chưa phân loại";
-            poi.DisplayName ??= poi.Name; // L
+            //// Gán giá trị mặc định (chuỗi rỗng) để Database không bị lỗi "NOT NULL"
+            //poi.Address ??= "";
+            //poi.Category ??= "Chưa phân loại";
+            //poi.DisplayName ??= poi.Name; // L
 
             if (ModelState.IsValid)
             {

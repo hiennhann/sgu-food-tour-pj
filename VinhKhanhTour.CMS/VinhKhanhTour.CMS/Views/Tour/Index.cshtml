@@ -18,7 +18,7 @@
                     <tr>
                         <th class="border-0">ID</th>
                         <th class="border-0">Tên Tour</th>
-                        <th class="border-0">Mô Tả</th>
+                        <th class="border-0">Hình Ảnh</th>
                         <th class="border-0">DS Quán (PoiIds)</th>
                         <th class="border-0 text-end">Hành Động</th>
                     </tr>
@@ -33,11 +33,17 @@
                         <tr>
                             <td class="text-muted fw-bold">#@item.Id</td>
                             <td class="fw-bold text-dark">@item.TourName</td>
-                            <td class="text-muted">@item.Description</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.CoverImageUrl))
+                                {
+                                    <img src="~/images/tours/@item.CoverImageUrl" alt="Cover" style="width:60px; height:60px; object-fit:cover; border-radius:8px;" />
+                                }
+                            </td>
                             <td><span class="badge bg-light text-dark border">@item.PoiIds</span></td>
                             <td class="text-end">
-                                <button class="btn btn-sm btn-light text-warning shadow-sm me-1"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-sm btn-light text-danger shadow-sm"><i class="bi bi-trash"></i></button>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-light text-info shadow-sm me-1"><i class="bi bi-eye"></i></a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light text-warning shadow-sm me-1"><i class="bi bi-pencil-square"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light text-danger shadow-sm"><i class="bi bi-trash"></i></a>
                             </td>
                         </tr>
                     }

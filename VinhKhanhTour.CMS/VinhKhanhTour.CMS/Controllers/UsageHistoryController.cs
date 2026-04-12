@@ -15,12 +15,28 @@ namespace VinhKhanhTour.CMS.Controllers
             _context = context;
         }
 
-        // Chỉ cần hàm Xem danh sách, sắp xếp theo thời gian mới nhất
-        public async Task<IActionResult> Index()
+        // Đã bổ sung tham số 'actionType' để nhận lệnh lọc từ giao diện
+        public async Task<IActionResult> Index(string actionType)
         {
-            var history = await _context.UsageHistories
-                                        .OrderByDescending(h => h.CreatedAt)
-                                        .ToListAsync();
+            var query = _context.UsageHistories.AsQueryable();
+
+            // Nếu Admin có chọn loại hành động để lọc, tiến hành lọc dữ liệu
+            if (!string.IsNullOrEmpty(actionType))
+            {
+                query = query.Where(h => h.ActionType == actionType);
+                // Giữ lại lựa chọn cũ trên giao diện
+                ViewBag.CurrentFilter = actionType;
+            }
+
+            // Lấy ra danh sách các ActionType duy nhất (để đổ vào Dropdown lọc)
+            ViewBag.ActionTypes = await _context.UsageHistories
+                                                .Select(h => h.ActionType)
+                                                .Distinct()
+                                                .ToListAsync();
+
+            var history = await query.OrderByDescending(h => h.CreatedAt)
+                                     .ToListAsync();
+
             return View(history);
         }
     }

@@ -1,0 +1,35 @@
+﻿@model VinhKhanhTour.CMS.Models.AudioTrack
+@{
+    ViewData["Title"] = "Delete Audio";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card border-danger shadow" style="border-radius: 10px;">
+            <div class="card-header bg-danger text-white fw-bold text-center py-3" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                <i class="bi bi-exclamation-triangle-fill fs-4 d-block mb-1"></i>
+                CẢNH BÁO XÓA DỮ LIỆU
+            </div>
+            <div class="card-body p-4 text-center">
+                <h5 class="mb-4">Bạn có chắc chắn muốn xóa file Audio này không?</h5>
+                
+                <div class="bg-light p-3 rounded mb-4 text-start d-inline-block">
+                    <p class="mb-1"><strong>ID Quán (PoiId):</strong> <span class="text-danger fw-bold">#@Model.PoiId</span></p>
+                    <p class="mb-1"><strong>Ngôn ngữ:</strong> <span class="badge bg-info text-dark">@Model.LanguageCode</span></p>
+                </div>
+
+                <div class="alert alert-warning small text-start">
+                    <strong>Lưu ý:</strong> Hành động này không thể hoàn tác. App sẽ không thể phát âm thanh này cho du khách được nữa.
+                </div>
+
+                <form asp-action="Delete" method="post" class="mt-4 d-flex justify-content-center gap-3">
+                    <input type="hidden" asp-for="Id" />
+                    <a asp-action="Index" class="btn btn-light fw-bold px-4" style="border-radius: 8px;">Hủy, quay lại</a>
+                    <button type="submit" class="btn btn-danger fw-bold px-4 shadow-sm" style="border-radius: 8px;">
+                        <i class="bi bi-trash me-1"></i> Vâng, Xóa Vĩnh Viễn
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
