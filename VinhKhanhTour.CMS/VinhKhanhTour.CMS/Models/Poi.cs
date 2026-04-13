@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace VinhKhanhTour.CMS.Models
+
 {
     public class Poi
     {
@@ -30,5 +32,6 @@ namespace VinhKhanhTour.CMS.Models
         [Required]
         public string Category { get; set; }
         public bool IsActive { get; set; } = true; // Mặc định là true (Đang hoạt động)
+        public virtual ICollection<AudioTrack> AudioTracks { get; set; }
     }
 }
