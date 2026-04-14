@@ -169,12 +169,18 @@ namespace VinhKhanhTour.Views
 
             CultureInfo culture = action switch
             {
-                "Tiếng Việt" => new CultureInfo("vi-VN"), "English (Tiếng Anh)" => new CultureInfo("en-US"),
-                "Español (Tiếng Tây Ban Nha)" => new CultureInfo("es-ES"), "Français (Tiếng Pháp)" => new CultureInfo("fr-FR"),
-                "Deutsch (Tiếng Đức)" => new CultureInfo("de-DE"), "中文 (Tiếng Trung)" => new CultureInfo("zh-CN"),
-                "日本語 (Tiếng Nhật)" => new CultureInfo("ja-JP"), "한국어 (Tiếng Hàn)" => new CultureInfo("ko-KR"),
-                "Русский (Tiếng Nga)" => new CultureInfo("ru-RU"), "Italiano (Tiếng Ý)" => new CultureInfo("it-IT"),
-                "Português (Tiếng Bồ Đào Nha)" => new CultureInfo("pt-PT"), "हिन्दी (Tiếng Hindi)" => new CultureInfo("hi-IN"),
+                "Tiếng Việt" => new CultureInfo("vi-VN"),
+                "English (Tiếng Anh)" => new CultureInfo("en-US"),
+                "Español (Tiếng Tây Ban Nha)" => new CultureInfo("es-ES"),
+                "Français (Tiếng Pháp)" => new CultureInfo("fr-FR"),
+                "Deutsch (Tiếng Đức)" => new CultureInfo("de-DE"),
+                "中文 (Tiếng Trung)" => new CultureInfo("zh-CN"),
+                "日本語 (Tiếng Nhật)" => new CultureInfo("ja-JP"),
+                "한국어 (Tiếng Hàn)" => new CultureInfo("ko-KR"),
+                "Русский (Tiếng Nga)" => new CultureInfo("ru-RU"),
+                "Italiano (Tiếng Ý)" => new CultureInfo("it-IT"),
+                "Português (Tiếng Bồ Đào Nha)" => new CultureInfo("pt-PT"),
+                "हिन्दी (Tiếng Hindi)" => new CultureInfo("hi-IN"),
                 _ => new CultureInfo("vi-VN")
             };
             LocalizationResourceManager.Instance.SetCulture(culture);
@@ -183,7 +189,7 @@ namespace VinhKhanhTour.Views
         private Border CreateTabBar()
         {
             var tabBarGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, BackgroundColor = Colors.Transparent, Padding = new Thickness(0, 10, 0, 10) };
-            
+
             var tab1 = CreateTabItem("Trang chủ", "🏠", false);
             var tapHome = new TapGestureRecognizer(); tapHome.Tapped += async (s, e) => await Navigation.PushAsync(new HomePage(), false);
             tab1.GestureRecognizers.Add(tapHome); Grid.SetColumn(tab1, 0); tabBarGrid.Children.Add(tab1);

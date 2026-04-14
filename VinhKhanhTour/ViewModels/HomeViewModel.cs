@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Maui.ApplicationModel;
@@ -12,63 +14,88 @@ namespace VinhKhanhTour.ViewModels
     public class HomeViewModel
     {
         public ObservableCollection<FoodPlace> FeaturedPlaces { get; set; }
-        private readonly PoiRepository _poiRepository;
-
-        // 🔴 BIẾN MỚI: Dùng để lưu trữ TOÀN BỘ danh sách quán ăn làm gốc
         private List<FoodPlace> _allPlaces = new List<FoodPlace>();
 
         public HomeViewModel()
         {
             FeaturedPlaces = new ObservableCollection<FoodPlace>();
-            _poiRepository = MauiProgram.Services.GetService<PoiRepository>();
 
-            _ = LoadDataAsync();
+            // Đưa vào luồng chạy ngầm để không làm đứng màn hình
+            Task.Run(async () => await LoadDataAsync());
 
             LocalizationResourceManager.Instance.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == "CurrentLanguageCode")
                 {
-                    _ = LoadDataAsync();
+                    Task.Run(async () => await LoadDataAsync());
                 }
             };
         }
 
         private async Task LoadDataAsync()
         {
-            var pois = await _poiRepository.GetAllPoisAsync();
-
-            MainThread.BeginInvokeOnMainThread(() =>
+            try
             {
-                _allPlaces.Clear();
-
-                // Lấy TẤT CẢ quán ăn (Bỏ lệnh Take(3))
-                foreach (var poi in pois)
+                // BƯỚC CHỐNG LỖI: Chờ tối đa 2 giây cho đến khi hệ thống Service tiêm thành công
+                int retry = 0;
+                while (MauiProgram.Services == null && retry < 20)
                 {
-                    _allPlaces.Add(new FoodPlace
-                    {
-                        Id = poi.Id.ToString(),
-                        Name = poi.DisplayName,
-                        Address = "Vĩnh Khánh, Q4",
-                        Rating = 4.8,
-                        ReviewCount = 150 + poi.Id * 5,
-                        ImageUrl = poi.ImageUrl,
-                        NarrationText = poi.DisplayTtsScript
-                    });
+                    await Task.Delay(100);
+                    retry++;
                 }
 
-                // Khi vừa mở app lên, mặc định sẽ lọc và hiển thị "Tất cả"
-                FilterByCategory("Tất cả");
-            });
+                var poiRepository = MauiProgram.Services?.GetService<PoiRepository>();
+                if (poiRepository == null) return;
+
+                var pois = await poiRepository.GetAllPoisAsync();
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    _allPlaces.Clear();
+
+                    if (pois != null && pois.Any())
+                    {
+                        foreach (var poi in pois)
+                        {
+                            _allPlaces.Add(new FoodPlace
+                            {
+                                Id = poi.Id.ToString(),
+                                // Nếu CMS trống tên hiển thị, lấy tên gốc. Nếu trống hết, để mặc định
+                                Name = poi.DisplayName ?? poi.Name ?? "Quán ốc chưa có tên",
+                                Address = poi.Address ?? "Khu Phố Ẩm Thực Vĩnh Khánh",
+                                Rating = 4.8,
+                                ReviewCount = 150 + poi.Id * 5, // Random số lượt đánh giá cho đẹp UI
+
+                                // ĐỒNG BỘ ẢNH: Nếu CMS không có ảnh, dùng ảnh default để app không bị xấu
+                                ImageUrl = string.IsNullOrEmpty(poi.ImageUrl) ? "featured_food_2.jpg" : poi.ImageUrl,
+
+                                // ĐỒNG BỘ AUDIO: Text sẽ được nạp thẳng vào NarrationEngine
+                                NarrationText = poi.DisplayTtsScript ?? $"Chào mừng bạn đến với {poi.Name}"
+                            });
+                        }
+                    }
+
+                    // Luôn gọi bộ lọc mặc định để render danh sách
+                    FilterByCategory("Tất cả");
+                });
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"[LỖI TẢI TRANG CHỦ]: {ex.Message}");
+                // Thêm 3 dòng này để App tự bật thông báo lỗi lên màn hình:
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await Application.Current.MainPage.DisplayAlert("Báo Lỗi Dữ Liệu", ex.Message, "OK");
+                });
+            }
         }
 
-        // 🔴 HÀM MỚI: Thực hiện việc lọc quán ăn dựa theo tên Phân loại
         public void FilterByCategory(string category)
         {
             FeaturedPlaces.Clear();
 
             var filteredList = _allPlaces.Where(p =>
             {
-                // Mẹo: Vì chúng ta chưa có cột Category trong Database, nên mình dùng tên quán để phân loại
                 if (category == "Tất cả") return true;
                 if (category == "Ốc & Hải sản") return p.Name.Contains("Ốc") || p.Name.Contains("Sò") || p.Name.Contains("Nghêu") || p.Name.Contains("Hải sản");
                 if (category == "Đồ nướng") return p.Name.Contains("Nướng") || p.Name.Contains("BBQ") || p.Name.Contains("Ngói");
