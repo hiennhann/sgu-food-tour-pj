@@ -28,7 +28,7 @@ namespace VinhKhanhTour.Views
 
         private int _playingPoiId = 0;
         private int _currentDwellingPoiId = 0;
-        private bool _isPlaying = false; // Mặc định tắt audio
+        private bool _isPlaying = false;
         private List<Poi> _cachedPois = new();
 
         private Poi _nearestPoi;
@@ -72,9 +72,6 @@ namespace VinhKhanhTour.Views
             NarrationEngine.Instance.CancelCurrentNarration();
         }
 
-        // ========================================================
-        // HTML BẢN ĐỒ
-        // ========================================================
         private static string TaoHtmlBanDo(List<Poi> danhSach, int selectedId)
         {
             var jsGhim = new System.Text.StringBuilder();
@@ -203,7 +200,10 @@ namespace VinhKhanhTour.Views
             {
                 var poiRepo = MauiProgram.Services.GetService<Data.PoiRepository>();
                 if (poiRepo != null) _cachedPois = await poiRepo.GetAllPoisAsync();
-                if (_cachedPois == null || !_cachedPois.Any()) _cachedPois = Poi.GetSampleData();
+
+                // TUYỆT ĐỐI KHÔNG GỌI GetSampleData() NỮA
+                // Nếu chưa có mạng hoặc API chưa trả về kịp, tạo một danh sách rỗng để không bị lỗi
+                if (_cachedPois == null) _cachedPois = new List<Poi>();
 
                 var html = TaoHtmlBanDo(_cachedPois, _selectedPoiId);
                 BanDoWebView.Source = new HtmlWebViewSource { Html = html };
@@ -217,9 +217,6 @@ namespace VinhKhanhTour.Views
 
             string url = e.Url.ToLower();
 
-            // ===============================================
-            // KHI CLICK VÀO 1 QUÁN ỐC TRÊN BẢN ĐỒ
-            // ===============================================
             if (url.StartsWith("tappin://"))
             {
                 e.Cancel = true;
@@ -234,19 +231,15 @@ namespace VinhKhanhTour.Views
                     {
                         MainThread.BeginInvokeOnMainThread(async () =>
                         {
-                            // Dùng SetBinding để thẻ này lập tức dịch lại khi thay đổi ngôn ngữ
                             CardStatusLabel.RemoveBinding(Label.TextProperty);
                             CardStatusLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "ĐỊA ĐIỂM ĐÃ CHỌN"));
 
-                            // Tên quán thì giữ nguyên không dịch
                             PoiNameLabel.RemoveBinding(Label.TextProperty);
                             PoiNameLabel.Text = selectedPoi.Name;
 
-                            // Gắn binding cho mô tả chức năng
                             DistanceLabel.RemoveBinding(Label.TextProperty);
                             DistanceLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Chọn Nghe Audio hoặc Chỉ đường"));
 
-                            // Tắt audio đang phát và đổi giao diện nút
                             _isPlaying = false;
                             NarrationEngine.Instance.CancelCurrentNarration();
                             if (PlayPauseButton != null)
@@ -261,9 +254,6 @@ namespace VinhKhanhTour.Views
                     }
                 }
             }
-            // ===============================================
-            // KHI CLICK RA KHOẢNG TRỐNG (HỦY CHỌN QUÁN)
-            // ===============================================
             else if (url.StartsWith("mapclick://"))
             {
                 e.Cancel = true;
@@ -291,9 +281,6 @@ namespace VinhKhanhTour.Views
                     catch { }
                 });
             }
-            // ===============================================
-            // KHI BẤM NÚT MỞ GOOGLE MAP TỪ POPUP
-            // ===============================================
             else if (url.StartsWith("openmap://"))
             {
                 e.Cancel = true;
@@ -377,18 +364,19 @@ namespace VinhKhanhTour.Views
             catch { }
         }
 
-        // ========================================================
-        // SỰ KIỆN QUÉT RADAR GPS CHẠY NGẦM
-        // ========================================================
         private void Geolocation_LocationChanged(object sender, GeolocationLocationChangedEventArgs e)
         {
             _currentUserLocation = e.Location;
 
             Task.Run(async () =>
             {
-                var pois = _cachedPois.Any() ? _cachedPois : Poi.GetSampleData();
+                // Lấy từ danh sách thật. Nếu danh sách rỗng (chưa có mạng), thì radar nghỉ ngơi, không quét nữa.
+                var pois = _cachedPois;
+                if (pois == null || !pois.Any()) return;
+
                 Poi nearestTriggeredPoi = null;
                 double minDistance = double.MaxValue;
+
                 double nearestDistance = double.MaxValue;
                 Poi closestPoi = null;
 
@@ -486,9 +474,6 @@ namespace VinhKhanhTour.Views
             }
         }
 
-        // ========================================================
-        // LOGIC CHẠY AUDIO KHI BẤM NÚT TRÊN THẺ 
-        // ========================================================
         private async void OnPlayPauseClicked(object sender, EventArgs e)
         {
             Poi targetPoi = (_selectedPoiId > 0) ? _cachedPois.FirstOrDefault(p => p.Id == _selectedPoiId) : _nearestPoi;
@@ -527,7 +512,6 @@ namespace VinhKhanhTour.Views
                 }
                 finally
                 {
-                    // Đảm bảo nút luôn trả về màu Cam sau khi đọc xong
                     if (_isPlaying)
                     {
                         _isPlaying = false;
@@ -546,9 +530,6 @@ namespace VinhKhanhTour.Views
             }
         }
 
-        // ========================================================
-        // TẠO TAB BAR BẰNG CODE 
-        // ========================================================
         private Border CreateTabBar()
         {
             var tabBarGrid = new Grid

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="../VinhKhanhTour/VinhKhanhTour.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="VinhKhanhTour.CMS/VinhKhanhTour.CMS.csproj" />
+</Solution>

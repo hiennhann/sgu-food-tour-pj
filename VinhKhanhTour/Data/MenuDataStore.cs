@@ -2,15 +2,7 @@ using System.Collections.Generic;
 using VinhKhanhTour.Models;
 
 // Bổ sung: Định nghĩa trực tiếp class FoodItem ngay trong file này
-namespace VinhKhanhTour.Models
-{
-    public class FoodItem
-    {
-        public string Name { get; set; }
-        public string Price { get; set; }
-        public string ImageUrl { get; set; }
-    }
-}
+
 
 namespace VinhKhanhTour.Data
 {
@@ -37,6 +29,244 @@ namespace VinhKhanhTour.Data
 
             // Thực đơn cho Ốc Oanh
             if (placeName.Contains("Ốc Oanh"))
+            {
+                return new List<FoodItem>
+                {
+                    new FoodItem { Name = "Bạch Tuột Nướng", Price = "150.000đ", ImageUrl = "bachtuotnuong.png" },
+                    new FoodItem { Name = "Cà Bắp Nướng", Price = "39.000đ", ImageUrl = "cabapnuong.png" },
+                    new FoodItem { Name = "Nghêu Hấp Thái", Price = "180.000đ", ImageUrl = "ngheuhapthai.png" },
+                    new FoodItem { Name = "Mực Trứng Hấp", Price = "150.000đ", ImageUrl = "muctrunghap.png" },
+                    new FoodItem { Name = "Ốc Len Xào Dừa", Price = "200.000đ", ImageUrl = "oclenxaodua.png" },
+                    new FoodItem { Name = "Ốc Móng Tay Xào Rau Muống", Price = "150.000đ", ImageUrl = "ocmongtayxaoraumuong.png" },
+                    new FoodItem { Name = "Tôm Nướng", Price = "250.000đ", ImageUrl = "tomnuong.png" },
+                    new FoodItem { Name = "Sò Hấp", Price = "80.000đ", ImageUrl = "sohap.png" },
+                    new FoodItem { Name = "Sò Lông Nướng", Price = "120.000đ", ImageUrl = "solongnuong.png" },
+                    new FoodItem { Name = "Coca Cola", Price = "15.000đ", ImageUrl = "coca.png" },
+                    new FoodItem { Name = "Bia Heineken", Price = "25.000đ", ImageUrl = "ken.png" },
+                    new FoodItem { Name = "Bia Larue", Price = "18.000đ", ImageUrl = "larue.png" },
+                    new FoodItem { Name = "Pepsi", Price = "15.000đ", ImageUrl = "pepsi.png" },
+                    new FoodItem { Name = "Bia Sài Gòn", Price = "18.000đ", ImageUrl = "saigon.png" },
+                    new FoodItem { Name = "Nước Tăng Lực Sting", Price = "15.000đ", ImageUrl = "sting.png" },
+                    new FoodItem { Name = "Bia Tiger Bạc", Price = "24.000đ", ImageUrl = "tigerbac.png" },
+                    new FoodItem { Name = "Bia Tiger Nâu", Price = "22.000đ", ImageUrl = "tigernau.png" }
+                };
+            }
+
+            if (placeName.Contains("Ốc Phát"))
+            {
+                return new List<FoodItem>
+                {
+                    new FoodItem { Name = "Cua Hấp", Price = "200.000đ", ImageUrl = "cuahap.png" },
+                    new FoodItem { Name = "Cua Sốt Trứng Muối", Price = "250.000đ", ImageUrl = "cuasottrungmuoi.png" },
+                    new FoodItem { Name = "Hàu Hấp", Price = "50.000đ", ImageUrl = "hauhap.png" },
+                    new FoodItem { Name = "Hàu Nướng Mỡ Hành", Price = "70.000đ", ImageUrl = "haunuongmohanh.png" },
+                    new FoodItem { Name = "Ốc Xào Sa Tế", Price = "200.000đ", ImageUrl = "ocxaosate.png" },
+                    new FoodItem { Name = "Ốc Móng Tay Xào Rau Muống", Price = "150.000đ", ImageUrl = "ocmongtayxaoraumuong.png" },
+                    new FoodItem { Name = "Tôm Nướng Mọi", Price = "200.000đ", ImageUrl = "tomnuongmoi.png" },
+                    new FoodItem { Name = "Tôm Thái Lan", Price = "250.000đ", ImageUrl = "tomthailan.png" },
+                    new FoodItem { Name = "Coca Cola", Price = "15.000đ", ImageUrl = "coca.png" },
+                    new FoodItem { Name = "Bia Heineken", Price = "25.000đ", ImageUrl = "ken.png" },
+                    new FoodItem { Name = "Bia Larue", Price = "18.000đ", ImageUrl = "larue.png" },
+                    new FoodItem { Name = "Pepsi", Price = "15.000đ", ImageUrl = "pepsi.png" },
+                    new FoodItem { Name = "Bia Sài Gòn", Price = "18.000đ", ImageUrl = "saigon.png" },
+                    new FoodItem { Name = "Nước Tăng Lực Sting", Price = "15.000đ", ImageUrl = "sting.png" },
+                    new FoodItem { Name = "Bia Tiger Bạc", Price = "24.000đ", ImageUrl = "tigerbac.png" },
+                    new FoodItem { Name = "Bia Tiger Nâu", Price = "22.000đ", ImageUrl = "tigernau.png" }
+                };
+            }
+
+            if (placeName.Contains("Quán Ốc Thảo Quận 4"))
+            {
+                return new List<FoodItem>
+                {
+
+                    new FoodItem { Name = "Mực Trứng Hấp", Price = "150.000đ", ImageUrl = "muctrunghap.png" },
+                    new FoodItem { Name = "Bạch Tuột Nướng", Price = "150.000đ", ImageUrl = "bachtuotnuong.png" },
+                    new FoodItem { Name = "Cà Bắp Nướng", Price = "39.000đ", ImageUrl = "cabapnuong.png" },
+                    new FoodItem { Name = "Ốc Len Xào Dừa", Price = "200.000đ", ImageUrl = "oclenxaodua.png" },
+                    new FoodItem { Name = "Ốc Móng Tay Xào Rau Muống", Price = "150.000đ", ImageUrl = "ocmongtayxaoraumuong.png" },
+                    new FoodItem { Name = "Tôm Nướng", Price = "250.000đ", ImageUrl = "tomnuong.png" },
+                    new FoodItem { Name = "Sò Hấp", Price = "80.000đ", ImageUrl = "sohap.png" },
+                    new FoodItem { Name = "Nghêu Hấp Thái", Price = "180.000đ", ImageUrl = "ngheuhapthai.png" },
+                    new FoodItem { Name = "Sò Lông Nướng", Price = "120.000đ", ImageUrl = "solongnuong.png" },
+                    new FoodItem { Name = "Coca Cola", Price = "15.000đ", ImageUrl = "coca.png" },
+                    new FoodItem { Name = "Bia Heineken", Price = "25.000đ", ImageUrl = "ken.png" },
+                    new FoodItem { Name = "Bia Larue", Price = "18.000đ", ImageUrl = "larue.png" },
+                    new FoodItem { Name = "Pepsi", Price = "15.000đ", ImageUrl = "pepsi.png" },
+                    new FoodItem { Name = "Bia Sài Gòn", Price = "18.000đ", ImageUrl = "saigon.png" },
+                    new FoodItem { Name = "Nước Tăng Lực Sting", Price = "15.000đ", ImageUrl = "sting.png" },
+                    new FoodItem { Name = "Bia Tiger Bạc", Price = "24.000đ", ImageUrl = "tigerbac.png" },
+                    new FoodItem { Name = "Bia Tiger Nâu", Price = "22.000đ", ImageUrl = "tigernau.png" }
+                };
+            }
+
+            if (placeName.Contains("Toàn Phương Quán"))
+            {
+                return new List<FoodItem>
+                {
+                    new FoodItem { Name = "Nghêu Hấp Thái", Price = "180.000đ", ImageUrl = "ngheuhapthai.png" },
+                    new FoodItem { Name = "Mực Trứng Hấp", Price = "150.000đ", ImageUrl = "muctrunghap.png" },
+                    new FoodItem { Name = "Ốc Len Xào Dừa", Price = "200.000đ", ImageUrl = "oclenxaodua.png" },
+                    new FoodItem { Name = "Ốc Móng Tay Xào Rau Muống", Price = "150.000đ", ImageUrl = "ocmongtayxaoraumuong.png" },
+                    new FoodItem { Name = "Tôm Nướng", Price = "250.000đ", ImageUrl = "tomnuong.png" },
+                    new FoodItem { Name = "Sò Hấp", Price = "80.000đ", ImageUrl = "sohap.png" },
+                    new FoodItem { Name = "Sò Lông Nướng", Price = "120.000đ", ImageUrl = "solongnuong.png" },
+                    new FoodItem { Name = "Bạch Tuột Nướng", Price = "150.000đ", ImageUrl = "bachtuotnuong.png"},
+                    new FoodItem { Name = "Cà Bắp Nướng", Price = "39.000đ", ImageUrl = "cabapnuong.png" },
+                    new FoodItem { Name = "Coca Cola", Price = "15.000đ", ImageUrl = "coca.png" },
+                    new FoodItem { Name = "Bia Heineken", Price = "25.000đ", ImageUrl = "ken.png" },
+                    new FoodItem { Name = "Bia Larue", Price = "18.000đ", ImageUrl = "larue.png" },
+                    new FoodItem { Name = "Pepsi", Price = "15.000đ", ImageUrl = "pepsi.png" },
+                    new FoodItem { Name = "Bia Sài Gòn", Price = "18.000đ", ImageUrl = "saigon.png" },
+                    new FoodItem { Name = "Nước Tăng Lực Sting", Price = "15.000đ", ImageUrl = "sting.png" },
+                    new FoodItem { Name = "Bia Tiger Bạc", Price = "24.000đ", ImageUrl = "tigerbac.png" },
+                    new FoodItem { Name = "Bia Tiger Nâu", Price = "22.000đ", ImageUrl = "tigernau.png" }
+                };
+            }
+
+            if (placeName.Contains("Ốc Vũ"))
+            {
+                return new List<FoodItem>
+                {
+                    new FoodItem { Name = "Bạch Tuộc Nướng", Price = "150.000đ", ImageUrl = "bachtuotnuong.png" },
+                    new FoodItem { Name = "Cà Bắp Nướng", Price = "39.000đ", ImageUrl = "cabapnuong.png" },
+                    new FoodItem { Name = "Nghêu Hấp Thái", Price = "180.000đ", ImageUrl = "ngheuhapthai.png" },
+                    new FoodItem { Name = "Mực Trứng Hấp", Price = "150.000đ", ImageUrl = "muctrunghap.png" },
+                    new FoodItem { Name = "Ốc Len Xào Dừa", Price = "200.000đ", ImageUrl = "oclenxaodua.png" },
+                    new FoodItem { Name = "Ốc Móng Tay Xào Rau Muống", Price = "150.000đ", ImageUrl = "ocmongtayxaoraumuong.png" },
+                    new FoodItem { Name = "Tôm Nướng", Price = "250.000đ", ImageUrl = "tomnuong.png" },
+                    new FoodItem { Name = "Sò Hấp", Price = "80.000đ", ImageUrl = "sohap.png" },
+                    new FoodItem { Name = "Sò Lông Nướng", Price = "120.000đ", ImageUrl = "solongnuong.png" },
+                    new FoodItem { Name = "Sò Điệp Nướng", Price = "130.000đ", ImageUrl = "sodiepnuong.png" },
+                    new FoodItem { Name = "Sò Điệp Nướng Mỡ Hành", Price = "140.000đ", ImageUrl = "sodiepnuongmohanh.png" },
+                    new FoodItem { Name = "Sò Dương Nướng Sa Tế", Price = "160.000đ", ImageUrl = "soduongnuongsate.png" },
+                    new FoodItem { Name = "Sò Huyết Xào Sa Tế", Price = "150.000đ", ImageUrl = "sohuyetxaosate.png" },
+                    new FoodItem { Name = "Sò Lông Nướng Mỡ Hành", Price = "130.000đ", ImageUrl = "solongnuongmohanh.png" },
+                    new FoodItem { Name = "Coca Cola", Price = "15.000đ", ImageUrl = "coca.png" },
+                    new FoodItem { Name = "Bia Heineken", Price = "25.000đ", ImageUrl = "ken.png" },
+                    new FoodItem { Name = "Bia Larue", Price = "18.000đ", ImageUrl = "larue.png" },
+                    new FoodItem { Name = "Pepsi", Price = "15.000đ", ImageUrl = "pepsi.png" },
+                    new FoodItem { Name = "Bia Sài Gòn", Price = "18.000đ", ImageUrl = "saigon.png" },
+                    new FoodItem { Name = "Nước Tăng Lực Sting", Price = "15.000đ", ImageUrl = "sting.png" },
+                    new FoodItem { Name = "Bia Tiger Bạc", Price = "24.000đ", ImageUrl = "tigerbac.png" },
+                    new FoodItem { Name = "Bia Tiger Nâu", Price = "22.000đ", ImageUrl = "tigernau.png" }
+                };
+            }
+
+            if (placeName.Contains("Hủ Tiếu Dê"))
+            {
+                return new List<FoodItem>
+                {
+                    new FoodItem { Name = "Hủ Tiếu Dê ", Price = "50.000đ", ImageUrl = "hutieude.png" },
+                    new FoodItem { Name = "Hủ Tiếu Sườn Dê", Price = "70.000đ", ImageUrl = "hutieudee.png" },
+                    new FoodItem { Name = "Hủ Tiếu Dê Đặc Biệt", Price = "90.000đ", ImageUrl = "hutieudeee.png" }
+                };
+            }
+
+            if (placeName.Contains("Lẩu Nướng Thuận Việt"))
+            {
+                return new List<FoodItem>
+                {
+                    new FoodItem { Name = "Bạch Tuột Nướng", Price = "150.000đ", ImageUrl = "bachtuotnuong.png" },
+                    new FoodItem { Name = "Cà Bắp Nướng", Price = "39.000đ", ImageUrl = "cabapnuong.png" },
+                    new FoodItem { Name = "Nghêu Hấp Thái", Price = "180.000đ", ImageUrl = "ngheuhapthai.png" },
+                    new FoodItem { Name = "Mực Trứng Hấp", Price = "150.000đ", ImageUrl = "muctrunghap.png" },
+                    new FoodItem { Name = "Ốc Len Xào Dừa", Price = "200.000đ", ImageUrl = "oclenxaodua.png" },
+                    new FoodItem { Name = "Ốc Móng Tay Xào Rau Muống", Price = "150.000đ", ImageUrl = "ocmongtayxaoraumuong.png" },
+                    new FoodItem { Name = "Tôm Nướng", Price = "250.000đ", ImageUrl = "tomnuong.png" },
+                    new FoodItem { Name = "Sò Hấp", Price = "80.000đ", ImageUrl = "sohap.png" },
+                    new FoodItem { Name = "Sò Lông Nướng", Price = "120.000đ", ImageUrl = "solongnuong.png" },
+                    new FoodItem { Name = "Coca Cola", Price = "15.000đ", ImageUrl = "coca.png" },
+                    new FoodItem { Name = "Bia Heineken", Price = "25.000đ", ImageUrl = "ken.png" },
+                    new FoodItem { Name = "Bia Larue", Price = "18.000đ", ImageUrl = "larue.png" },
+                    new FoodItem { Name = "Pepsi", Price = "15.000đ", ImageUrl = "pepsi.png" },
+                    new FoodItem { Name = "Bia Sài Gòn", Price = "18.000đ", ImageUrl = "saigon.png" },
+                    new FoodItem { Name = "Nước Tăng Lực Sting", Price = "15.000đ", ImageUrl = "sting.png" },
+                    new FoodItem { Name = "Bia Tiger Bạc", Price = "24.000đ", ImageUrl = "tigerbac.png" },
+                    new FoodItem { Name = "Bia Tiger Nâu", Price = "22.000đ", ImageUrl = "tigernau.png" }
+                };
+            }
+
+            if (placeName.Contains("Ốc Đào"))
+            {
+                return new List<FoodItem>
+                {
+                    new FoodItem { Name = "Sụn Gà Chiên Mắm", Price = "110.000đ", ImageUrl = "sungachienmam.png" },
+                    new FoodItem { Name = "Sườn Cay Thái Lan", Price = "220.000đ", ImageUrl = "suoncaythailan.png" },
+                    new FoodItem { Name = "Thịt Xiên Bóp Thấu", Price = "25.000đ", ImageUrl = "thitxien.png" },
+                    new FoodItem { Name = "Tôm Hùm Phô Mai", Price = "850.000đ", ImageUrl = "tomhum.png" },
+                    new FoodItem { Name = "Tôm Nướng Mọi", Price = "230.000đ", ImageUrl = "tomnuongmoi.png" },
+                    new FoodItem { Name = "Tôm Sốt Thái Lan", Price = "190.000đ", ImageUrl = "tomthailan.png" },
+                    new FoodItem { Name = "Xiên Que Thập Cẩm", Price = "15.000đ", ImageUrl = "xienque.png" },
+                    new FoodItem { Name = "Coca Cola", Price = "15.000đ", ImageUrl = "coca.png" },
+                    new FoodItem { Name = "Bia Heineken", Price = "25.000đ", ImageUrl = "ken.png" },
+                    new FoodItem { Name = "Bia Larue", Price = "18.000đ", ImageUrl = "larue.png" },
+                    new FoodItem { Name = "Pepsi", Price = "15.000đ", ImageUrl = "pepsi.png" },
+                    new FoodItem { Name = "Bia Sài Gòn", Price = "18.000đ", ImageUrl = "saigon.png" },
+                    new FoodItem { Name = "Nước Tăng Lực Sting", Price = "15.000đ", ImageUrl = "sting.png" },
+                    new FoodItem { Name = "Bia Tiger Bạc", Price = "24.000đ", ImageUrl = "tigerbac.png" },
+                    new FoodItem { Name = "Bia Tiger Nâu", Price = "22.000đ", ImageUrl = "tigernau.png" }
+                };
+            }
+
+            if (placeName.Contains("Mì Sườn Lò Siêu"))
+            {
+                return new List<FoodItem>
+                {
+                    new FoodItem { Name = "Mì Sườn Khô", Price = "50.000đ", ImageUrl = "misuonkho.png" },
+                    new FoodItem { Name = "Mì Sườn Hoành Thánh", Price = "55.000đ", ImageUrl = "misuonhoanhthanh.png" },
+                    new FoodItem { Name = "Mì Cà Ri Sườn", Price = "60.000đ", ImageUrl = "micarisuon.png" },
+                    new FoodItem { Name = "Mì Sườn Hầm", Price = "55.000đ", ImageUrl = "misuonham.png" },
+                    new FoodItem { Name = "Coca Cola", Price = "15.000đ", ImageUrl = "coca.png" },
+                    new FoodItem { Name = "Bia Heineken", Price = "25.000đ", ImageUrl = "ken.png" },
+                    new FoodItem { Name = "Bia Larue", Price = "18.000đ", ImageUrl = "larue.png" },
+                    new FoodItem { Name = "Pepsi", Price = "15.000đ", ImageUrl = "pepsi.png" },
+                    new FoodItem { Name = "Bia Sài Gòn", Price = "18.000đ", ImageUrl = "saigon.png" },
+                    new FoodItem { Name = "Nước Tăng Lực Sting", Price = "15.000đ", ImageUrl = "sting.png" },
+                    new FoodItem { Name = "Bia Tiger Bạc", Price = "24.000đ", ImageUrl = "tigerbac.png" },
+                    new FoodItem { Name = "Bia Tiger Nâu", Price = "22.000đ", ImageUrl = "tigernau.png" }
+                };
+            }
+
+            if (placeName.Contains("Ốc Anh Sáu"))
+            {
+                return new List<FoodItem>
+                {
+                    new FoodItem { Name = "Xiên Que Thập Cẩm", Price = "15.000đ", ImageUrl = "xienque.png" },
+                    new FoodItem { Name = "Đặc Sản Toàn Phương Quán", Price = "350.000đ", ImageUrl = "tpq.png" },
+                    new FoodItem { Name = "Tôm Sốt Thái Lan", Price = "190.000đ", ImageUrl = "tomthailan.png" },
+                    new FoodItem { Name = "Tôm Nướng Mọi", Price = "230.000đ", ImageUrl = "tomnuongmoi.png" },
+                    new FoodItem { Name = "Tôm Hùm Phô Mai", Price = "850.000đ", ImageUrl = "tomhum.png" },
+                    new FoodItem { Name = "Thịt Xiên Bóp Thấu", Price = "25.000đ", ImageUrl = "thitxien.png" },
+                    new FoodItem { Name = "Sườn Cay Thái Lan", Price = "220.000đ", ImageUrl = "suoncaythailan.png" },
+                    new FoodItem { Name = "Sụn Gà Chiên Mắm", Price = "110.000đ", ImageUrl = "sungachienmam.png" },
+                    new FoodItem { Name = "Sủi Cảo", Price = "65.000đ", ImageUrl = "suicao.png" },
+                    new FoodItem { Name = "Sò Lông Nướng Mỡ Hành", Price = "130.000đ", ImageUrl = "solongnuongmohanh.png" },
+                    new FoodItem { Name = "Sò Huyết Xào Sa Tế", Price = "150.000đ", ImageUrl = "sohuyetxaosate.png" },
+                    new FoodItem { Name = "Sò Dương Nướng Sa Tế", Price = "160.000đ", ImageUrl = "soduongnuongsate.png" },
+                    new FoodItem { Name = "Sò Điệp Nướng Mỡ Hành", Price = "140.000đ", ImageUrl = "sodiepnuongmohanh.png" },
+                    new FoodItem { Name = "Sò Điệp Nướng", Price = "130.000đ", ImageUrl = "sodiepnuong.png" },
+                    new FoodItem { Name = "Sò Lông Nướng", Price = "120.000đ", ImageUrl = "solongnuong.png" },
+                    new FoodItem { Name = "Sò Hấp", Price = "80.000đ", ImageUrl = "sohap.png" },
+                    new FoodItem { Name = "Tôm Nướng", Price = "250.000đ", ImageUrl = "tomnuong.png" },
+                    new FoodItem { Name = "Ốc Móng Tay Xào Rau Muống", Price = "150.000đ", ImageUrl = "ocmongtayxaoraumuong.png" },
+                    new FoodItem { Name = "Ốc Len Xào Dừa", Price = "200.000đ", ImageUrl = "oclenxaodua.png" },
+                    new FoodItem { Name = "Mực Trứng Hấp", Price = "150.000đ", ImageUrl = "muctrunghap.png" },
+                    new FoodItem { Name = "Nghêu Hấp Thái", Price = "180.000đ", ImageUrl = "ngheuhapthai.png" },
+                    new FoodItem { Name = "Cà Bắp Nướng", Price = "39.000đ", ImageUrl = "cabapnuong.png" },
+                    new FoodItem { Name = "Bạch Tuộc Nướng", Price = "150.000đ", ImageUrl = "bachtuotnuong.png" },
+                    new FoodItem { Name = "Coca Cola", Price = "15.000đ", ImageUrl = "coca.png" },
+                    new FoodItem { Name = "Bia Heineken", Price = "25.000đ", ImageUrl = "ken.png" },
+                    new FoodItem { Name = "Bia Larue", Price = "18.000đ", ImageUrl = "larue.png" },
+                    new FoodItem { Name = "Pepsi", Price = "15.000đ", ImageUrl = "pepsi.png" },
+                    new FoodItem { Name = "Bia Sài Gòn", Price = "18.000đ", ImageUrl = "saigon.png" },
+                    new FoodItem { Name = "Nước Tăng Lực Sting", Price = "15.000đ", ImageUrl = "sting.png" },
+                    new FoodItem { Name = "Bia Tiger Bạc", Price = "24.000đ", ImageUrl = "tigerbac.png" },
+                    new FoodItem { Name = "Bia Tiger Nâu", Price = "22.000đ", ImageUrl = "tigernau.png" }
+                };
+            }
+
+            if (placeName.Contains("Bún Cá Châu Đốc"))
             {
                 return new List<FoodItem>
                 {
