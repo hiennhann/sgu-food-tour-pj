@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
+using System;
 using VinhKhanhTour.Models;
 using VinhKhanhTour.Data;
 using VinhKhanhTour.Services;
@@ -16,6 +17,36 @@ namespace VinhKhanhTour.Views
             NavigationPage.SetHasNavigationBar(this, false);
             BackgroundColor = Colors.White;
 
+            var mainGrid = new Grid
+            {
+                RowDefinitions =
+                {
+                    new RowDefinition { Height = GridLength.Auto }, // Chứa nút Back
+                    new RowDefinition { Height = GridLength.Star }  // Chứa Form (ScrollView)
+                }
+            };
+
+            // ==========================================
+            // NÚT BACK (QUAY LẠI)
+            // ==========================================
+            var backLayout = new HorizontalStackLayout { Padding = new Thickness(20, 20, 0, 0), Spacing = 5 };
+            var backIcon = new Label { Text = "←", FontSize = 24, TextColor = Colors.Black, VerticalOptions = LayoutOptions.Center };
+            var backText = new Label { TextColor = Colors.Black, FontSize = 16, VerticalOptions = LayoutOptions.Center };
+            backText.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Quay lại"));
+
+            backLayout.Children.Add(backIcon);
+            backLayout.Children.Add(backText);
+
+            var tapBack = new TapGestureRecognizer();
+            tapBack.Tapped += async (s, e) => await Navigation.PopAsync();
+            backLayout.GestureRecognizers.Add(tapBack);
+
+            Grid.SetRow(backLayout, 0);
+            mainGrid.Children.Add(backLayout);
+
+            // ==========================================
+            // FORM ĐĂNG KÝ
+            // ==========================================
             var stack = new VerticalStackLayout { Spacing = 15, Padding = 30, VerticalOptions = LayoutOptions.Center };
 
             var titleLabel = new Label { FontSize = 28, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
@@ -46,7 +77,11 @@ namespace VinhKhanhTour.Views
             loginLink.GestureRecognizers.Add(tap);
             stack.Children.Add(loginLink);
 
-            Content = new ScrollView { Content = stack };
+            var scrollView = new ScrollView { Content = stack };
+            Grid.SetRow(scrollView, 1);
+            mainGrid.Children.Add(scrollView);
+
+            Content = mainGrid;
         }
 
         private Entry CreateStyledEntry(string placeholderKey, string icon, Keyboard k = null, bool isPassword = false)

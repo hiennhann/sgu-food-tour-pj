@@ -1,6 +1,8 @@
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using VinhKhanhTour.Models;
+using VinhKhanhTour.Helpers;
+using VinhKhanhTour.Services;
 
 namespace VinhKhanhTour.Views
 {
@@ -40,7 +42,7 @@ namespace VinhKhanhTour.Views
                 HeightRequest = 120
             });
 
-            // NÚT BACK (Đã gắn Binding đa ngôn ngữ)
+            // NÚT BACK
             var backBtn = new Button
             {
                 FontSize = 16,
@@ -54,7 +56,7 @@ namespace VinhKhanhTour.Views
                 VerticalOptions = LayoutOptions.Start,
                 Margin = new Thickness(15, 50, 0, 0)
             };
-            backBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Quay lại"));
+            backBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Quay lại"));
             backBtn.Clicked += async (s, e) => await Navigation.PopAsync();
             coverGrid.Children.Add(backBtn);
             mainStack.Children.Add(coverGrid);
@@ -79,17 +81,59 @@ namespace VinhKhanhTour.Views
             addressLabel.SetBinding(Label.TextProperty, new Binding("Address", stringFormat: "📍 {0}"));
             metaStack.Children.Add(addressLabel);
 
-            // GIỜ MỞ CỬA (Đã gắn Binding đa ngôn ngữ)
             var timeLabel = new Label { TextColor = Color.FromArgb("#707070"), FontSize = 15 };
-            timeLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Mở cửa", stringFormat: "🕒 {0}: 15:00 - 23:30"));
+            timeLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Mở cửa", stringFormat: "🕒 {0}: 15:00 - 23:30"));
             metaStack.Children.Add(timeLabel);
 
             infoLayout.Children.Add(metaStack);
 
+            // ==========================================
+            // TÍNH NĂNG MỚI: NÚT CHECK-IN
+            // ==========================================
+            var checkInBtn = new Button
+            {
+                BackgroundColor = Color.FromArgb("#E8F5E9"), // Nền xanh lá nhạt
+                TextColor = Color.FromArgb("#2E7D32"), // Chữ xanh lá đậm
+                FontAttributes = FontAttributes.Bold,
+                CornerRadius = 15,
+                HeightRequest = 45,
+                Margin = new Thickness(0, 5)
+            };
+            checkInBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Check-in ngay", stringFormat: "📍 {0}"));
+            checkInBtn.Clicked += async (s, e) =>
+            {
+                if (AppState.IsLoggedIn)
+                {
+                    // Đổi nút thành trạng thái đang load
+                    checkInBtn.Text = "⏳ Đang xử lý...";
+                    checkInBtn.IsEnabled = false;
+
+                    int.TryParse(place.Id, out int poiId); // Ép kiểu Id của FoodPlace sang int
+                    var db = new DatabaseService();
+                    bool success = await db.CheckInAsync(AppState.UserId, poiId, "Đã ghé thăm!");
+
+                    if (success)
+                        await DisplayAlert("Thành công!", "Đã lưu dấu chân của bạn vào Nhật ký hành trình", "Tuyệt vời");
+                    else
+                        await DisplayAlert("Lỗi", "Không thể kết nối đến máy chủ", "Thử lại sau");
+
+                    // Trả lại trạng thái cũ
+                    checkInBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Check-in ngay", stringFormat: "📍 {0}"));
+                    checkInBtn.IsEnabled = true;
+                }
+                else
+                {
+                    bool login = await DisplayAlert("Thông báo", "Bạn cần đăng nhập để sử dụng tính năng Check-in. Đăng nhập ngay?", "Đồng ý", "Hủy");
+                    if (login) await Navigation.PushAsync(new LoginPage());
+                }
+            };
+            infoLayout.Children.Add(checkInBtn);
+            // ==========================================
+
             infoLayout.Children.Add(new BoxView { HeightRequest = 1, BackgroundColor = Color.FromArgb("#EAEAEA"), Margin = new Thickness(0, 5) });
 
             var introLabel = new Label { FontSize = 20, FontAttributes = FontAttributes.Bold, TextColor = Colors.Black };
-            introLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Giới thiệu"));
+            introLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Giới thiệu"));
             infoLayout.Children.Add(introLabel);
 
             var descLabel = new Label { TextColor = Color.FromArgb("#4A4A4A"), LineHeight = 1.5, FontSize = 16 };
@@ -124,13 +168,13 @@ namespace VinhKhanhTour.Views
             var actionGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, ColumnSpacing = 15 };
 
             var menuBtn = new Button { BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
-            menuBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Thực Đơn", stringFormat: "📋 {0}"));
+            menuBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Thực Đơn", stringFormat: "📋 {0}"));
             menuBtn.Clicked += async (s, e) => await Navigation.PushAsync(new MenuPage(place));
             Grid.SetColumn(menuBtn, 0);
             actionGrid.Children.Add(menuBtn);
 
             var audioBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
-            audioBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Nghe Audio", stringFormat: "🎧 {0}"));
+            audioBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Nghe Audio", stringFormat: "🎧 {0}"));
             audioBtn.Clicked += async (s, e) => await Navigation.PushAsync(new AudioPlayerPage(place));
             Grid.SetColumn(audioBtn, 1);
             actionGrid.Children.Add(audioBtn);

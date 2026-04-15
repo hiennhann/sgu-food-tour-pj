@@ -1,56 +1,110 @@
-﻿using SQLite;
-using System.IO;
+﻿using System;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Microsoft.Maui.Storage;
 using VinhKhanhTour.Models;
 
-namespace VinhKhanhTour.Data
+namespace VinhKhanhTour.Services
 {
     public class DatabaseService
     {
-        private SQLiteAsyncConnection _db;
+        private readonly HttpClient _httpClient;
 
-        // Hàm khởi tạo và kết nối DB
-        private async Task Init()
+        // CHÚ Ý: Giữ đúng IP máy tính của bạn như các API khác
+        private readonly string _baseUrl = "http://192.168.1.4:5113/api/AuthApi";
+
+        public DatabaseService()
         {
-            if (_db != null)
-                return;
-
-            // Tạo đường dẫn an toàn giấu trong ruột điện thoại (Khách không thể tìm thấy file này)
-            var databasePath = Path.Combine(FileSystem.AppDataDirectory, "VinhKhanhLocal.db3");
-
-            _db = new SQLiteAsyncConnection(databasePath);
-
-            // Tạo bảng UserAccount (Nếu bảng đã có sẵn thì lệnh này sẽ tự động bỏ qua)
-            await _db.CreateTableAsync<UserAccount>();
+            _httpClient = new HttpClient();
+            _httpClient.Timeout = TimeSpan.FromSeconds(10);
         }
 
-        // ==========================================
-        // CÁC HÀM XỬ LÝ ĐĂNG NHẬP / ĐĂNG KÝ
-        // ==========================================
-
-        // 1. Kiểm tra Email đã tồn tại chưa
+        // 1. Kiểm tra Email qua API
         public async Task<bool> IsEmailExistsAsync(string email)
         {
-            await Init();
-            var user = await _db.Table<UserAccount>().Where(u => u.Email == email).FirstOrDefaultAsync();
-            return user != null; // Trả về true nếu đã có người xài email này
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<bool>($"{_baseUrl}/check-email?email={email}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[LỖI CHECK EMAIL]: {ex.Message}");
+                return false;
+            }
         }
 
-        // 2. Đăng ký (Thêm User mới vào DB)
+        // 2. Đăng ký qua API
         public async Task<int> RegisterUserAsync(UserAccount newUser)
         {
-            await Init();
-            return await _db.InsertAsync(newUser);
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/register", newUser);
+                return response.IsSuccessStatusCode ? 1 : 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[LỖI ĐĂNG KÝ]: {ex.Message}");
+                return 0;
+            }
         }
 
-        // 3. Đăng nhập (Tìm User có khớp Email và Password không)
+        // 3. Đăng nhập qua API
         public async Task<UserAccount> GetUserAsync(string email, string password)
         {
-            await Init();
-            return await _db.Table<UserAccount>()
-                            .Where(u => u.Email == email && u.Password == password)
-                            .FirstOrDefaultAsync();
+            try
+            {
+                // Đóng gói email và pass gửi lên API
+                var loginData = new UserAccount { Email = email, Password = password, FullName = "login" };
+                var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/login", loginData);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Đăng nhập đúng -> Nhận thông tin User (Kèm FullName) từ Server về
+                    var options = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    return await response.Content.ReadFromJsonAsync<UserAccount>(options);
+                }
+                return null; // Đăng nhập sai
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[LỖI ĐĂNG NHẬP]: {ex.Message}");
+                return null;
+            }
+        }
+        private readonly string _checkInUrl = "http://192.168.1.7:5113/api/CheckInApi";
+
+        // Hàm 1: Bắn lệnh Check-in lên Server
+        public async Task<bool> CheckInAsync(int userId, int poiId, string note = "")
+        {
+            try
+            {
+                var record = new { UserId = userId, PoiId = poiId, Note = note };
+                var response = await _httpClient.PostAsJsonAsync(_checkInUrl, record);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        // Hàm 2: Lấy danh sách Nhật ký về để hiển thị
+        public async Task<List<dynamic>> GetMyJourneyAsync(int userId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_checkInUrl}/user/{userId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    // Trả về danh sách có chứa Tên quán, Thời gian, Ảnh...
+                    return await response.Content.ReadFromJsonAsync<List<dynamic>>();
+                }
+                return new List<dynamic>();
+            }
+            catch
+            {
+                return new List<dynamic>();
+            }
         }
     }
 }

@@ -91,7 +91,21 @@ namespace VinhKhanhTour.Views
 
         private void UpdateProfileCard()
         {
-            var profileGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = 60 }, new ColumnDefinition { Width = GridLength.Star } }, RowDefinitions = new RowDefinitionCollection { new RowDefinition { Height = GridLength.Auto }, new RowDefinition { Height = GridLength.Auto }, new RowDefinition { Height = GridLength.Auto } }, ColumnSpacing = 15, RowSpacing = 5 };
+            // Tăng RowDefinitions lên 4 dòng để có chỗ chứa nút Nhật ký
+            var profileGrid = new Grid
+            {
+                ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = 60 }, new ColumnDefinition { Width = GridLength.Star } },
+                RowDefinitions = new RowDefinitionCollection
+        {
+            new RowDefinition { Height = GridLength.Auto }, // Dòng 0: Tên
+            new RowDefinition { Height = GridLength.Auto }, // Dòng 1: Email
+            new RowDefinition { Height = GridLength.Auto }, // Dòng 2: Nút Nhật ký hành trình
+            new RowDefinition { Height = GridLength.Auto }  // Dòng 3: Nút Đăng xuất
+        },
+                ColumnSpacing = 15,
+                RowSpacing = 5
+            };
+
             var avatar = new Border { WidthRequest = 60, HeightRequest = 60, StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 30 }, BackgroundColor = Color.FromArgb("#E0E0E0"), StrokeThickness = 0 };
             Grid.SetRowSpan(avatar, 2); Grid.SetColumn(avatar, 0);
 
@@ -108,10 +122,25 @@ namespace VinhKhanhTour.Views
                 Grid.SetRow(emailLabel, 1); Grid.SetColumn(emailLabel, 1);
                 profileGrid.Children.Add(emailLabel);
 
+                // ==========================================
+                // THÊM MỚI: NÚT XEM NHẬT KÝ HÀNH TRÌNH
+                // ==========================================
+                var historyBtn = new Button { BackgroundColor = Color.FromArgb("#E3F2FD"), TextColor = Color.FromArgb("#1565C0"), FontAttributes = FontAttributes.Bold, CornerRadius = 10, HeightRequest = 40, Margin = new Thickness(0, 10, 0, 0) };
+                historyBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Nhật ký hành trình", stringFormat: "📖 {0}"));
+                historyBtn.Clicked += async (s, e) => {
+                    // Hiển thị thông báo tạm thời, sau này có trang JourneyPage thì thay thế bằng lệnh Navigation
+                    await DisplayAlert("Chờ chút", "Đang mở Nhật ký hành trình...", "OK");
+                    // await Navigation.PushAsync(new JourneyPage()); 
+                };
+                Grid.SetRow(historyBtn, 2); Grid.SetColumn(historyBtn, 1); // Đặt ở dòng số 2
+                profileGrid.Children.Add(historyBtn);
+                // ==========================================
+
                 var logoutBtn = new Button { BackgroundColor = Color.FromArgb("#F4F4F6"), TextColor = Colors.Red, FontAttributes = FontAttributes.Bold, CornerRadius = 10, HeightRequest = 40, Margin = new Thickness(0, 10, 0, 0) };
                 logoutBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Đăng Xuất"));
                 logoutBtn.Clicked += (s, e) => { AppState.Logout(); UpdateProfileCard(); };
-                Grid.SetRow(logoutBtn, 2); Grid.SetColumn(logoutBtn, 1);
+
+                Grid.SetRow(logoutBtn, 3); Grid.SetColumn(logoutBtn, 1); // Đẩy nút Đăng xuất xuống dòng số 3
                 profileGrid.Children.Add(logoutBtn);
             }
             else
@@ -135,9 +164,9 @@ namespace VinhKhanhTour.Views
                 Grid.SetRow(loginBtn, 2); Grid.SetColumn(loginBtn, 1);
                 profileGrid.Children.Add(loginBtn);
             }
+
             _profileCard.Content = profileGrid;
         }
-
         private View CreateSettingsRow(string icon, string titleKey, string valueText, bool showArrow)
         {
             var grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = 40 }, new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Auto }, new ColumnDefinition { Width = 20 } }, Padding = new Thickness(15, 15), BackgroundColor = Colors.Transparent };
