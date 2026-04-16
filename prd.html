@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGU Food Tour Diagram - Toàn Bộ Hệ Thống Đầy Đủ Chi Tiết</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        /* Glassmorphism containers */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+        }
+
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 3rem;
+            overflow-x: auto;
+            border: 1px solid #f1f5f9;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .diagram-container:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .section-content {
+            margin-bottom: 7rem;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Nav Pills */
+        .nav-link {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            text-align: center;
+            flex: 1 1 auto;
+            min-width: 180px;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+            border-color: transparent;
+            box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3);
+            transform: translateY(-2px);
+        }
+
+        pre.mermaid {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .diagram-container svg {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #0ea5e9, #6366f1);
+        }
+
+        /* Decorative Background Blob */
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+
+<body class="relative overflow-x-hidden antialiased">
+    <!-- Background elements -->
+    <div class="blob bg-blue-300 w-[500px] h-[500px] rounded-full top-0 left-0 -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="blob bg-indigo-300 w-[500px] h-[500px] rounded-full top-80 right-0 translate-x-1/3"></div>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl relative z-10">
+        <header class="text-center mb-16 pt-8">
+
+
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight text-gradient drop-shadow-sm">Vinh Khanh
+                Food Tour</h1>
+
+
+            <!-- Credits Section -->
+            <div class="glass-panel inline-block px-8 py-6 rounded-3xl mx-auto">
+                <div class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-5 text-center">Sinh viên thực
+                    hiện</div>
+                <div class="flex flex-col md:flex-row gap-6 md:gap-10 justify-center items-center">
+                    <div
+                        class="flex items-center gap-4 bg-white/70 px-6 py-4 rounded-2xl border border-white shadow-sm transition hover:shadow-md hover:bg-white/90">
+                        <div
+                            class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-white font-bold shadow-inner text-xl">
+                            N</div>
+                        <div class="text-left">
+                            <div class="font-bold text-slate-800 text-lg">Nguyễn Văn Hiền Nhân</div>
+                            <div class="text-sm font-medium text-blue-600 mt-0.5">MSSV: 3123411207</div>
+                        </div>
+                    </div>
+                    <div
+                        class="flex items-center gap-4 bg-white/70 px-6 py-4 rounded-2xl border border-white shadow-sm transition hover:shadow-md hover:bg-white/90">
+                        <div
+                            class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-white font-bold shadow-inner text-xl">
+                            H</div>
+                        <div class="text-left">
+                            <div class="font-bold text-slate-800 text-lg">Trương Tiến Ngọc Hồ</div>
+                            <div class="text-sm font-medium text-indigo-600 mt-0.5">MSSV: 3123411109</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Links MỤC LỤC -->
+        <div class="flex justify-center mb-16 sticky top-4 z-50">
+            <div class="flex flex-wrap justify-center gap-3 p-2 rounded-2xl glass-panel shadow-lg w-full md:w-auto">
+                <a href="#overview"
+                    class="nav-link px-6 py-3 text-slate-700 font-semibold rounded-xl border border-slate-200/50">0.
+                    Tổng Quan</a>
+                <a href="#usecase"
+                    class="nav-link px-6 py-3 text-slate-700 font-semibold rounded-xl border border-slate-200/50">1. Sơ
+                    Đồ Use Case</a>
+                <a href="#class"
+                    class="nav-link px-6 py-3 text-slate-700 font-semibold rounded-xl border border-slate-200/50">2. Sơ
+                    Đồ Class</a>
+                <a href="#sequence"
+                    class="nav-link px-6 py-3 text-slate-700 font-semibold rounded-xl border border-slate-200/50">3. Sơ
+                    Đồ Sequence</a>
+                <a href="#activity"
+                    class="nav-link px-6 py-3 text-slate-700 font-semibold rounded-xl border border-slate-200/50">4. Sơ
+                    Đồ Activity</a>
+            </div>
+        </div>
+
+        <!-- ============================== -->
+        <!--        0. OVERVIEW             -->
+        <!-- ============================== -->
+        <div id="overview" class="section-content">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-300 mb-6 border-l-8 border-l-purple-600">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900 flex items-center">
+                    <span
+                        class="bg-purple-600 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3 text-xl shadow-md">0</span>
+                    Tổng Quan Công Nghệ & Cơ Sở Dữ Liệu
+                </h2>
+                <div class="text-gray-700 mb-4 space-y-4">
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-5">
+                            <h3 class="text-xl font-bold text-blue-800 mb-3 flex items-center">
+                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                Ứng Dụng Di Động (Mobile Client)
+                            </h3>
+                            <ul class="list-disc pl-5 space-y-2 text-gray-800 leading-relaxed">
+                                <li><strong>Framework:</strong> <span class="font-semibold text-blue-700">.NET
+                                        MAUI</span> (C#) - Xây dựng ứng dụng Native trên đa nền tảng.</li>
+                                <li><strong>Bản đồ & Tọa độ:</strong> Kết hợp Native OS Geolocation API và Map Control.
+                                </li>
+                                <li><strong>Đa Phương tiện:</strong> Tính năng đọc văn bản tự
+                                    động (Text-To-Speech) fallback.</li>
+                                <li><strong>Cơ sở dữ liệu:</strong> <span
+                                        class="bg-yellow-200 px-1 py-0.5 rounded font-bold text-yellow-900">SQLite</span>
+                                    - Đóng vai trò là Offline Database. Gọi HTTP REST Get kéo Json Data từ Server về nạp
+                                    vào bộ nhớ để sử dụng độc lập trên điện thoại.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-teal-50 border border-teal-200 rounded-lg p-5">
+                            <h3 class="text-xl font-bold text-teal-800 mb-3 flex items-center">
+                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01">
+                                    </path>
+                                </svg>
+                                Hệ Thống Quản Trị (CMS Web)
+                            </h3>
+                            <ul class="list-disc pl-5 space-y-2 text-gray-800 leading-relaxed">
+                                <li><strong>Web Framework:</strong> <span class="font-semibold text-teal-700">ASP.NET
+                                        Core MVC</span></li>
+                                <li><strong>Truy xuất Data (ORM):</strong> Entity Framework Core (EF Core).</li>
+                                <li><strong>Cơ sở dữ liệu:</strong> <span
+                                        class="bg-yellow-200 px-1 py-0.5 rounded font-bold text-yellow-900">PostgreSQL</span>
+                                </li>
+                                <li><strong>Hệ sinh thái:</strong> Expose REST API JSON phục vụ định tuyến đồng bộ dữ
+                                    liệu xuống Mobile.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-amber-50 border border-amber-200 rounded-lg p-5">
+                        <h3 class="text-xl font-bold text-amber-800 mb-3 flex items-center">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            Các Chức Năng Chính
+                        </h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-800 leading-relaxed">
+                            <li><strong>Bản đồ & Định vị tự động:</strong> Giúp du khách và khách quốc tế tự tin khám
+                                phá các ngõ hẻm phố ẩm thực, không chệch lộ trình, thông qua la bàn dẫn đường và các
+                                điểm ghim ảo (POI).</li>
+                            <li><strong>Thuyết minh tự động:</strong> Tích hợp phát các đoạn âm thanh
+                                MP3 hoặc giọng đọc AI (Text-To-Speech) mô tả lại lịch sử, nguồn gốc các khu ăn uống, tạo
+                                chiều sâu văn hóa truyền tải thẳng vào tai nghe mà không cần đọc văn bản dài.</li>
+                            <li><strong>Cơ chế Ngoại tuyến (Offline Mode):</strong> Giải quyết triệt để nỗi đau mất mạng
+                                4G/Wifi của khách quốc tế. Dữ liệu đã được API gắp sẵn vào <strong>SQLite</strong> local
+                                để mọi thao tác vuốt chọn thực đơn, nghe thuyết minh, xem vị trí đều tức thì, không bị
+                                cản trở bởi kết nối kém.</li>
+                            <li><strong>Đa ngôn ngữ:</strong> Cập nhật từ vựng đa ngôn ngữ.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================== -->
+        <!--      1. USE CASE DIAGRAM       -->
+        <!-- ============================== -->
+        <div id="usecase" class="section-content">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-300 mb-6 border-l-8 border-l-blue-600">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900 flex items-center">
+                    <span
+                        class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3 text-xl shadow-md">1</span>
+                    Sơ Đồ Use Case
+                </h2>
+
+            </div>
+            <div class="diagram-container">
+                <pre class="mermaid">
+flowchart LR
+    %% Actors
+    Tourist([Khách Du Lịch\nUser Mobile])
+    Admin([Quản Trị Viên\nCMS Admin])
+
+    %% User System Boundary
+    subgraph System_Mobile [Vinh Khanh MAUI Mobile Application]
+        direction TB
+        UC1([Account: Đăng ký / Đăng nhập])
+        UC2([Map: Khám phá Bản đồ & Định vị])
+        UC3([Audio: Nghe Thuyết minh bản địa])
+        UC4([Menu: Xem Ẩm thực & Quán ăn])
+        UC5([Place: Xem Chi tiết địa điểm])
+        UC6([Setting: Tùy chỉnh Ngôn ngữ])
+    end
+
+    %% Admin System Boundary
+    subgraph System_CMS [Hệ Thống CMS Web Portal]
+        direction TB
+        UC7([Quản lý Cảnh Điểm POI])
+        UC8([Quản lý Tuyến Đường Tours])
+        UC9([Quản lý Tệp Âm Thanh Audio Tracks])
+        UC10([Quản lý Đa Ngôn Ngữ Translation])
+        UC11([Thống kê Hành vi Usage])
+        UC12([Cung Cấp Hệ sinh thái API])
+    end
+
+    %% Associations User
+    Tourist --- UC1
+    Tourist --- UC2
+    Tourist --- UC4
+    Tourist --- UC6
+
+    %% Associations Admin
+    Admin --- UC7
+    Admin --- UC8
+    Admin --- UC9
+    Admin --- UC10
+    Admin --- UC11
+
+    %% Includes / Extends User Sub-cases
+    UC2 -.->|&lt;&lt;include&gt;&gt;| UC1
+    UC3 -.->|&lt;&lt;extend&gt;&gt;| UC2
+    UC5 -.->|&lt;&lt;extend&gt;&gt;| UC4
+
+    %% Cross-interaction (Hệ thống đồng bộ)
+    UC12 -.->|&lt;&lt;include&gt;&gt; Đồng bộ Dữ liệu| UC2
+    UC12 -.->|&lt;&lt;include&gt;&gt; Đồng bộ Dữ liệu| UC4
+    
+    style Tourist fill:#f8fafc,stroke:#3b82f6,stroke-width:2px
+    style Admin fill:#f8fafc,stroke:#10b981,stroke-width:2px
+</pre>
+            </div>
+        </div>
+
+        <!-- ============================== -->
+        <!--        2. CLASS DIAGRAM        -->
+        <!-- ============================== -->
+        <div id="class" class="section-content">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-300 mb-6 border-l-8 border-l-blue-600">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900 flex items-center">
+                    <span
+                        class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3 text-xl shadow-md">2</span>
+                    Sơ Đồ Class
+                </h2>
+            </div>
+            <div class="diagram-container" style="overflow-x: auto; padding-bottom: 2rem;">
+                <pre class="mermaid">
+classDiagram
+    %% ======= MODELS / ENTITIES SHARED =======
+    namespace CoreEntities_Shared {
+        class Poi {
+            +int Id
+            +string Name
+            +string DisplayName
+            +double Latitude
+            +double Longitude
+            +string DisplayTtsScript
+            +string ImageUrl
+            +int Priority
+            +int? TourId
+        }
+        
+        class Tour {
+            +int Id
+            +string TourName
+            +string Description
+        }
+        
+        class AudioTrack {
+            +int Id
+            +string FileName
+            +int PoiId
+            +string Language
+        }
+        
+        class Translation {
+            +int Id
+            +string LanguageCode
+            +string Key
+            +string Value
+        }
+        
+        class FoodPlace {
+            +int Id
+            +string Name
+            +string Address
+            +string Description
+            +string ImageUrl
+            +double Latitude
+            +double Longitude
+        }
+        
+        class FoodItem {
+            +int Id
+            +string Name
+            +double Price
+            +string ImageUrl
+            +int PlaceId
+        }
+
+        class UserAccount {
+            +int Id
+            +string Email
+            +string PasswordHash
+            +string FullName
+            +DateTime CreatedAt
+        }
+        
+        class UsageHistory {
+            +int Id
+            +string ActionType
+            +string Details
+            +DateTime Timestamp
+        }
+    }
+
+    %% ======= CMS ADMIN (WEB BACKEND) =======
+    namespace Admin_CMS_Backend {
+        class AppDbContext {
+            +DbSet~Poi~ Pois
+            +DbSet~Tour~ Tours
+            +DbSet~AudioTrack~ Audios
+            +DbSet~Translation~ Translations
+            +DbSet~UsageHistory~ UsageHistories
+            +SaveChangesAsync() Task~int~
+        }
+        
+        class PoiController {
+            +Index() IActionResult
+            +Create(Poi) IActionResult
+            +Edit(int, Poi) IActionResult
+        }
+        
+        class TourController {
+            +Index()
+            +Create()
+        }
+        
+        class AudioTrackController {
+            +UploadAudio()
+        }
+        
+        class ApiApiController {
+            +GetPois() ActionResult~IEnumerable~Poi~~
+            +GetTours() ActionResult~IEnumerable~Tour~~
+        }
+    }
+
+    %% ======= MAUI MOBILE (USER APP) =======
+    namespace User_Mobile_App {
+        class LocalSQLiteDB {
+            -SQLiteAsyncConnection _database
+            +InitAsync() Task
+        }
+        
+        class PoiRepository {
+            +GetAllPoisAsync() Task~List~Poi~~
+            +SyncWithApiAsync() Task
+        }
+        
+        class DatabaseService {
+            +GetUserAsync(string, string) Task~UserAccount~
+            +RegisterUserAsync(UserAccount) Task~int~
+        }
+        
+        class MenuDataStore {
+            +GetPlacesAsync() Task~List~FoodPlace~~
+        }
+        
+        class MapPage {
+            -LoadPins() void
+            -Pin_Clicked(sender, e) void
+        }
+        
+        class AudioPlayerPage {
+            -PlayMedia() void
+            -TextToSpeechFallback() void
+        }
+    }
+
+    %% RELATIONS MODELS (SHARED)
+    AppDbContext "1" *-- "*" Poi : manages in SQL
+    AppDbContext "1" *-- "*" Tour : manages in SQL
+    AppDbContext "1" *-- "*" AudioTrack : manages in SQL
+    
+    LocalSQLiteDB "1" *-- "*" Poi : caches offline
+    
+    Poi "1" *-- "*" AudioTrack : has zero or more
+    Tour "1" o-- "*" Poi : consists of points
+    FoodPlace "1" *-- "*" FoodItem : contains menu items
+
+    %% RELATIONS CONTROLLERS (CMS)
+    PoiController ..> AppDbContext : injects
+    TourController ..> AppDbContext : injects
+    AudioTrackController ..> AppDbContext : injects
+    ApiApiController ..> AppDbContext : streams json
+
+    %% RELATIONS MAUI (USER)
+    PoiRepository --|> LocalSQLiteDB : uses connection
+    DatabaseService --|> LocalSQLiteDB : validates users
+    MenuDataStore ..> FoodPlace : loads
+    
+    MapPage ..> PoiRepository : queries local logic
+    AudioPlayerPage ..> Poi : loads script/audio details
+    
+    PoiRepository ..> ApiApiController : HTTP GET sync
+</pre>
+            </div>
+        </div>
+
+        <!-- ============================== -->
+        <!--      3. SEQUENCE DIAGRAMS      -->
+        <!-- ============================== -->
+        <div id="sequence" class="section-content">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-300 mb-6 border-l-8 border-l-blue-600">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900 flex items-center">
+                    <span
+                        class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3 text-xl shadow-md">3</span>
+                    Sơ Đồ Sequence
+                </h2>
+            </div>
+
+            <!-- 3.1 & 3.2: USER AUTHENTICATION -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 rounded-r-lg shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800">3.1 & 3.2. Mobile App: Luồng Đăng Ký/Đăng Nhập Tài Khoản
+                    Người Dùng</h3>
+            </div>
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+    actor Tourist
+    participant TView as UI Views (Register/Login)
+    participant DbSvc as DatabaseService
+    participant SqLite as SQLite Local DB
+    participant State as Application State
+
+    %% Register Path
+    Tourist-&gt;&gt;TView: [ĐĂNG KÝ] Nhập Email, Name, Bấm Đăng ký
+    TView-&gt;&gt;DbSvc: RegisterUserAsync(...)
+    DbSvc-&gt;&gt;SqLite: Cố gắng INSERT INTO UserAccount
+    alt Email Tồn Tại
+        SqLite--&gt;&gt;DbSvc: SQLError (Constraint Unique)
+        DbSvc--&gt;&gt;TView: Return Error
+        TView--&gt;&gt;Tourist: Hiện Popup Cảnh báo
+    else Đăng Ký OK
+        SqLite--&gt;&gt;DbSvc: Success Rows = 1
+        DbSvc--&gt;&gt;TView: Return True
+        TView--&gt;&gt;Tourist: Báo Thành công, Dẫn về Đăng Nhập
+    end
+    
+    %% Login Path
+    Tourist-&gt;&gt;TView: [ĐĂNG NHẬP] Nhập User, Pass
+    TView-&gt;&gt;DbSvc: GetUserAsync()
+    DbSvc-&gt;&gt;SqLite: SELECT * FROM UserAccount WHERE Auth
+    SqLite--&gt;&gt;DbSvc: User Object / Null
+    alt Hợp Lệ
+        DbSvc--&gt;&gt;TView: User Account
+        TView-&gt;&gt;State: Ghi đè Global Session Cache
+        TView--&gt;&gt;Tourist: Xóa Trang Auth, Rẽ sang Trang Chủ Shell
+    else Sai Pass
+        DbSvc--&gt;&gt;TView: Null
+        TView--&gt;&gt;Tourist: Chớp đỏ, Yêu cầu thử lại
+    end
+            </pre>
+            </div>
+
+            <!-- 3.3 & 3.4: USER MAP CORE -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 rounded-r-lg shadow-sm mt-8">
+                <h3 class="text-xl font-bold text-gray-800">3.3 & 3.4. Mobile App: Bản Đồ Định Vị & Phát Thuyết
+                    Minh</h3>
+            </div>
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+    actor Tourist
+    participant MapView as MapPage
+    participant DeviceGPS as OS Locator Plugin
+    participant MapUI as Google/Apple Map Control
+    participant AudioP as AudioPlayerPage
+    participant HW_Media as Hardware Speaker
+
+    %% Load Map Path
+    Tourist-&gt;&gt;MapView: Yêu Cầu Chức Năng Bản Đồ
+    MapView-&gt;&gt;DeviceGPS: Yêu Cầu Tọa Độ (GetLocation)
+    DeviceGPS--&gt;&gt;MapView: Tọa Đô Lat, Lng
+    MapView-&gt;&gt;MapView: Query PoiRepository (Lấy Cache Data)
+    MapView-&gt;&gt;MapUI: Cắm các Mũi Kim (Pins) từ List POI
+    MapUI--&gt;&gt;Tourist: Màn Hình Tương tác Map Nhìn Trực Quan
+
+    %% Interacting path
+    Tourist-&gt;&gt;MapUI: Chạm Vành khuyên (Marker) địa danh
+    MapUI-&gt;&gt;MapView: Kích Hoạt Nút "Play Âm Thanh" (Biểu Mẫu)
+    Tourist-&gt;&gt;MapView: Bấm Nút Play
+    
+    MapView-&gt;&gt;AudioP: Navigation Push AudioPlayer(id)
+    AudioP-&gt;&gt;HW_Media: Yêu Cầu Tệp File Nội Bộ hoặc TextToSpeech (TTS)
+    HW_Media--&gt;&gt;Tourist: Đổ luồng Âm Thanh ra Loa (Thuyết Minh Lịch Sử)
+    Tourist-&gt;&gt;AudioP: Bấm Tạm Dừng / Tắt
+    AudioP-&gt;&gt;HW_Media: Disposal() và Giải Phóng Cache
+            </pre>
+            </div>
+
+            <!-- 3.5 & 3.6: USER MENU & DETAILS -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 rounded-r-lg shadow-sm mt-8">
+                <h3 class="text-xl font-bold text-gray-800">3.5 & 3.6. Mobile App: Xem Thực Đơn Và Dẫn Đường Đến Quán
+                </h3>
+            </div>
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+    actor Tourist
+    participant Menu as MenuPage (Lists)
+    participant FoodDB as MenuDataStore
+    participant Detail as PlaceDetailPage
+    participant Browser as Map / URI scheme
+
+    Tourist-&gt;&gt;Menu: Vào Tab Thực Đơn (Ẩm Thực)
+    Menu-&gt;&gt;FoodDB: Lệnh GetPlacesAsync()
+    FoodDB--&gt;&gt;Menu: Dataset Hình ảnh, Tên Quán
+    Menu--&gt;&gt;Tourist: Cuộn màn hình Scroll View Ảnh Đại Diện (Grid)
+    
+    Tourist-&gt;&gt;Menu: Nhấp chọn một Item Quán Bất Kỳ
+    Menu-&gt;&gt;Detail: PushAsync Màn Hình Thứ Cấp
+    Detail-&gt;&gt;FoodDB: GetMenuForPlace(placeId)
+    FoodDB--&gt;&gt;Detail: List Ẩm Thực Bên Trong 1 Quán + Giá Tiền
+    Detail--&gt;&gt;Tourist: Trình bày chi tiết thông tin Giá Cả
+    
+    Tourist-&gt;&gt;Detail: Chạm Nút "Đưa Tôi Tới Đây!"
+    Detail-&gt;&gt;Browser: Lệnh Kích Hoạt URL "geo:lat,lng" / Mở GGMaps Native
+    Browser--&gt;&gt;Tourist: App Chuyển Cảnh Out App - Chỉ đường rẽ nhánh
+            </pre>
+            </div>
+
+            <!-- 3.7 & 3.8: ADMIN POI & TOURS -->
+            <div class="bg-teal-50 border-l-4 border-teal-600 p-4 mb-4 rounded-r-lg shadow-sm mt-8">
+                <h3 class="text-xl font-bold text-gray-800">3.7 & 3.8. CMS Web Admin: Quản Trị POI và Tour</h3>
+            </div>
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+    actor Admin
+    participant ViewUI as MVC Razor Views
+    participant Ctrl as ResourceControllers (POI/Tour)
+    participant DB as AppDbContext (Entity Framework PostgreSQL)
+
+    Admin-&gt;&gt;ViewUI: Nhấn Tùy Chọn "New / Edit" tại Dashboard
+    ViewUI-&gt;&gt;Ctrl: Trả Mẫu From-Data HTTP POST request
+    Ctrl-&gt;&gt;Ctrl: Bộ Lọc Validate Token & Dữ Liệu Tĩnh (Model.IsValid)
+    
+    alt Có Lỗi Cột Dữ Liệu (Trống Tên, Trống Tọa Độ)
+        Ctrl--&gt;&gt;ViewUI: Từ chối, Nạp lại Form kèm Cảnh Báo Validation
+    else Toàn Vẹn Hệ Data
+        Ctrl-&gt;&gt;DB: Exec Entity DbSet (Add/Update/Delete)
+        DB--&gt;&gt;Ctrl: Int Response: Lượng Rows bị tác động 
+        Ctrl--&gt;&gt;ViewUI: Trả lệnh Chuyển Hướng Redirection (Bảng Index)
+        ViewUI--&gt;&gt;Admin: Cập Nhập Trực Tiếp - Bảng Table Nhảy Dữ Liệu Mới
+    end
+            </pre>
+            </div>
+
+            <!-- 3.9 & 3.10: ADMIN AUDIO & TRANSLATIONS -->
+            <div class="bg-teal-50 border-l-4 border-teal-600 p-4 mb-4 rounded-r-lg shadow-sm mt-8">
+                <h3 class="text-xl font-bold text-gray-800">3.9 & 3.10. CMS Web Admin: Audio & Translation</h3>
+            </div>
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+    actor Admin
+    participant UpUI as Form Audio/Trans
+    participant ACtrl as AudioTrackController
+    participant TxtCtrl as TranslationController
+    participant WWW as Máy Chủ Chứa File wwwroot
+    participant DB as AppDbContext SQL
+
+    %% Audio Upload
+    Admin-&gt;&gt;UpUI: Chọn Audio MP3 dung lượng &lt; 5MB
+    UpUI-&gt;&gt;ACtrl: Post IFormFile qua Stream
+    ACtrl-&gt;&gt;WWW: CopyToAsync(fileStream Local Physical)
+    WWW--&gt;&gt;ACtrl: Hoàn Tất Bắn Path file string
+    ACtrl-&gt;&gt;DB: Gép Path String Tên Truy cập tạo Track mới
+    DB--&gt;&gt;ACtrl: Object Audio đã chèn thành công
+    
+    %% Translation Update
+    Admin-&gt;&gt;UpUI: Đăng bản văn bản ngôn ngữ 'EN / VI'
+    UpUI-&gt;&gt;TxtCtrl: POST Dic (Key, Value, Locale)
+    TxtCtrl-&gt;&gt;DB: Push Record Mới Update Data Dictionary
+    DB--&gt;&gt;TxtCtrl: Dữ liệu Đa Quốc gia Hoàn Thiện
+            </pre>
+            </div>
+
+            <!-- 3.11: API SYNC SYSTEM -->
+            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 mb-4 rounded-r-lg shadow-sm mt-8">
+                <h3 class="text-xl font-bold text-gray-800">3.11 & 3.12. Automation Logic: Cơ Chế Lấy Dữ Liệu Offline
+                </h3>
+            </div>
+            <div class="diagram-container">
+                <pre class="mermaid">
+sequenceDiagram
+    participant Mobile_BG as Mobile App Boot Process
+    participant ApiBack as CMS API Middleware Nodes
+    participant UserStorage as Mobile Device Mem Cache
+
+    Mobile_BG-&gt;&gt;Mobile_BG: Kiểm soát Network.Wifi/4G Có Hợp Lệ?
+    alt Co Mang Internet
+        Mobile_BG-&gt;&gt;ApiBack: Gửi Traced HTTP GET JSON Payload (Poi, Tour, Dict)
+        ApiBack-&gt;&gt;ApiBack: Select Toàn Bộ Hệ Thống, Format Json String
+        ApiBack--&gt;&gt;Mobile_BG: Data Package Kích Thước Nhỏ (REST)
+        Mobile_BG-&gt;&gt;UserStorage: Thanh toán Lịch Sử Cũ (Truncate), Chèn Data JSON (Insert All)
+        UserStorage--&gt;&gt;Mobile_BG: Bản Sao DB Cập Nhật Ngay Lập Tức
+    else Ngoại Tuyến (Offline)
+        Mobile_BG-&gt;&gt;UserStorage: Sử Dụng Default SQLite Cứng
+        UserStorage--&gt;&gt;Mobile_BG: Return Data Cache Đã Tồn Tại Lưu Lâu Ngày
+    end
+            </pre>
+            </div>
+        </div>
+
+        <!-- ============================== -->
+        <!--     4. ACTIVITY DIAGRAMS       -->
+        <!-- ============================== -->
+        <div id="activity" class="section-content">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-300 mb-6 border-l-8 border-l-blue-600">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900 flex items-center">
+                    <span
+                        class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3 text-xl shadow-md">4</span>
+                    Sơ Đồ Activity
+                </h2>
+
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- 4.1 -->
+                <div>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-2 rounded-r-lg shadow-sm">
+                        <h3 class="font-bold text-gray-800">4.1. Mobile: Xác thực Định danh (Auth Flow)</h3>
+                    </div>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+flowchart TD
+    Start(["Bắt đầu Mở App"]) --&gt; CheckSession{"Có Token Local?"}
+    CheckSession --&gt;|"Đúng"| Home(["Sang Trang Chủ"])
+    CheckSession --&gt;|"Sai"| AuthView["Hiển thị Màn hình Xác thực"]
+    
+    AuthView --&gt; Choice{"Người dùng chọn?"}
+    Choice --&gt;|"Đăng Ký"| FillReg["Nhập Dữ liệu Đăng Ký"]
+    FillReg --&gt; ValidReg{"Tồn tại Email?"}
+    ValidReg --&gt;|"Có"| Err1["Báo lỗi: Đã sử dụng"] --&gt; AuthView
+    ValidReg --&gt;|"Chưa"| SaveReg["Lưu Account Mới SQLite"] --&gt; AuthView
+    
+    Choice --&gt;|"Đăng Nhập"| FillLogin["Nhập Tên/Pass"]
+    FillLogin --&gt; Verify{"Verify Data?"}
+    Verify --&gt;|"Khớp"| SetSess["Lưu Biến Phiên Toàn Cục"] --&gt; Home
+    Verify --&gt;|"Lệch"| Err2["Cảnh báo Lỗi"] --&gt; AuthView
+                    </pre>
+                    </div>
+                </div>
+
+                <!-- 4.2 -->
+                <div>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-2 rounded-r-lg shadow-sm">
+                        <h3 class="font-bold text-gray-800">4.2. Mobile: Khám phá Vị trí (Map Flow)</h3>
+                    </div>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+flowchart TD
+    Start(["Click Xem Bản Đồ"]) --&gt; ReqGPS["Gọi Geolocation OS"]
+    ReqGPS --&gt; HasPerm{"Cấp quyền GPS?"}
+    HasPerm --&gt;|"Từ chối"| End2(["Ngừng - Đóng View"])
+    HasPerm --&gt;|"Cho phép"| QueryPOI["Tải Point Of Interest Database"]
+    
+    QueryPOI --&gt; RenderMap["Vẽ Pins Địa điểm lên Bản đồ"]
+    RenderMap --&gt; PickPin{"Chọn vào 1 Pin?"}
+    
+    PickPin --&gt;|"Không"| Wait(["Giữ Nguyên Màn Hình"])
+    PickPin --&gt;|"Có"| Measure{"Tính Khoảng Cách Tới Pin < 500m?"}
+    Measure --&gt;|"Lớn Hơn"| Alert["Thông báo: Bạn đang ở quá xa"] --&gt; RenderMap
+    Measure --&gt;|"Gần Bên"| OpenSheet["Mở Chi tiết Thu nhỏ & Nút Nghe Audio"] --&gt; EndMap(["Đợi Lệnh Tới Audio Flow"])
+                    </pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- 4.3 -->
+                <div>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-2 rounded-r-lg shadow-sm">
+                        <h3 class="font-bold text-gray-800">4.3. Mobile: Trải nghiệm Thuyết Minh (Audio Flow)</h3>
+                    </div>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+flowchart TD
+    Start(["Nhấp Yêu Cầu 'Nghe Audio'"]) --&gt; ReadPoi["Phân tích Dữ liệu Điểm đến"]
+    ReadPoi --&gt; FindTrack{"Tìm Track Nhạc Nền"}
+    
+    FindTrack --&gt;|"Tồn tại tệp vật lý"| InitMp3["Đẩy vào Media Bộ giải mã"]
+    InitMp3 --&gt; PlayVoice["Phát dòng Voice Audio"]
+    
+    FindTrack --&gt;|"Khuyết tệp âm thanh"| InitTTS["Thiết lập Engine Phát Âm AI"]
+    InitTTS --&gt; DumpText["Đổ Text Vào Nền Ngữ Âm"]
+    DumpText --&gt; RobotVoice["Phát Giọng đọc Robot"]
+    
+    PlayVoice --&gt; ActionEnd{"Hành động tiếp"}
+    RobotVoice --&gt; ActionEnd
+    ActionEnd --&gt;|"Tạm dừng"| Pause["Pause Player"]
+    ActionEnd --&gt;|"Quay lại"| Stop["Stop Player Bộ Nhớ"] --&gt; End3(["Quay lại Map"])
+                    </pre>
+                    </div>
+                </div>
+
+                <!-- 4.4 -->
+                <div>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-2 rounded-r-lg shadow-sm">
+                        <h3 class="font-bold text-gray-800">4.4. Mobile: Lưu trữ Menu Ẩm thực (Food & Places)</h3>
+                    </div>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+flowchart TD
+    Start(["Mở Tab Ẩm Thực"]) --&gt; LoadDB["Đọc Toàn Bộ Data Menu DataStore"]
+    LoadDB --&gt; RenderList["Hiển thị Bố Cục Thẻ Quán Ăn"]
+    
+    RenderList --&gt; SelectPlace{"Chạm 1 Quán Bất Kỳ?"}
+    SelectPlace --&gt;|"Trở Lại"| End4(["Rời khỏi Tab"])
+    SelectPlace --&gt;|"Nhấp Quán"| PushPage["Push Màn Hình PlaceDetailPage"]
+    
+    PushPage --&gt; GenFood["Sàng lọc Bảng Món Ăn Liên Quan Tại Quán"]
+    GenFood --&gt; LayoutPrice["Hiển thị Giao diện Menu Bảng Giá"]
+    LayoutPrice --&gt; DirectMap{"Bấm Nút Đường Đi?"}
+    
+    DirectMap --&gt;|"Đồng Ý"| BootURI["Kích Hoạt Liên Kết Bật GG Maps"] --&gt; EndExt(["Chuyển Đổi Sang App Ngoài"])
+    DirectMap --&gt;|"Quay về"| RenderList
+                    </pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- 4.5 -->
+                <div>
+                    <div class="bg-teal-50 border-l-4 border-teal-600 p-3 mb-2 rounded-r-lg shadow-sm">
+                        <h3 class="font-bold text-gray-800">4.5. Admin: Quản Lý Khung Hệ Thống (CMS Data)</h3>
+                    </div>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+flowchart TD
+    Start(["Đăng nhập CMS Thành công"]) --&gt; MoveDash["Đứng Tại Bảng POI / Tours / Translates"]
+    MoveDash --&gt; Action{"Thêm / Sửa / Xóa?"}
+    
+    Action --&gt;|"Xóa"| Promp["Đẩy Cảnh báo Bảo mật Xóa"]
+    Promp --&gt; Confirm{"Chấp thuận?"}
+    Confirm --&gt;|"Có"| DbDel["Thực thi Delete DB vĩnh viễn"] --&gt; Relaod
+    Confirm --&gt;|"Không"| MoveDash
+    
+    Action --&gt;|"Thêm/Sửa"| MakeForm["Render HTML Form Component"]
+    MakeForm --&gt; Submit["Submit Gửi Object Data Lên Server"]
+    Submit --&gt; Valid{"Data ModelState Dữ Liệu Hợp Lệ?"}
+    Valid --&gt;|"Thiếu Trường"| ReForm["Từ chối Hồi đáp Lỗi Red Text"] --&gt; MakeForm
+    Valid --&gt;|"Toàn Vẹn"| DbSave["Thực thi Entity DB SaveChanges"]
+    
+    DbSave --&gt; Relaod["Cập Nhập Danh Sách Grid Mới"] --&gt; MoveDash
+                    </pre>
+                    </div>
+                </div>
+
+                <!-- 4.6 -->
+                <div>
+                    <div class="bg-teal-50 border-l-4 border-teal-600 p-3 mb-2 rounded-r-lg shadow-sm">
+                        <h3 class="font-bold text-gray-800">4.6. Admin: Kỹ Nghệ Xử Lý File Upload Stream (Audio)</h3>
+                    </div>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+flowchart TD
+    Start(["Tạo Mới AudioTrack"]) --&gt; Build["Đính Kèm Ánh Xạ File Audio"]
+    Build --&gt; PostReq["Gửi Controller Form Data Upload"]
+    
+    PostReq --&gt; IsEmpty{"File Rỗng?"}
+    IsEmpty --&gt;|"Có"| ReturnErr["Báo Tệp Mắc Lỗi"] --&gt; Start
+    
+    IsEmpty --&gt;|"Không"| ParseName["Lọc Tách Đuôi Name File Ngầm Định"]
+    ParseName --&gt; Stream["Tạo FileStream Local Physical"]
+    Stream --&gt; WritePhy["Lưu Trữ WWWROOT Folder Server"]
+    WritePhy --&gt; GrabUrl["Bóc Đường dẫn Tĩnh (Static Reference) URL"]
+    
+    GrabUrl --&gt; UpdateDbObj["Update Chuỗi Liên Kết Dữ Liệu Sang Database Object"]
+    UpdateDbObj --&gt; Persist["Dịch Code Lưu Trữ Persistent"] --&gt; End5(["Kéo Audio Ok"])
+                    </pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.7 -->
+            <div
+                class="bg-purple-50 border-l-4 border-purple-500 p-4 mb-4 rounded-r-lg shadow-sm w-full mx-auto max-w-4xl">
+                <h3 class="text-xl font-bold text-gray-800 text-center">4.7. Đồng Bộ API Tự Động Định Tuyến
+                    Offline</h3>
+            </div>
+            <div class="diagram-container w-full mx-auto max-w-4xl">
+                <pre class="mermaid">
+flowchart TD
+    Start(["Tải Hoàn Tất Front-End Engine Mobile OS"]) --&gt; ScanThread["Thread Quét Sóng Nền Tín Hiệu Wifi/Online"]
+    ScanThread --&gt; CanNet{"Kết nối Sever?"}
+    
+    CanNet --&gt;|"Suy Hao - Đứt Mạng"| Skipy["Đế Chế Offline Kích Hoạt - Gọi Dữ Liệu Cứng Phủ Từ Memory"]
+    Skipy --&gt; EndSys(["Sản Phẩm Di Động Hoạt Động Cục Bộ"])
+    
+    CanNet --&gt;|"Có Mạng Wifi"| ShootApi["Triệu Tập Module REST Request Kéo Toàn Bộ JSON Tĩnh"]
+    ShootApi --&gt; BackendWait["Backend Trả Kết Quả Mảng Lớn Hỗn Hợp Payload"]
+    BackendWait --&gt; Diff["Client C-Sharp C# Cải Biên JSON Data Model"]
+    Diff --&gt; Overwrite["Chạy Trigger Thuật Toán Xóa File / Ghi Đè Local Cache Mới"]
+    Overwrite --&gt; FreshData["Ứng Dụng Load Lại Nội Dung Cập Nhật"]
+    FreshData --&gt; EndSys
+            </pre>
+            </div>
+
+        </div>
+
+        <footer class="mt-16 text-center text-gray-400 text-sm border-t pt-8 pb-8">
+            <!-- <p>&copy; 2026 SGU Food Tour Project Documentation. Generated via Core System Analysis & Architectural
+                Design Verification.</p>
+            <p>Trình bày dưới dạng tài liệu mở rộng tối đa theo luồng thông tin không phân mảnh.</p> -->
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'default',
+                themeVariables: {
+                    primaryColor: '#f1f5f9',
+                    primaryTextColor: '#1e293b',
+                    primaryBorderColor: '#cbd5e1',
+                    lineColor: '#64748b',
+                    secondaryColor: '#ffffff',
+                    fontFamily: 'Outfit, sans-serif'
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
