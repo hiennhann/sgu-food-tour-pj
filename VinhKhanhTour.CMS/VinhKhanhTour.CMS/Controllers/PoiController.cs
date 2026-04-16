@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using VinhKhanhTour.CMS.Models;
@@ -19,18 +18,14 @@ namespace VinhKhanhTour.CMS.Controllers
             _context = context;
         }
 
-        // ==========================================
-        // 1. MÀN HÌNH DANH SÁCH QUÁN ĂN (INDEX)
-        // ==========================================
         public async Task<IActionResult> Index()
         {
             var pois = await _context.Pois.OrderByDescending(p => p.Id).ToListAsync();
             return View(pois);
         }
 
-        // ==========================================
-        // 2. MÀN HÌNH FORM THÊM MỚI (CREATE)
-        // ==========================================
+        // 2. MÀN HÌNH FORM THÊM
+  
         public IActionResult Create()
         {
             return View();
@@ -67,7 +62,9 @@ namespace VinhKhanhTour.CMS.Controllers
                     {
                         await ImageFile.CopyToAsync(stream);
                     }
-                    poi.ImageUrl = newFileName;
+
+                    //  Thêm "/images/" vào trước tên file để tạo đường dẫn Web chuẩn
+                    poi.ImageUrl = $"/images/{newFileName}";
                 }
                 else
                 {
@@ -79,7 +76,7 @@ namespace VinhKhanhTour.CMS.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // MẸO DEBUG: Nếu vẫn báo lỗi, dòng này sẽ in thẳng tên Cột bị lỗi ra màn hình đen (Console)
+            // Nếu vẫn báo lỗi, dòng này sẽ in thẳng tên Cột bị lỗi ra màn hình đen (Console)
             foreach (var modelStateKey in ViewData.ModelState.Keys)
             {
                 var modelStateVal = ViewData.ModelState[modelStateKey];
@@ -92,9 +89,8 @@ namespace VinhKhanhTour.CMS.Controllers
             return View(poi);
         }
 
-        // ==========================================
+      
         // 3. MÀN HÌNH XEM CHI TIẾT (DETAILS)
-        // ==========================================
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -105,9 +101,7 @@ namespace VinhKhanhTour.CMS.Controllers
             return View(poi);
         }
 
-        // ==========================================
         // 4. MÀN HÌNH CHỈNH SỬA (EDIT)
-        // ==========================================
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -146,14 +140,18 @@ namespace VinhKhanhTour.CMS.Controllers
             {
                 var fileExtension = Path.GetExtension(ImageFile.FileName);
                 var newFileName = Guid.NewGuid().ToString() + fileExtension;
+
                 var imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
                 if (!Directory.Exists(imageFolder)) Directory.CreateDirectory(imageFolder);
+
                 var exactFilePath = Path.Combine(imageFolder, newFileName);
                 using (var stream = new FileStream(exactFilePath, FileMode.Create))
                 {
                     await ImageFile.CopyToAsync(stream);
                 }
-                existingPoi.ImageUrl = newFileName;
+
+                // Thêm "/images/" vào đường dẫn
+                existingPoi.ImageUrl = $"/images/{newFileName}";
             }
 
             ModelState.Clear();
@@ -171,9 +169,7 @@ namespace VinhKhanhTour.CMS.Controllers
             }
         }
 
-        // ==========================================
         // 5. MÀN HÌNH XÓA (DELETE)
-        // ==========================================
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();

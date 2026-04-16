@@ -12,6 +12,16 @@ namespace VinhKhanhTour.Views
         {
             NavigationPage.SetHasNavigationBar(this, false);
             BackgroundColor = Colors.White;
+
+            // ==========================================
+            // 👉 XỬ LÝ ĐƯỜNG DẪN ẢNH TỪ SERVER CMS
+            // ==========================================
+            string serverUrl = "http://10.0.2.2:5113"; // Đổi thành IP WiFi nếu chạy trên máy thật
+            if (!string.IsNullOrEmpty(place.ImageUrl) && !place.ImageUrl.StartsWith("http"))
+            {
+                place.ImageUrl = serverUrl + place.ImageUrl;
+            }
+
             BindingContext = place;
 
             var rootGrid = new Grid
@@ -87,13 +97,11 @@ namespace VinhKhanhTour.Views
 
             infoLayout.Children.Add(metaStack);
 
-            // ==========================================
             // TÍNH NĂNG MỚI: NÚT CHECK-IN
-            // ==========================================
             var checkInBtn = new Button
             {
-                BackgroundColor = Color.FromArgb("#E8F5E9"), // Nền xanh lá nhạt
-                TextColor = Color.FromArgb("#2E7D32"), // Chữ xanh lá đậm
+                BackgroundColor = Color.FromArgb("#E8F5E9"),
+                TextColor = Color.FromArgb("#2E7D32"),
                 FontAttributes = FontAttributes.Bold,
                 CornerRadius = 15,
                 HeightRequest = 45,
@@ -104,12 +112,11 @@ namespace VinhKhanhTour.Views
             {
                 if (AppState.IsLoggedIn)
                 {
-                    // Đổi nút thành trạng thái đang load
                     checkInBtn.Text = "⏳ Đang xử lý...";
                     checkInBtn.IsEnabled = false;
 
-                    int.TryParse(place.Id, out int poiId); // Ép kiểu Id của FoodPlace sang int
-                    var db = new DatabaseService();
+                    int.TryParse(place.Id, out int poiId);
+                    var db = new DatabaseService(); // Lưu ý DatabaseService này ở thư mục Data
                     bool success = await db.CheckInAsync(AppState.UserId, poiId, "Đã ghé thăm!");
 
                     if (success)
@@ -117,7 +124,6 @@ namespace VinhKhanhTour.Views
                     else
                         await DisplayAlert("Lỗi", "Không thể kết nối đến máy chủ", "Thử lại sau");
 
-                    // Trả lại trạng thái cũ
                     checkInBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Check-in ngay", stringFormat: "📍 {0}"));
                     checkInBtn.IsEnabled = true;
                 }
@@ -128,7 +134,6 @@ namespace VinhKhanhTour.Views
                 }
             };
             infoLayout.Children.Add(checkInBtn);
-            // ==========================================
 
             infoLayout.Children.Add(new BoxView { HeightRequest = 1, BackgroundColor = Color.FromArgb("#EAEAEA"), Margin = new Thickness(0, 5) });
 

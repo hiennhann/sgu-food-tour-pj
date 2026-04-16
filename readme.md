@@ -63,30 +63,54 @@ Hệ sinh thái được phân chia theo hai dự án nhằm tách biệt User v
 
 ## 6. Sơ đồ Hệ thống (System Diagrams)
 
-### 6.1 Sơ đồ Hoạt động Geofencing 
-Mô tả luồng chạy từ khi Tracking GPS đánh giá điểm POI để tự động phát âm thanh trên Mobile.
+### 6.1 Biểu đồ Use Case (Use Case Diagram)
+Thể hiện các chức năng chính của hai đối tượng người dùng: Khách hàng (Sử dụng App Mobile) và Quản trị viên (Sử dụng Web CMS).
 
 ```mermaid
-stateDiagram-v2
-    [*] --> GetLocation: Định vị GPS mỗi 5s
-    GetLocation --> CheckInsideRadius: Công thức khoảng cách LocationHelper
-    
-    CheckInsideRadius --> InZone: Khoảng cách < Bán kính Quán
-    CheckInsideRadius --> OutOfZone: Khoảng cách > Bán kính
-    
-    OutOfZone --> GetLocation: Bỏ qua / Không phát Âm thanh
-    
-    InZone --> CancelIfSpam: Trùng lặp cảnh báo?
-    CancelIfSpam --> PlayTTS: Thỏa mãn thời gian chờ
-    
-    PlayTTS --> PlayingStatus: Đổi Icon Map -> Vàng, bật Loa
-    PlayingStatus --> SetCooldown: Ghi nhớ không spam
-    SetCooldown --> GetLocation: Vòng lặp tiếp tục
+flowchart LR
+    %% Actors
+    Customer(["Khách hàng (Mobile App)"])
+    Admin(["Quản trị viên (CMS)"])
+
+    %% Use Cases for Customer
+    subgraph Mobile App
+        direction TB
+        UC1(Đăng nhập / Đăng ký)
+        UC2(Xem Bản đồ tương tác)
+        UC3(Xem Chi tiết Địa điểm)
+        UC4(Nghe thuyết minh Tự động - Geofencing)
+        UC5(Đổi Ngôn ngữ)
+    end
+
+    %% Use Cases for Admin
+    subgraph Hệ thống Quản trị CMS
+        direction TB
+        UC6(Đăng nhập CMS)
+        UC7(Quản lý Điểm đến / POI)
+        UC8(Quản lý File Âm thanh)
+        UC9(Quản lý Hành trình / Tour)
+        UC10(Quản lý Ngôn ngữ / Translation)
+        UC11(Xem Lịch sử Cập nhật)
+    end
+
+    Customer --> UC1
+    Customer --> UC2
+    Customer --> UC3
+    Customer --> UC4
+    Customer --> UC5
+
+    Admin --> UC6
+    Admin --> UC7
+    Admin --> UC8
+    Admin --> UC9
+    Admin --> UC10
+    Admin --> UC11
 ```
 
-### 6.2 Sơ đồ Lớp tĩnh cơ bản (Class Diagram)
-Thể hiện kiến trúc lưu trữ Data/Service đối với phân hệ Mobile C#.
+### 6.2 Biểu đồ Lớp (Class Diagram)
+Thể hiện kiến trúc lưu trữ Data/Service đối với phân hệ Mobile C# và Web CMS.
 
+**Mô hình Lớp Mobile App (Ứng dụng phía Khách hàng):**
 ```mermaid
 classDiagram
     class PoiRepository {
@@ -94,7 +118,11 @@ classDiagram
        +GetAllPoisAsync()
        +SavePoiAsync()
     }
-
+    class UserAccount {
+       +int Id
+       +string Username
+       +string PasswordHash
+    }
     class Poi {
        +int Id
        +string Name
@@ -104,26 +132,118 @@ classDiagram
        +double Longitude
        +double Radius
     }
-
-    class FoodPlace {
-       +string Id
-       +string Name
-       +string Address
-       +double Rating
-       +string NarrationText
-    }
-
     class LocalizationResourceManager {
        +CurrentLanguageCode string
        +Translate()
     }
-
     class NarrationEngine {
        +PlayNarrationAsync()
        +CancelCurrentNarration()
     }
+    PoiRepository ..> Poi : CRUD
+    PoiRepository ..> UserAccount : Auth
+```
 
-    PoiRepository ..> Poi : Quản lý (CRUD) Models
+**Mô hình Lớp CMS Web (Hệ thống Quản trị):**
+```mermaid
+classDiagram
+    class AppDbContext {
+        +DbSet~Poi~ Pois
+        +DbSet~AudioTrack~ AudioTracks
+        +DbSet~Tour~ Tours
+        +DbSet~Translation~ Translations
+    }
+    class PoiController {
+        +Index()
+        +Create()
+        +Edit()
+    }
+    class AudioTrackController {
+        +Index()
+        +Upload()
+    }
+    class Poi {
+        +int Id
+        +string Name
+        +string TtsScript
+    }
+    class AudioTrack {
+        +int Id
+        +string FilePath
+        +string FileName
+    }
+    PoiController --> AppDbContext
+    AudioTrackController --> AppDbContext
+    AppDbContext o-- Poi
+    AppDbContext o-- AudioTrack
+```
+
+### 6.3 Biểu đồ Tuần tự (Sequence Diagram)
+
+**Luồng Phát âm thanh tự động (Geofencing Auto-Audio):**
+```mermaid
+sequenceDiagram
+    participant GPS as Location Service
+    participant Engine as Narration Engine
+    participant Map as WebView Map
+    
+    loop Mỗi 5 Giây
+        GPS->>Engine: Gửi Tọa độ hiện tại (Lat/Lng)
+        Engine->>Engine: Tính khoảng cách tới các POI
+        alt Nằm trong Radius của POI
+            Engine->>Map: Gửi JS Event cập nhật Marker (Vàng)
+            Engine->>Engine: Gọi OS TTS đọc Audio
+        else Nằm ngoài Radius
+            Engine-->>Engine: Bỏ qua
+        end
+    end
+```
+
+**Luồng Thêm Địa điểm mới trên CMS (Add POI):**
+```mermaid
+sequenceDiagram
+    actor Admin
+    participant View as CMS Web View
+    participant Ctrl as PoiController
+    participant DB as AppDbContext
+    
+    Admin->>View: Mở form & Nhập thông tin POI
+    View->>Ctrl: POST /Poi/Create (Dữ liệu form)
+    Ctrl->>Ctrl: Validate Form Model
+    alt Hợp lệ
+        Ctrl->>DB: Add(Poi) & SaveChanges()
+        DB-->>Ctrl: Lưu thành công
+        Ctrl-->>View: Redirect về danh sách POI
+    else Dữ liệu lỗi
+        Ctrl-->>View: Trả về Form + Hiển thị báo Lỗi
+    end
+```
+
+### 6.4 Biểu đồ Hoạt động (Activity Diagram)
+
+**Luồng Khởi động Mobile App:**
+```mermaid
+stateDiagram-v2
+    [*] --> StartApp: Mở ứng dụng (MauiProgram)
+    StartApp --> CheckDB: Kết nối SQLite
+    CheckDB --> SeedData: Database trống? (Có)
+    CheckDB --> LoadMap: Database có sẵn
+    SeedData --> LoadMap: Insert Mock Data
+    LoadMap --> RequestGPS: Xin quyền Định vị Location
+    RequestGPS --> ShowMap: Render WebView (Leaflet)
+    ShowMap --> [*]
+```
+
+**Luồng Quản lý Nội dung trên CMS:**
+```mermaid
+stateDiagram-v2
+    [*] --> Dashboard: Admin đăng nhập thành công
+    Dashboard --> SelectModule: Chọn chức năng (Quản lý POI/Audio)
+    SelectModule --> InputData: Nhập dữ liệu mới
+    InputData --> Validate: Hệ thống kiểm tra hợp lệ
+    Validate --> InputData: Lỗi (Hiển thị thông báo)
+    Validate --> UpdateDB: Hợp lệ (Lưu Database)
+    UpdateDB --> Dashboard: Thông báo thành công
 ```
 
 ---
