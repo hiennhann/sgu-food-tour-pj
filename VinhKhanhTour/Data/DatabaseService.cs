@@ -11,7 +11,7 @@ namespace VinhKhanhTour.Services
         private readonly HttpClient _httpClient;
 
         // CHÚ Ý: Giữ đúng IP máy tính của bạn như các API khác
-        private readonly string _baseUrl = "http://192.168.1.4:5113/api/AuthApi";
+        private readonly string _baseUrl = "http://192.168.1.5:5113/api/AuthApi";
 
         public DatabaseService()
         {
@@ -71,7 +71,7 @@ namespace VinhKhanhTour.Services
                 return null;
             }
         }
-        private readonly string _checkInUrl = "http://192.168.1.7:5113/api/CheckInApi";
+        private readonly string _checkInUrl = "http://192.168.1.5:5113/api/CheckInApi";
 
         // Hàm 1: Bắn lệnh Check-in lên Server
         public async Task<bool> CheckInAsync(int userId, int poiId, string note = "")

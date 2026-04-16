@@ -16,7 +16,7 @@ namespace VinhKhanhTour.Services
         public ApiService()
         {
             // Cổng API của Web CMS
-            _baseUrl = "http://192.168.1.4:5113/api";
+            _baseUrl = "http://192.168.1.5:5113/api";
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
         }

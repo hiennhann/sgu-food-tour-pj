@@ -9,7 +9,6 @@ namespace VinhKhanhTour
 {
     public class HomePage : ContentPage
     {
-        // Chứa danh sách các nút bộ lọc để dễ đổi màu
         private List<Border> _categoryButtons = new List<Border>();
 
         public HomePage()
@@ -29,9 +28,7 @@ namespace VinhKhanhTour
                 }
             };
 
-            // ========================================================
-            // 1. HEADER (CỐ ĐỊNH PHÍA TRÊN)
-            // ========================================================
+            // 1. HEADER
             var headerGrid = new Grid { HeightRequest = 260 };
             headerGrid.Children.Add(new Image { Source = "hero_vinh_khanh.jpg", Aspect = Aspect.AspectFill });
             headerGrid.Children.Add(new BoxView { BackgroundColor = Color.FromArgb("#70000000") });
@@ -54,12 +51,9 @@ namespace VinhKhanhTour
             Grid.SetRow(headerGrid, 0);
             mainGrid.Children.Add(headerGrid);
 
-            // ========================================================
-            // 2. TẠO KHUNG HEADER CHO DANH SÁCH CUỘN (CHỐNG LỖI TÀNG HÌNH)
-            // ========================================================
+            // 2. KHUNG HEADER DANH SÁCH CUỘN
             var headerForCollection = new VerticalStackLayout { Spacing = 15, Padding = new Thickness(15, 15, 15, 10) };
 
-            // Thanh tìm kiếm
             var searchBorder = new Border
             {
                 Stroke = Color.FromArgb("#E5E5E5"),
@@ -86,16 +80,13 @@ namespace VinhKhanhTour
             searchBorder.Content = searchGrid;
             headerForCollection.Children.Add(searchBorder);
 
-            // Nút bấm lọc
             headerForCollection.Children.Add(CreateCategoryList());
 
-            // Nút CTA Bắt đầu tour
             var ctaButton = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 50, Margin = new Thickness(0, 10) };
             ctaButton.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Bắt Đầu Tour Ngay", stringFormat: "🗺️ {0} →"));
             ctaButton.Clicked += async (s, e) => await Navigation.PushAsync(new MapPage());
             headerForCollection.Children.Add(ctaButton);
 
-            // Tiêu đề địa điểm nổi bật
             var featuredHeader = new HorizontalStackLayout { Spacing = 5 };
             featuredHeader.Children.Add(new Label { Text = "📍", TextColor = Color.FromArgb("#FF5C0F"), FontSize = 20 });
             var headerLabel = new Label { FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, VerticalOptions = LayoutOptions.Center };
@@ -103,19 +94,13 @@ namespace VinhKhanhTour
             featuredHeader.Children.Add(headerLabel);
             headerForCollection.Children.Add(featuredHeader);
 
-            // =========================================================
-            // 3. VẼ DANH SÁCH BẰNG COLLECTION VIEW
-            // =========================================================
+            // 3. COLLECTION VIEW
             var placesCollectionView = new CollectionView();
             placesCollectionView.SetBinding(ItemsView.ItemsSourceProperty, "FeaturedPlaces");
 
-            // Đưa toàn bộ Tìm kiếm, Bộ lọc vào Header của CollectionView (Cách chuẩn MAUI)
             placesCollectionView.Header = headerForCollection;
-
-            // Thêm footer 100px để cuộn tới đáy không bị TabBar đè lên
             placesCollectionView.Footer = new ContentView { HeightRequest = 100 };
 
-            // Trạng thái trống (Empty State)
             var emptyLayout = new VerticalStackLayout { HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center, Spacing = 10, Margin = new Thickness(0, 40, 0, 0) };
             emptyLayout.Children.Add(new Label { Text = "🍽️", FontSize = 40, HorizontalOptions = LayoutOptions.Center });
             var emptyLabel = new Label { TextColor = Colors.Gray, FontSize = 14, HorizontalOptions = LayoutOptions.Center };
@@ -123,7 +108,6 @@ namespace VinhKhanhTour
             emptyLayout.Children.Add(emptyLabel);
             placesCollectionView.EmptyView = emptyLayout;
 
-            // Template thẻ Quán ăn
             placesCollectionView.ItemTemplate = new DataTemplate(() =>
             {
                 var cardGrid = new Grid { HeightRequest = 180, Margin = new Thickness(15, 0, 15, 15) };
@@ -184,9 +168,7 @@ namespace VinhKhanhTour
             Grid.SetRow(placesCollectionView, 1);
             mainGrid.Children.Add(placesCollectionView);
 
-            // ========================================================
-            // 4. TAB BAR HIỆN ĐẠI
-            // ========================================================
+            // 4. TAB BAR
             var tabBarBorder = CreateTabBar();
             Grid.SetRow(tabBarBorder, 2);
             mainGrid.Children.Add(tabBarBorder);
@@ -194,16 +176,14 @@ namespace VinhKhanhTour
             Content = mainGrid;
         }
 
-        // ============================================================
-        // CÁC HÀM XỬ LÝ BỘ LỌC CATEGORY
-        // ============================================================
         private View CreateCategoryList()
         {
             var stack = new HorizontalStackLayout { Spacing = 12, Padding = new Thickness(5, 5, 20, 15) };
             _categoryButtons.Clear();
 
-            string[] names = { "Tất cả", "Ốc & Hải sản", "Đồ nướng", "Đồ uống" };
-            string[] icons = { "🔥", "🐚", "🍖", "🍹" };
+            // Đã cập nhật đầy đủ 7 danh mục từ Web CMS xuống App
+            string[] names = { "Tất cả", "Ốc & Hải sản", "Đồ nướng", "Đồ uống", "Nhà hàng", "Ăn vặt", "Khác" };
+            string[] icons = { "🔥", "🐚", "🍖", "🍹", "🍽️", "🍡", "✨" };
 
             for (int i = 0; i < names.Length; i++)
             {
@@ -248,7 +228,6 @@ namespace VinhKhanhTour
         private Border CreateCategoryButton(string text, string icon, bool isSelected = false)
         {
             var layout = new HorizontalStackLayout { Spacing = 6, Padding = new Thickness(16, 8) };
-
             layout.Children.Add(new Label { Text = icon, FontSize = 16, VerticalOptions = LayoutOptions.Center });
 
             var textLabel = new Label
@@ -272,9 +251,6 @@ namespace VinhKhanhTour
             };
         }
 
-        // ========================================================
-        // TẠO TAB BAR BẰNG CODE
-        // ========================================================
         private Border CreateTabBar()
         {
             var tabBarGrid = new Grid
