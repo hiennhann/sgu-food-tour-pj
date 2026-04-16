@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Add New POI";
 }
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -23,17 +22,17 @@
                     <h5 class="fw-bold mb-3 text-primary"><i class="bi bi-info-circle me-2"></i>Thông tin cơ bản</h5>
                     
                     <div class="mb-3">
-                        <label asp-for="Name" class="form-label text-muted fw-bold small">Tên Quán (Bắt buộc)</label>
+                        <label asp-for="Name" class="form-label text-muted fw-bold small">Tên Quán <span class="text-danger">*</span></label>
                         <input asp-for="Name" class="form-control bg-light border-0" placeholder="Nhập tên quán..." required />
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="DisplayName" class="form-label text-muted fw-bold small">Tên Hiển Thị (Mở rộng)</label>
+                        <label asp-for="DisplayName" class="form-label text-muted fw-bold small">Tên Hiển Thị (Không bắt buộc)</label>
                         <input asp-for="DisplayName" class="form-control bg-light border-0" />
                     </div>
                     <div class="mb-3">
-                        <label asp-for="Address" class="form-label text-muted fw-bold small">Địa chỉ quán (Bắt buộc)</label>
-                        <input asp-for="Address" class="form-control bg-light border-0" placeholder="VD: 40 Vĩnh Khánh, Phường 8, Quận 4..." required />
+                        <label asp-for="Address" class="form-label text-muted fw-bold small">Địa chỉ quán <span class="text-danger">*</span></label>
+                        <input asp-for="Address" class="form-control bg-light border-0" placeholder="VD: 40 Vĩnh Khánh..." required />
                     </div>
 
                     <div class="mb-3">
@@ -41,8 +40,10 @@
                         <select asp-for="Category" class="form-select bg-light border-0">
                             <option value="Quán Ốc">Quán Ốc</option>
                             <option value="Hải Sản">Hải Sản</option>
-                            <option value="Ăn Vặt / Lẩu">Ăn Vặt / Lẩu</option>
-                            <option value="Đồ Uống / Trà Sữa">Đồ Uống / Trà Sữa</option>
+                            <option value="Đồ Nướng">Đồ Nướng</option>
+                            <option value="Đồ Uống">Đồ Uống</option>
+                            <option value="Nhà Hàng">Nhà Hàng</option>
+                            <option value="Ăn Vặt">Ăn Vặt</option>
                             <option value="Khác">Khác</option>
                         </select>
                     </div>
@@ -50,13 +51,13 @@
                     <div class="row mb-3">
                         <div class="col-6">
                             <label asp-for="Latitude" class="form-label text-muted fw-bold small">Vĩ độ (Lat)</label>
-                            <input asp-for="Latitude" id="latInput" class="form-control bg-light border-0 text-primary fw-bold" readonly value="10.761622" />
+                            <input asp-for="Latitude" id="latInput" class="form-control bg-light border-0 text-primary fw-bold" value="10.761622" />
                         </div>
                         <div class="col-6">
                             <label asp-for="Longitude" class="form-label text-muted fw-bold small">Kinh độ (Lng)</label>
-                            <input asp-for="Longitude" id="lngInput" class="form-control bg-light border-0 text-primary fw-bold" readonly value="106.661172" />
+                            <input asp-for="Longitude" id="lngInput" class="form-control bg-light border-0 text-primary fw-bold" value="106.661172" />
                         </div>
-                        <small class="text-muted mt-1">💡 Click vào bản đồ bên phải để tự động lấy tọa độ.</small>
+                        <small class="text-muted mt-1">💡 Click vào bản đồ hoặc tự nhập số liệu để cập nhật tọa độ.</small>
                     </div>
 
                     <div class="row mb-3">
@@ -74,17 +75,17 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-muted fw-bold small">Chọn Hình Ảnh Đại Diện</label>
+                        <label class="form-label text-muted fw-bold small">Hình Ảnh Đại Diện (Không bắt buộc)</label>
                         <input type="file" name="ImageFile" class="form-control bg-light border-0" accept="image/*" />
                     </div>
 
                     <div class="mb-4">
-                        <label asp-for="DisplayTtsScript" class="form-label text-muted fw-bold small">Kịch bản Thuyết minh</label>
-                        <textarea asp-for="DisplayTtsScript" class="form-control bg-light border-0" rows="3" placeholder="Nhập nội dung giới thiệu quán..."></textarea>
+                        <label asp-for="DisplayTtsScript" class="form-label text-muted fw-bold small">Kịch bản Thuyết minh (Không bắt buộc)</label>
+                        <textarea asp-for="DisplayTtsScript" class="form-control bg-light border-0" rows="3" placeholder="Để trống nếu chưa có audio..."></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100 fw-bold py-2 shadow-sm" style="border-radius: 8px;">
-                        <i class="bi bi-save me-1"></i> Save POI
+                        <i class="bi bi-save me-1"></i> Lưu Quán Ăn
                     </button>
                 </div>
             </div>
@@ -99,11 +100,14 @@
 </form>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
     var defaultLat = 10.761622;
     var defaultLng = 106.661172;
 
-    var map = L.map('poiMap').setView([defaultLat, defaultLng], 16);
+    var latElement = document.getElementById('latInput');
+    var lngElement = document.getElementById('lngInput');
 
+    var map = L.map('poiMap').setView([defaultLat, defaultLng], 16);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
     }).addTo(map);
@@ -123,7 +127,22 @@
     });
 
     function updateInputs(lat, lng) {
-    document.getElementById('latInput').value = lat;
-    document.getElementById('lngInput').value = lng;
+    latElement.value = lat;
+    lngElement.value = lng;
     }
+
+    function updateMapFromInput() {
+    var newLat = parseFloat(latElement.value.replace(',', '.'));
+    var newLng = parseFloat(lngElement.value.replace(',', '.'));
+
+    if (!isNaN(newLat) && !isNaN(newLng)) {
+    var newLatLng = new L.LatLng(newLat, newLng);
+    marker.setLatLng(newLatLng);
+    map.panTo(newLatLng);
+    }
+    }
+
+    latElement.addEventListener('input', updateMapFromInput);
+    lngElement.addEventListener('input', updateMapFromInput);
+    });
 </script>

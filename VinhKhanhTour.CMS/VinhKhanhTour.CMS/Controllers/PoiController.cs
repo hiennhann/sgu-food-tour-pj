@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using VinhKhanhTour.CMS.Models;
@@ -23,7 +24,6 @@ namespace VinhKhanhTour.CMS.Controllers
         // ==========================================
         public async Task<IActionResult> Index()
         {
-            // Lấy danh sách quán, sắp xếp theo ID giảm dần (quán mới thêm lên đầu)
             var pois = await _context.Pois.OrderByDescending(p => p.Id).ToListAsync();
             return View(pois);
         }
@@ -40,20 +40,20 @@ namespace VinhKhanhTour.CMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Poi poi, IFormFile? ImageFile)
         {
-            //// Bỏ qua kiểm tra lỗi của các trường không có trên Form
-            //ModelState.Remove("ImageUrl");
-            //ModelState.Remove("Address");
-            //ModelState.Remove("Category");
-            //ModelState.Remove("DisplayName");
+            // BƯỚC QUAN TRỌNG: Gỡ bỏ bắt lỗi tự động cho các trường không bắt buộc
+            ModelState.Remove("ImageUrl");
+            ModelState.Remove("DisplayTtsScript");
+            ModelState.Remove("AudioTracks");
 
-            //// Gán giá trị mặc định (chuỗi rỗng) để Database không bị lỗi "NOT NULL"
-            //poi.Address ??= "";
-            //poi.Category ??= "Chưa phân loại";
-            //poi.DisplayName ??= poi.Name; // L
+            // Gán giá trị mặc định an toàn nếu người dùng bỏ trống
+            poi.Address ??= "";
+            poi.Category ??= "Khác";
+            poi.DisplayName ??= poi.Name;
+            poi.DisplayTtsScript ??= ""; // Khách không nhập kịch bản thì lưu rỗng
 
             if (ModelState.IsValid)
             {
-                // Xử lý lưu file ảnh
+                // Xử lý lưu ảnh nếu có chọn
                 if (ImageFile != null && ImageFile.Length > 0)
                 {
                     var fileExtension = Path.GetExtension(ImageFile.FileName);
@@ -67,12 +67,11 @@ namespace VinhKhanhTour.CMS.Controllers
                     {
                         await ImageFile.CopyToAsync(stream);
                     }
-
-                    poi.ImageUrl = newFileName; // Lưu tên file vào DB
+                    poi.ImageUrl = newFileName;
                 }
                 else
                 {
-                    poi.ImageUrl = ""; // Nếu không up ảnh thì để trống
+                    poi.ImageUrl = ""; // Không bắt buộc hình, cho rỗng luôn
                 }
 
                 _context.Pois.Add(poi);
@@ -80,11 +79,14 @@ namespace VinhKhanhTour.CMS.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // In lỗi ra Console nếu vẫn còn lỗi Validate
-            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-            foreach (var err in errors)
+            // MẸO DEBUG: Nếu vẫn báo lỗi, dòng này sẽ in thẳng tên Cột bị lỗi ra màn hình đen (Console)
+            foreach (var modelStateKey in ViewData.ModelState.Keys)
             {
-                Console.WriteLine("LỖI VALIDATE: " + err);
+                var modelStateVal = ViewData.ModelState[modelStateKey];
+                foreach (var error in modelStateVal.Errors)
+                {
+                    Console.WriteLine($"[LỖI CREATE] Cột: {modelStateKey} - Lỗi: {error.ErrorMessage}");
+                }
             }
 
             return View(poi);
@@ -122,40 +124,51 @@ namespace VinhKhanhTour.CMS.Controllers
         {
             if (id != poi.Id) return NotFound();
 
-            ModelState.Remove("ImageUrl");
-            ModelState.Remove("ImageFile");
+            var existingPoi = await _context.Pois.FindAsync(id);
+            if (existingPoi == null) return NotFound();
 
-            if (ModelState.IsValid)
+            if (!string.IsNullOrEmpty(poi.Name)) existingPoi.Name = poi.Name;
+            if (!string.IsNullOrEmpty(poi.DisplayName)) existingPoi.DisplayName = poi.DisplayName;
+
+            existingPoi.DisplayTtsScript = string.IsNullOrEmpty(poi.DisplayTtsScript) ? "" : poi.DisplayTtsScript;
+
+            if (!string.IsNullOrEmpty(poi.Address)) existingPoi.Address = poi.Address;
+            if (!string.IsNullOrEmpty(poi.Category)) existingPoi.Category = poi.Category;
+
+            if (poi.Latitude != 0) existingPoi.Latitude = poi.Latitude;
+            if (poi.Longitude != 0) existingPoi.Longitude = poi.Longitude;
+            if (poi.Radius != 0) existingPoi.Radius = poi.Radius;
+            if (poi.Priority != 0) existingPoi.Priority = poi.Priority;
+
+            existingPoi.IsActive = poi.IsActive;
+
+            if (ImageFile != null && ImageFile.Length > 0)
             {
-                try
+                var fileExtension = Path.GetExtension(ImageFile.FileName);
+                var newFileName = Guid.NewGuid().ToString() + fileExtension;
+                var imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                if (!Directory.Exists(imageFolder)) Directory.CreateDirectory(imageFolder);
+                var exactFilePath = Path.Combine(imageFolder, newFileName);
+                using (var stream = new FileStream(exactFilePath, FileMode.Create))
                 {
-                    // Nếu up ảnh mới thì xử lý lưu ảnh
-                    if (ImageFile != null && ImageFile.Length > 0)
-                    {
-                        var fileExtension = Path.GetExtension(ImageFile.FileName);
-                        var newFileName = Guid.NewGuid().ToString() + fileExtension;
-                        var imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-                        if (!Directory.Exists(imageFolder)) Directory.CreateDirectory(imageFolder);
-                        var exactFilePath = Path.Combine(imageFolder, newFileName);
-                        using (var stream = new FileStream(exactFilePath, FileMode.Create))
-                        {
-                            await ImageFile.CopyToAsync(stream);
-                        }
-                        poi.ImageUrl = newFileName;
-                    }
-                    // Nếu không up ảnh mới, thuộc tính ImageUrl cũ (được giữ trong thẻ hidden) sẽ tự được dùng lại
+                    await ImageFile.CopyToAsync(stream);
+                }
+                existingPoi.ImageUrl = newFileName;
+            }
 
-                    _context.Update(poi);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PoiExists(poi.Id)) return NotFound();
-                    else throw;
-                }
+            ModelState.Clear();
+
+            try
+            {
+                _context.Update(existingPoi);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(poi);
+            catch (Exception ex)
+            {
+                Console.WriteLine("LỖI SQL KHI LƯU: " + ex.Message);
+                return View(existingPoi);
+            }
         }
 
         // ==========================================
