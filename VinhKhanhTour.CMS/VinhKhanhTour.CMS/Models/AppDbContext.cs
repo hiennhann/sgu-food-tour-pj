@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace VinhKhanhTour.CMS.Models
 {
@@ -11,7 +11,5 @@ namespace VinhKhanhTour.CMS.Models
         public DbSet<Translation> Translations { get; set; }
         public DbSet<UsageHistory> UsageHistories { get; set; }
         public DbSet<Tour> Tours { get; set; }
-        public DbSet<UserAccount> UserAccounts { get; set; }
-        public DbSet<CheckInRecord> CheckInRecords { get; set; }
     }
 }

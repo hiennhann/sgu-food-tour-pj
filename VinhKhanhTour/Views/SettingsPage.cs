@@ -1,4 +1,4 @@
-﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using System;
 using System.Threading.Tasks;
@@ -86,80 +86,47 @@ namespace VinhKhanhTour.Views
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            UpdateProfileCard();
+            LoadProfileCard();
         }
 
-        private void UpdateProfileCard()
+        private void LoadProfileCard()
         {
             var profileGrid = new Grid
             {
-                ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = 60 }, new ColumnDefinition { Width = GridLength.Star } },
+                ColumnDefinitions = new ColumnDefinitionCollection
+                {
+                    new ColumnDefinition { Width = 60 },
+                    new ColumnDefinition { Width = GridLength.Star }
+                },
                 RowDefinitions = new RowDefinitionCollection
                 {
                     new RowDefinition { Height = GridLength.Auto }, // Dòng 0: Tên
-                    new RowDefinition { Height = GridLength.Auto }, // Dòng 1: Email / Gợi ý
-                    new RowDefinition { Height = GridLength.Auto }, // Dòng 2: Nút Nhật ký / Nút Đăng nhập
-                    new RowDefinition { Height = GridLength.Auto }  // Dòng 3: Nút Đăng xuất (Chỉ khi đã login)
+                    new RowDefinition { Height = GridLength.Auto }  // Dòng 1: Mô tả
                 },
                 ColumnSpacing = 15,
                 RowSpacing = 5
             };
 
-            var avatar = new Border { WidthRequest = 60, HeightRequest = 60, StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 30 }, BackgroundColor = Color.FromArgb("#E0E0E0"), StrokeThickness = 0 };
+            var avatar = new Border
+            {
+                WidthRequest = 60, HeightRequest = 60,
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 30 },
+                BackgroundColor = Color.FromArgb("#E0E0E0"),
+                StrokeThickness = 0,
+                Content = new Label { Text = "👤", FontSize = 30, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center }
+            };
             Grid.SetRowSpan(avatar, 2); Grid.SetColumn(avatar, 0);
+            profileGrid.Children.Add(avatar);
 
-            if (AppState.IsLoggedIn)
-            {
-                avatar.Content = new Label { Text = "😎", FontSize = 30, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
-                profileGrid.Children.Add(avatar);
+            var nameLabel = new Label { FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, VerticalOptions = LayoutOptions.End };
+            nameLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Khách du lịch"));
+            Grid.SetRow(nameLabel, 0); Grid.SetColumn(nameLabel, 1);
+            profileGrid.Children.Add(nameLabel);
 
-                var nameLabel = new Label { Text = AppState.UserName, FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, VerticalOptions = LayoutOptions.End };
-                Grid.SetRow(nameLabel, 0); Grid.SetColumn(nameLabel, 1);
-                profileGrid.Children.Add(nameLabel);
-
-                var emailLabel = new Label { Text = AppState.UserEmail, FontSize = 13, TextColor = Colors.Gray, VerticalOptions = LayoutOptions.Start };
-                Grid.SetRow(emailLabel, 1); Grid.SetColumn(emailLabel, 1);
-                profileGrid.Children.Add(emailLabel);
-
-                // NÚT NHẬT KÝ HÀNH TRÌNH
-                var historyBtn = new Button { BackgroundColor = Color.FromArgb("#E3F2FD"), TextColor = Color.FromArgb("#1565C0"), FontAttributes = FontAttributes.Bold, CornerRadius = 10, HeightRequest = 40, Margin = new Thickness(0, 10, 0, 0) };
-                historyBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Nhật ký hành trình", stringFormat: "📖 {0}"));
-                historyBtn.Clicked += async (s, e) => {
-                    await DisplayAlert("Chờ chút", "Đang mở Nhật ký hành trình...", "OK");
-                    // await Navigation.PushAsync(new JourneyPage()); 
-                };
-                Grid.SetRow(historyBtn, 2); Grid.SetColumn(historyBtn, 1);
-                profileGrid.Children.Add(historyBtn);
-
-                // NÚT ĐĂNG XUẤT
-                var logoutBtn = new Button { BackgroundColor = Color.FromArgb("#F4F4F6"), TextColor = Colors.Red, FontAttributes = FontAttributes.Bold, CornerRadius = 10, HeightRequest = 40, Margin = new Thickness(0, 10, 0, 0) };
-                logoutBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Đăng Xuất"));
-                logoutBtn.Clicked += (s, e) => { AppState.Logout(); UpdateProfileCard(); };
-
-                Grid.SetRow(logoutBtn, 3); Grid.SetColumn(logoutBtn, 1);
-                profileGrid.Children.Add(logoutBtn);
-            }
-            else
-            {
-                avatar.Content = new Label { Text = "👤", FontSize = 30, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
-                profileGrid.Children.Add(avatar);
-
-                var nameLabel = new Label { FontAttributes = FontAttributes.Bold, FontSize = 18, TextColor = Colors.Black, VerticalOptions = LayoutOptions.End };
-                nameLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Khách du lịch"));
-                Grid.SetRow(nameLabel, 0); Grid.SetColumn(nameLabel, 1);
-                profileGrid.Children.Add(nameLabel);
-
-                var hintLabel = new Label { FontSize = 13, TextColor = Colors.Gray, VerticalOptions = LayoutOptions.Start };
-                hintLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Đăng nhập để lưu địa điểm yêu thích"));
-                Grid.SetRow(hintLabel, 1); Grid.SetColumn(hintLabel, 1);
-                profileGrid.Children.Add(hintLabel);
-
-                var loginBtn = new Button { BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 10, HeightRequest = 40, Margin = new Thickness(0, 10, 0, 0) };
-                loginBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Đăng Nhập / Đăng Ký"));
-                loginBtn.Clicked += async (s, e) => await Navigation.PushAsync(new LoginPage());
-                Grid.SetRow(loginBtn, 2); Grid.SetColumn(loginBtn, 1);
-                profileGrid.Children.Add(loginBtn);
-            }
+            var hintLabel = new Label { FontSize = 13, TextColor = Colors.Gray, VerticalOptions = LayoutOptions.Start };
+            hintLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Khám phá hành trình ẩm thực Vĩnh Khánh"));
+            Grid.SetRow(hintLabel, 1); Grid.SetColumn(hintLabel, 1);
+            profileGrid.Children.Add(hintLabel);
 
             _profileCard.Content = profileGrid;
         }

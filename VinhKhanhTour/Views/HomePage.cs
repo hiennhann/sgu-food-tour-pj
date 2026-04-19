@@ -202,9 +202,8 @@ namespace VinhKhanhTour
             var stack = new HorizontalStackLayout { Spacing = 12, Padding = new Thickness(5, 5, 20, 15) };
             _categoryButtons.Clear();
 
-            // Đã cập nhật đầy đủ 7 danh mục từ Web CMS xuống App
-            string[] names = { "Tất cả", "Ốc & Hải sản", "Đồ nướng", "Đồ uống", "Nhà hàng", "Ăn vặt", "Khác" };
-            string[] icons = { "🔥", "🐚", "🍖", "🍹", "🍽️", "🍡", "✨" };
+            string[] names = { "Tất cả", "Ốc & Hải sản", "Đồ nướng", "Đồ uống" };
+            string[] icons = { "🔥", "🐚", "🍖", "🍹" };
 
             for (int i = 0; i < names.Length; i++)
             {

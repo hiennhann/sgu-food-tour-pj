@@ -29,7 +29,6 @@ namespace VinhKhanhTour
             // ===============================================
             builder.Services.AddSingleton<ApiService>();
             builder.Services.AddSingleton<LocalDbService>();
-            builder.Services.AddSingleton<DatabaseService>(); // Nếu bạn có dùng cho UserAccount
             builder.Services.AddSingleton<PoiRepository>();   // ĐÂY LÀ THẰNG CÒN THIẾU GÂY LỖI NULL!
                                                               // Đăng ký các Service để App biết đường gọi
             builder.Services.AddSingleton<VinhKhanhTour.Services.ApiService>();

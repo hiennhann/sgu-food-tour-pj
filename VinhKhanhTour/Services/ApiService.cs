@@ -16,7 +16,7 @@ namespace VinhKhanhTour.Services
         public ApiService()
         {
             // Dùng 10.0.2.2 để máy ảo Android kết nối được với Web CMS (localhost)
-            _baseUrl = "http://192.168.1.5:5113/api";
+            _baseUrl = "http://10.0.2.2:5113/api";
 
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
