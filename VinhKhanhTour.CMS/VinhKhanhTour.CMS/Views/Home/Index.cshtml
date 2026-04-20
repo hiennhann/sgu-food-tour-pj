@@ -2,48 +2,115 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h2 class="fw-bold mb-4">HỆ THỐNG QUẢN TRỊ</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark"><i class="bi bi-speedometer2 text-primary me-2"></i> Bảng Điều Khiển</h2>
+</div>
 
-<style>
-    .stat-card { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 5px solid; margin-bottom: 20px; }
-    .stat-card.green { border-bottom-color: #2ecc71; }
-    .stat-card.blue { border-bottom-color: #3498db; }
-    .stat-card.orange { border-bottom-color: #f39c12; }
-    .stat-card.purple { border-bottom-color: #9b59b6; }
-    .stat-card .icon-box { background: #f8f9fa; width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-    .green .icon-box { color: #2ecc71; background: #eafaf1; }
-    .blue .icon-box { color: #3498db; background: #ebf5fb; }
-    .orange .icon-box { color: #f39c12; background: #fef5e7; }
-    .purple .icon-box { color: #9b59b6; background: #f5eef8; }
-</style>
+<div class="row mb-4">
+    <div class="col-md-12 col-lg-3 mb-3">
+        <div class="card bg-success text-white shadow-sm h-100" style="border-radius: 12px; border: none;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0">Đang Hoạt Động (Live)</h6>
+                    <div class="spinner-grow spinner-grow-sm text-light" role="status"></div>
+                </div>
+                <h2 id="liveCount" class="display-5 fw-bold mb-0">0</h2>
+                <small class="text-white-50">thiết bị đang mở App</small>
+            </div>
+        </div>
+    </div>
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="stat-card green shadow-sm">
-            <div><p class="text-muted mb-1 fw-bold">Tổng số Tour</p><h2 class="fw-bold mb-0">@ViewBag.TotalTours</h2></div>
-            <div class="icon-box"><i class="bi bi-map"></i></div>
+    <div class="col-md-4 col-lg-3 mb-3">
+        <div class="card bg-primary text-white shadow-sm h-100" style="border-radius: 12px; border: none;">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2">Tổng số Tour</h6>
+                <h2 class="display-5 fw-bold mb-0">@ViewBag.TotalTours</h2>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card blue shadow-sm">
-            <div><p class="text-muted mb-1 fw-bold">Tổng Quán Ăn (POI)</p><h2 class="fw-bold mb-0">@ViewBag.TotalPois</h2></div>
-            <div class="icon-box"><i class="bi bi-geo-alt"></i></div>
+
+    <div class="col-md-4 col-lg-3 mb-3">
+        <div class="card bg-warning text-dark shadow-sm h-100" style="border-radius: 12px; border: none;">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2">Tổng số Quán (POI)</h6>
+                <h2 class="display-5 fw-bold mb-0">@ViewBag.TotalPois</h2>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card orange shadow-sm">
-            <div><p class="text-muted mb-1 fw-bold">File Âm Thanh</p><h2 class="fw-bold mb-0">@ViewBag.TotalAudios</h2></div>
-            <div class="icon-box"><i class="bi bi-headphones"></i></div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card purple shadow-sm">
-            <div><p class="text-muted mb-1 fw-bold">Bản Dịch Đa Ngôn Ngữ</p><h2 class="fw-bold mb-0">@ViewBag.TotalTranslations</h2></div>
-            <div class="icon-box"><i class="bi bi-translate"></i></div>
+
+    <div class="col-md-4 col-lg-3 mb-3">
+        <div class="card bg-info text-white shadow-sm h-100" style="border-radius: 12px; border: none;">
+            <div class="card-body">
+                <h6 class="fw-bold mb-2">Từ khóa đa ngôn ngữ</h6>
+                <h2 class="display-5 fw-bold mb-0">@ViewBag.TotalTranslations</h2>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="alert alert-info border-0 shadow-sm mt-3" style="border-radius: 10px;">
-    <i class="bi bi-info-circle-fill me-2"></i> Chào mừng bạn quay trở lại. Dữ liệu trên hệ thống đang được đồng bộ theo thời gian thực.
+<div class="card shadow-sm border-0" style="border-radius: 10px;">
+    <div class="card-header bg-white fw-bold py-3 border-bottom-0">
+        <i class="bi bi-broadcast text-success me-2"></i> Trạm giám sát thiết bị thời gian thực
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID Thiết Bị</th>
+                        <th>Địa chỉ IP</th>
+                        <th>Thời gian kết nối</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody id="deviceTableBody">
+                    <tr id="noDataRow">
+                        <td colspan="4" class="text-center text-muted py-5">
+                            <i class="bi bi-phone text-muted fs-1 d-block mb-2"></i>
+                            Hiện chưa có khách nào đang mở App.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/monitoringHub")
+    .build();
+
+    const tbody = document.getElementById("deviceTableBody");
+    const liveCount = document.getElementById("liveCount");
+    const noDataRow = document.getElementById("noDataRow");
+
+    connection.on("DeviceConnected", function (device, totalCount) {
+    liveCount.innerText = totalCount;
+    if (noDataRow) noDataRow.style.display = 'none';
+
+    const row = document.createElement("tr");
+    row.id = "row_" + device.deviceId;
+    row.innerHTML = `
+    <td class="fw-bold text-primary ps-4">${device.deviceId}</td>
+    <td><span class="badge bg-light text-dark border">${device.ipAddress}</span></td>
+    <td><i class="bi bi-clock text-muted me-1"></i> ${device.connectTime}</td>
+    <td><span class="badge bg-success bg-opacity-75"><span class="spinner-grow spinner-grow-sm me-1" style="width: 0.5rem; height: 0.5rem;"></span>Live</span></td>
+    `;
+    row.style.backgroundColor = '#d1e7dd';
+    tbody.insertBefore(row, tbody.firstChild);
+        
+    setTimeout(() => row.style.backgroundColor = '', 1500);
+    });
+
+    connection.on("DeviceDisconnected", function (deviceId, totalCount) {
+    liveCount.innerText = totalCount;
+    const row = document.getElementById("row_" + deviceId);
+    if (row) row.remove();
+        
+    if (totalCount === 0 && noDataRow) noDataRow.style.display = '';
+    });
+
+    connection.start().catch(err => console.error("Lỗi SignalR: ", err));
+</script>

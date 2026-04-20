@@ -13,7 +13,7 @@ builder.Services.AddControllersWithViews()
 // Khai báo Database
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddSignalR();
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
@@ -33,7 +33,7 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.MapHub<VinhKhanhTour.CMS.MonitoringHub>("/monitoringHub");
 app.UseAuthorization();
 
 app.MapControllerRoute(
