@@ -108,7 +108,8 @@ namespace VinhKhanhTour.Services
             { "Về ứng dụng Vĩnh Khánh Tour", "About Vinh Khanh Tour App" }, { "Chạm để đổi", "Tap to change" },
             { "Mặc định", "Default" }, { "Phiên bản 1.0.0", "Version 1.0.0" },
             { "Quay lại", "Back" }, { "Mở cửa", "Open" }, { "Thuyết minh tự động", "Auto Narration" },
-            { "Nội dung thuyết minh", "Narration Content" }, { "Dừng Audio", "Stop Audio" }
+            { "Nội dung thuyết minh", "Narration Content" }, { "Dừng Audio", "Stop Audio" },
+            { "Thời tiết TP.HCM", "HCMC Weather" }
         };
 
         private readonly Dictionary<string, string> _spanishResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -145,7 +146,8 @@ namespace VinhKhanhTour.Services
             { "Về ứng dụng Vĩnh Khánh Tour", "Acerca de la app Vinh Khanh Tour" }, { "Chạm để đổi", "Toca para cambiar" },
             { "Mặc định", "Por defecto" }, { "Phiên bản 1.0.0", "Versión 1.0.0" },
             { "Quay lại", "Atrás" }, { "Mở cửa", "Abierto" }, { "Thuyết minh tự động", "Narración automática" },
-            { "Nội dung thuyết minh", "Contenido de narración" }, { "Dừng Audio", "Detener Audio" }
+            { "Nội dung thuyết minh", "Contenido de narración" }, { "Dừng Audio", "Detener Audio" },
+            { "Thời tiết TP.HCM", "El tiempo en HCMC" }
         };
 
         private readonly Dictionary<string, string> _frenchResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -182,7 +184,8 @@ namespace VinhKhanhTour.Services
             { "Về ứng dụng Vĩnh Khánh Tour", "À propos de l'app Vinh Khanh Tour" }, { "Chạm để đổi", "Appuyez pour changer" },
             { "Mặc định", "Par défaut" }, { "Phiên bản 1.0.0", "Version 1.0.0" },
             { "Quay lại", "Retour" }, { "Mở cửa", "Ouvert" }, { "Thuyết minh tự động", "Narration automatique" },
-            { "Nội dung thuyết minh", "Contenu de la narration" }, { "Dừng Audio", "Arrêter l'Audio" }
+            { "Nội dung thuyết minh", "Contenu de la narration" }, { "Dừng Audio", "Arrêter l'Audio" },
+            { "Thời tiết TP.HCM", "Météo de HCMC" }
         };
 
         private readonly Dictionary<string, string> _germanResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -219,7 +222,8 @@ namespace VinhKhanhTour.Services
             { "Về ứng dụng Vĩnh Khánh Tour", "Über die Vinh Khanh Tour App" }, { "Chạm để đổi", "Zum Ändern tippen" },
             { "Mặc định", "Standard" }, { "Phiên bản 1.0.0", "Version 1.0.0" },
             { "Quay lại", "Zurück" }, { "Mở cửa", "Geöffnet" }, { "Thuyết minh tự động", "Automatische Erzählung" },
-            { "Nội dung thuyết minh", "Inhalt der Erzählung" }, { "Dừng Audio", "Audio stoppen" }
+            { "Nội dung thuyết minh", "Inhalt der Erzählung" }, { "Dừng Audio", "Audio stoppen" },
+            { "Thời tiết TP.HCM", "HCMC Wetter" }
         };
 
         private readonly Dictionary<string, string> _chineseResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -256,7 +260,8 @@ namespace VinhKhanhTour.Services
             { "Về ứng dụng Vĩnh Khánh Tour", "关于永庆旅游应用" }, { "Chạm để đổi", "点击更改" },
             { "Mặc định", "默认" }, { "Phiên bản 1.0.0", "版本 1.0.0" },
             { "Quay lại", "返回" }, { "Mở cửa", "营业" }, { "Thuyết minh tự động", "自动解说" },
-            { "Nội dung thuyết minh", "解说内容" }, { "Dừng Audio", "停止音频" }
+            { "Nội dung thuyết minh", "解说内容" }, { "Dừng Audio", "停止音频" },
+            { "Thời tiết TP.HCM", "胡志明市天气" }
         };
 
         private readonly Dictionary<string, string> _japaneseResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -293,13 +298,14 @@ namespace VinhKhanhTour.Services
             { "Về ứng dụng Vĩnh Khánh Tour", "ヴィンカンツアーアプリについて" }, { "Chạm để đổi", "タップして変更" },
             { "Mặc định", "デフォルト" }, { "Phiên bản 1.0.0", "バージョン 1.0.0" },
             { "Quay lại", "戻る" }, { "Mở cửa", "営業" }, { "Thuyết minh tự động", "自動音声案内" },
-            { "Nội dung thuyết minh", "ナレーション内容" }, { "Dừng Audio", "オーディオを停止" }
+            { "Nội dung thuyết minh", "ナレーション内容" }, { "Dừng Audio", "オーディオを停止" },
+            { "Thời tiết TP.HCM", "ホーチミンの天気" }
         };
 
         private readonly Dictionary<string, string> _koreanResources = new(StringComparer.OrdinalIgnoreCase) {
             { "Trang chủ", "홈" }, { "Bản đồ", "지도" }, { "Khám phá", "탐색" }, { "Cài đặt", "설정" },
             { "Khám phá Ẩm thực", "요리 탐색" }, { "Thiên đường Ốc Sài Gòn — Quận 4", "사이공 달팽이 천국 — 4군" },
-            { "Tìm quán ốc, lẩu, sushi...", "달팽이, 전골, 초밥 검색..." }, { "Bắt Đầu Tour Ngay", "지금 투어 시작" },
+            { "Tìm quán ốc, lẩu, 초밥 검색...", "달팽이, 전골, 초밥 검색..." }, { "Bắt Đầu Tour Ngay", "지금 투어 시작" },
             { "Bắt Đầu Tour Ngay →", "지금 투어 시작 →" }, { "Địa điểm nổi bật", "추천 장소" }, { "Nghe Audio", "오디오 듣기" },
             { "🔥 Tất cả", "🔥 모두" }, { "🐚 Ốc & Hải sản", "🐚 달팽이 & 해산물" }, { "🍖 Đồ nướng", "🍖 바베큐" },
             { "🍜 Món nước", "🍜 누들/국물" }, { "🍣 Sushi", "🍣 초밥" }, { "🐚 Ốc", "🐚 달팽이" }, { "Tất cả", "모두" },
@@ -330,7 +336,8 @@ namespace VinhKhanhTour.Services
             { "Về ứng dụng Vĩnh Khánh Tour", "빈칸 투어 앱 정보" }, { "Chạm để đổi", "탭하여 변경" },
             { "Mặc định", "기본값" }, { "Phiên bản 1.0.0", "버전 1.0.0" },
             { "Quay lại", "뒤로" }, { "Mở cửa", "영업" }, { "Thuyết minh tự động", "자동 나레이션" },
-            { "Nội dung thuyết minh", "나레이션 내용" }, { "Dừng Audio", "오디오 중지" }
+            { "Nội dung thuyết minh", "나레이션 내용" }, { "Dừng Audio", "오디오 중지" },
+            { "Thời tiết TP.HCM", "호치민 날씨" }
         };
 
         private readonly Dictionary<string, string> _russianResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -351,14 +358,14 @@ namespace VinhKhanhTour.Services
             { "Chưa tìm thấy quán ốc", "Киоск не найден" },
             { "Giới thiệu", "О нас" }, { "Xem Thực Đơn", "Посмотреть Меню" }, { "Chỉ Đường", "Маршрут" },
             { "Giới thiệu về {0}", "О {0}" }, { "Lỗi Audio", "Ошибка Аудио" },
-            { "Thiết bị của bạn не hỗ trợ đọc ngôn ngữ này.", "Ваше устройство не поддерживает TTS для этого языка." }, { "Đóng", "Закрыть" },
+            { "Thiết bị của bạn không hỗ trợ đọc ngôn ngữ này.", "Ваше устройство не поддерживает TTS для этого языка." }, { "Đóng", "Закрыть" },
             { "Thực Đơn", "Меню" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 Цены указаны только для справки и могут быть изменены." },
             { "🍽️ Đang cập nhật thực đơn...", "🍽️ Меню обновляется..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "ВЫБРАННОЕ МЕСТО" },
             { "Đang dò tìm...", "Поиск..." }, { "Đang theo dõi Radar GPS...", "Отслеживание GPS-радара..." },
             { "CÀI ĐẶT CHUNG", "ОБЩИЕ НАСТРОЙКИ" }, { "THÔNG TIN & HỖ TRỢ", "ИНФОРМАЦИЯ И ПОДДЕРЖКА" },
             { "Khách du lịch", "Турист" }, { "Đăng nhập để lưu địa điểm yêu thích", "Войдите, чтобы сохранить любимые места" },
             { "Đăng Nhập / Đăng Ký", "Войти / Регистрация" }, { "Đăng Xuất", "Выйти" },
-            { "Chào mừng trở lại!", "С возвращением!" }, { "Đăng nhập để tiếp tục khám phá Район 4.", "Войдите, чтобы продолжить исследовать Район 4." },
+            { "Chào mừng trở lại!", "С возвращением!" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "Войдите, чтобы продолжить исследовать Район 4." },
             { "Email", "Email" }, { "Mật khẩu", "Пароль" }, { "ĐĂNG NHẬP", "ВОЙТИ" },
             { "Chưa có tài khoản? Đăng ký mới", "Нет аккаунта? Зарегистрироваться" }, { "Tạo tài khoản mới", "Создать новый аккаунт" },
             { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "Присоединяйтесь к кулинарному сообществу Винь Кхань." },
@@ -367,7 +374,8 @@ namespace VinhKhanhTour.Services
             { "Về ứng dụng Vĩnh Khánh Tour", "О приложении Vinh Khanh Tour" }, { "Chạm để đổi", "Нажмите, чтобы изменить" },
             { "Mặc định", "По умолчанию" }, { "Phiên bản 1.0.0", "Версия 1.0.0" },
             { "Quay lại", "Назад" }, { "Mở cửa", "Открыто" }, { "Thuyết minh tự động", "Автоматическое повествование" },
-            { "Nội dung thuyết minh", "Содержание повествования" }, { "Dừng Audio", "Остановить аудио" }
+            { "Nội dung thuyết minh", "Содержание повествования" }, { "Dừng Audio", "Остановить аудио" },
+            { "Thời tiết TP.HCM", "Погода в Хошимине" }
         };
 
         private readonly Dictionary<string, string> _italianResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -397,14 +405,15 @@ namespace VinhKhanhTour.Services
             { "Đăng Nhập / Đăng Ký", "Accedi / Registrati" }, { "Đăng Xuất", "Esci" },
             { "Chào mừng trở lại!", "Bentornato!" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "Accedi per continuare a esplorare il Distretto 4." },
             { "Email", "Email" }, { "Mật khẩu", "Password" }, { "ĐĂNG NHẬP", "ACCEDI" },
-            { "Chưa có tài khoản? Đăng ký mới", "Non hai un account? Registrati" }, { "Tạo tài khoản mới", "Crea un nuovo account" },
+            { "Chưa có tài khoản? Đăng ký mới", "Non hai un account? Registrati" }, { "Tạo account mới", "Crea un nuovo account" },
             { "Tham gia cộng đồng ẩm thực Vĩnh Khánh ngay.", "Unisciti alla comunità gastronomica di Vinh Khanh." },
             { "Họ và tên", "Nome e cognome" }, { "ĐĂNG KÝ NGAY", "REGISTRATI ORA" },
             { "Đã có tài khoản? Đăng nhập", "Hai già un account? Accedi" }, { "Chính sách bảo mật", "Informativa sulla privacy" },
             { "Về ứng dụng Vĩnh Khánh Tour", "Informazioni sull'app Vinh Khanh Tour" }, { "Chạm để đổi", "Tocca per cambiare" },
             { "Mặc định", "Predefinito" }, { "Phiên bản 1.0.0", "Versione 1.0.0" },
             { "Quay lại", "Indietro" }, { "Mở cửa", "Aperto" }, { "Thuyết minh tự động", "Narrazione automatica" },
-            { "Nội dung thuyết minh", "Contenuto della narrazione" }, { "Dừng Audio", "Ferma Audio" }
+            { "Nội dung thuyết minh", "Contenuto della narrazione" }, { "Dừng Audio", "Ferma Audio" },
+            { "Thời tiết TP.HCM", "Meteo di HCMC" }
         };
 
         private readonly Dictionary<string, string> _portugueseResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -429,7 +438,7 @@ namespace VinhKhanhTour.Services
             { "Thực Đơn", "Cardápio" }, { "💡 Giá cả chỉ mang tính chất tham khảo, có thể thay đổi tùy thời điểm.", "💡 Os preços são apenas para referência e podem mudar." },
             { "🍽️ Đang cập nhật thực đơn...", "🍽️ Atualizando cardápio..." }, { "ĐỊA ĐIỂM ĐÃ CHỌN", "LOCAL SELECIONADO" },
             { "Đang dò tìm...", "Buscando..." }, { "Đang theo dõi Radar GPS...", "Rastreando radar GPS..." },
-            { "CÀI ĐẶT CHUNG", "CONFIGURAÇÕES GERAIS" }, { "THÔNG TIN & HỖ TRỢ", "INFO E SUPORTO" },
+            { "CÀI ĐẶT CHUNG", "CONFIGURAÇÕES GERAIS" }, { "THÔNG TIN & HỖ TRỢ", "INFO E SUPPORTO" },
             { "Khách du lịch", "Turista" }, { "Đăng nhập để lưu địa điểm yêu thích", "Faça login para salvar lugares" },
             { "Đăng Nhập / Đăng Ký", "Login / Registrar" }, { "Đăng Xuất", "Sair" },
             { "Chào mừng trở lại!", "Bem-vindo de volta!" }, { "Đăng nhập để tiếp tục khám phá Quận 4.", "Faça login para explorar o Distrito 4." },
@@ -441,7 +450,8 @@ namespace VinhKhanhTour.Services
             { "Về ứng dụng Vĩnh Khánh Tour", "Sobre o app Vinh Khanh Tour" }, { "Chạm để đổi", "Toque para mudar" },
             { "Mặc định", "Padrão" }, { "Phiên bản 1.0.0", "Versão 1.0.0" },
             { "Quay lại", "Voltar" }, { "Mở cửa", "Aberto" }, { "Thuyết minh tự động", "Narração Automática" },
-            { "Nội dung thuyết minh", "Conteúdo da Narração" }, { "Dừng Audio", "Parar Áudio" }
+            { "Nội dung thuyết minh", "Conteúdo da Narração" }, { "Dừng Audio", "Parar Áudio" },
+            { "Thời tiết TP.HCM", "Clima em HCMC" }
         };
 
         private readonly Dictionary<string, string> _hindiResources = new(StringComparer.OrdinalIgnoreCase) {
@@ -478,7 +488,8 @@ namespace VinhKhanhTour.Services
             { "Về ứng dụng Vĩnh Khánh Tour", "विन्ह खान टूर ऐप के बारे में" }, { "Chạm để đổi", "बदलने के लिए टैप करें" },
             { "Mặc định", "डिफ़ॉल्ट" }, { "Phiên bản 1.0.0", "संस्करण 1.0.0" },
             { "Quay lại", "वापस" }, { "Mở cửa", "खुला है" }, { "Thuyết minh tự động", "ऑटो नरेशन" },
-            { "Nội dung thuyết minh", "कथा सामग्री" }, { "Dừng Audio", "ऑडियो रोकें" }
+            { "Nội dung thuyết minh", "कथा सामग्री" }, { "Dừng Audio", "ऑडियो रोकें" },
+            { "Thời tiết TP.HCM", "हो ची मिन्ह मौसम" }
         };
     }
 }

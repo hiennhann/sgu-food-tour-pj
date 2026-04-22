@@ -46,9 +46,39 @@ namespace VinhKhanhTour
             subtitleLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Thiên đường Ốc Sài Gòn — Quận 4"));
             headerContentStack.Children.Add(subtitleLabel);
 
-            var playBtnHeader = new ImageButton { Source = "icon_play.png", BackgroundColor = Color.FromArgb("#FF5C0F"), WidthRequest = 50, HeightRequest = 50, CornerRadius = 25, HorizontalOptions = LayoutOptions.Center, Margin = new Thickness(0, 10, 0, 0) };
-            playBtnHeader.Shadow = new Shadow { Brush = Colors.Black, Opacity = 0.5f, Offset = new Point(0, 4), Radius = 10 };
-            headerContentStack.Children.Add(playBtnHeader);
+            var weatherLabel = new Label { FontSize = 14, TextColor = Colors.White, FontAttributes = FontAttributes.Bold, HorizontalTextAlignment = TextAlignment.Center, Margin = new Thickness(0, 5, 0, 0) };
+            headerContentStack.Children.Add(weatherLabel);
+
+            System.Threading.Tasks.Task.Run(async () => {
+                try
+                {
+                    using var client = new System.Net.Http.HttpClient();
+                    client.Timeout = System.TimeSpan.FromSeconds(5);
+                    var response = await client.GetStringAsync("https://api.open-meteo.com/v1/forecast?latitude=10.823&longitude=106.6296&current_weather=true");
+                    var json = System.Text.Json.JsonDocument.Parse(response);
+                    if (json.RootElement.TryGetProperty("current_weather", out var current))
+                    {
+                        var temp = current.GetProperty("temperature").GetDouble();
+                        var code = current.GetProperty("weathercode").GetInt32();
+                        string wIcon = "☁️";
+                        if (code == 0) wIcon = "☀️";
+                        else if (code >= 1 && code <= 3) wIcon = "⛅";
+                        else if (code >= 45 && code <= 48) wIcon = "🌫️";
+                        else if (code >= 51 && code <= 67) wIcon = "🌧️";
+                        else if (code >= 71 && code <= 77) wIcon = "❄️";
+                        else if (code >= 80 && code <= 82) wIcon = "🌦️";
+                        else if (code >= 95) wIcon = "⛈️";
+                        Microsoft.Maui.ApplicationModel.MainThread.BeginInvokeOnMainThread(() => {
+                            weatherLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode",
+                                source: VinhKhanhTour.Services.LocalizationResourceManager.Instance,
+                                converter: VinhKhanhTour.Helpers.TranslateConverter.Instance,
+                                converterParameter: "Thời tiết TP.HCM",
+                                stringFormat: "{0}: " + $"{temp}°C {wIcon}"));
+                        });
+                    }
+                }
+                catch { }
+            });
 
             headerGrid.Children.Add(headerContentStack);
             Grid.SetRow(headerGrid, 0);
@@ -81,6 +111,32 @@ namespace VinhKhanhTour
 
             var searchEntry = new Entry { BackgroundColor = Colors.Transparent, HeightRequest = 45 };
             searchEntry.SetBinding(Entry.PlaceholderProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Tìm quán ốc, lẩu, sushi..."));
+            searchEntry.TextChanged += (s, e) =>
+            {
+                if (BindingContext is HomeViewModel vm)
+                {
+                    vm.SearchByName(e.NewTextValue);
+
+                    // Reset giao diện UI Category về "Tất cả" khi có lệnh tìm kiếm
+                    if (_categoryButtons.Count > 0 && !string.IsNullOrWhiteSpace(e.NewTextValue))
+                    {
+                        var allBtn = _categoryButtons[0];
+                        foreach (var btn in _categoryButtons)
+                        {
+                            bool isSelected = (btn == allBtn);
+                            btn.BackgroundColor = isSelected ? Color.FromArgb("#FF5C0F") : Colors.White;
+                            btn.Stroke = isSelected ? Colors.Transparent : Color.FromArgb("#E5E5E5");
+                            btn.StrokeThickness = isSelected ? 0 : 1;
+                            btn.Shadow = isSelected ? new Shadow { Brush = Color.FromArgb("#FF5C0F"), Opacity = 0.3f, Offset = new Point(0, 4), Radius = 8 } : null;
+
+                            var layout = (HorizontalStackLayout)btn.Content;
+                            var label = (Label)layout.Children[1];
+                            label.TextColor = isSelected ? Colors.White : Color.FromArgb("#4A4A4A");
+                            label.FontAttributes = isSelected ? FontAttributes.Bold : FontAttributes.None;
+                        }
+                    }
+                }
+            };
             Grid.SetColumn(searchEntry, 1);
             searchGrid.Children.Add(searchEntry);
             searchBorder.Content = searchGrid;
@@ -284,11 +340,9 @@ namespace VinhKhanhTour
                     new ColumnDefinition { Width = GridLength.Star },
                     new ColumnDefinition { Width = GridLength.Star },
                     new ColumnDefinition { Width = GridLength.Star }
-                },
-                BackgroundColor = Colors.Transparent,
-                Padding = new Thickness(0, 10, 0, 10)
+                }
             };
-
+            // (...Code Tabs... Giữ nguyên phần tạo logic Menu điều hướng Tab phía cuối)
             var tab1 = CreateTabItem("Trang chủ", "🏠", true);
             var tapHome = new TapGestureRecognizer();
             tab1.GestureRecognizers.Add(tapHome);

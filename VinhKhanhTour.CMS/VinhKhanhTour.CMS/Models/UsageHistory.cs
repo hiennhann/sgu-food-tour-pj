@@ -8,8 +8,10 @@ namespace VinhKhanhTour.CMS.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public string UserEmail { get; set; }
+        // Đã xóa UserEmail và thêm 2 trường dành cho thiết bị di động
+        public string DeviceId { get; set; }
+
+        public string IpAddress { get; set; }
 
         [Required]
         public string ActionType { get; set; }

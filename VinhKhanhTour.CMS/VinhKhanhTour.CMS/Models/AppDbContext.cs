@@ -11,5 +11,7 @@ namespace VinhKhanhTour.CMS.Models
         public DbSet<Translation> Translations { get; set; }
         public DbSet<UsageHistory> UsageHistories { get; set; }
         public DbSet<Tour> Tours { get; set; }
+        public DbSet<DeviceSubscription> DeviceSubscriptions { get; set; }
+
     }
 }

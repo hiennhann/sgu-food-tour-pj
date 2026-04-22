@@ -123,15 +123,50 @@ namespace VinhKhanhTour.Views
 
             var actionGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, ColumnSpacing = 15 };
 
-            var menuBtn = new Button { BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
-            menuBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Thực Đơn", stringFormat: "📋 {0}"));
-            menuBtn.Clicked += async (s, e) => await Navigation.PushAsync(new MenuPage(place));
-            Grid.SetColumn(menuBtn, 0);
-            actionGrid.Children.Add(menuBtn);
+            var routeBtn = new Button { BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
+            routeBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Chỉ đường", stringFormat: "📍 {0}"));
+            routeBtn.Clicked += async (s, e) => {
+                var options = new Microsoft.Maui.ApplicationModel.MapLaunchOptions { Name = place.Name, NavigationMode = Microsoft.Maui.ApplicationModel.NavigationMode.Driving };
+                var location = new Microsoft.Maui.Devices.Sensors.Location(10.761622, 106.661172);
+                try { await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options); }
+                catch { await Application.Current.MainPage.DisplayAlert("Lỗi", "Không thể mở ứng dụng bản đồ.", "OK"); }
+            };
+            Grid.SetColumn(routeBtn, 0);
+            actionGrid.Children.Add(routeBtn);
 
+            bool isPlaying = false;
             var audioBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
             audioBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Nghe Audio", stringFormat: "🎧 {0}"));
-            audioBtn.Clicked += async (s, e) => await Navigation.PushAsync(new AudioPlayerPage(place));
+            audioBtn.Clicked += async (s, e) => {
+                if (isPlaying)
+                {
+                    isPlaying = false;
+                    audioBtn.BackgroundColor = Color.FromArgb("#FF5C0F");
+                    audioBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Nghe Audio", stringFormat: "🎧 {0}"));
+                    VinhKhanhTour.Services.NarrationEngine.Instance.CancelCurrentNarration();
+                }
+                else
+                {
+                    isPlaying = true;
+                    audioBtn.BackgroundColor = Color.FromArgb("#E53935");
+                    audioBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Dừng Audio", stringFormat: "⏹ {0}"));
+                    try
+                    {
+                        await VinhKhanhTour.Services.NarrationEngine.Instance.PlayNarrationAsync(place, isManual: true);
+                    }
+                    finally
+                    {
+                        if (isPlaying)
+                        {
+                            isPlaying = false;
+                            MainThread.BeginInvokeOnMainThread(() => {
+                                audioBtn.BackgroundColor = Color.FromArgb("#FF5C0F");
+                                audioBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: VinhKhanhTour.Services.LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Nghe Audio", stringFormat: "🎧 {0}"));
+                            });
+                        }
+                    }
+                }
+            };
             Grid.SetColumn(audioBtn, 1);
             actionGrid.Children.Add(audioBtn);
 

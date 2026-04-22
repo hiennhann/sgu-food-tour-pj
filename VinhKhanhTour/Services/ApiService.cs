@@ -16,10 +16,14 @@ namespace VinhKhanhTour.Services
         public ApiService()
         {
             // Dùng 10.0.2.2 để máy ảo Android kết nối được với Web CMS (localhost)
-            _baseUrl = "http://10.0.2.2:5113/api";
+            //_baseUrl = "http://10.0.2.2:5113/api";
+            _baseUrl = "https://9x12w3qg-5113.asse.devtunnels.ms/api";
+
 
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
+
+            _httpClient.DefaultRequestHeaders.Add("X-Tunnel-Skip-AntiPhishing-Page", "true");
         }
 
         public async Task<List<Poi>> GetPoisAsync()

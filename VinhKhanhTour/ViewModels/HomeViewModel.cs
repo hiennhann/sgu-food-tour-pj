@@ -121,5 +121,51 @@ namespace VinhKhanhTour.ViewModels
                 FeaturedPlaces.Add(item);
             }
         }
+
+        public void SearchByName(string query)
+        {
+            FeaturedPlaces.Clear();
+
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                // Nếu rỗng, hiển thị lại tất cả
+                FilterByCategory("Tất cả");
+                return;
+            }
+
+            var queryNormalized = RemoveDiacritics(query.Trim().ToLower());
+
+            // Tìm theo tên quán trong tất cả các quán (hỗ trợ không dấu)
+            var searchList = _allPlaces.Where(p =>
+            {
+                var nameNormalized = RemoveDiacritics(p.Name.ToLower());
+                return nameNormalized.Contains(queryNormalized);
+            }).ToList();
+
+            foreach (var item in searchList)
+            {
+                FeaturedPlaces.Add(item);
+            }
+        }
+
+        // Khử dấu câu tiếng Việt để phục vụ bộ máy tìm kiếm
+        private string RemoveDiacritics(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return text;
+
+            var normalizedString = text.Normalize(System.Text.NormalizationForm.FormD);
+            var stringBuilder = new System.Text.StringBuilder(capacity: normalizedString.Length);
+
+            foreach (var c in normalizedString)
+            {
+                var unicodeCategory = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != System.Globalization.UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(System.Text.NormalizationForm.FormC).Replace("Đ", "D").Replace("đ", "d");
+        }
     }
 }

@@ -86,6 +86,7 @@
     const liveCount = document.getElementById("liveCount");
     const noDataRow = document.getElementById("noDataRow");
 
+    // 1. Lắng nghe: Khi có thiết bị MỚI kết nối
     connection.on("DeviceConnected", function (device, totalCount) {
     liveCount.innerText = totalCount;
     if (noDataRow) noDataRow.style.display = 'none';
@@ -104,6 +105,7 @@
     setTimeout(() => row.style.backgroundColor = '', 1500);
     });
 
+    // 2. Lắng nghe: Khi có thiết bị NGẮT kết nối
     connection.on("DeviceDisconnected", function (deviceId, totalCount) {
     liveCount.innerText = totalCount;
     const row = document.getElementById("row_" + deviceId);
@@ -112,5 +114,33 @@
     if (totalCount === 0 && noDataRow) noDataRow.style.display = '';
     });
 
+    // 3. THÊM MỚI: Lắng nghe danh sách thiết bị khi Admin vừa mở trang hoặc F5
+    connection.on("LoadInitialDevices", function (devices, totalCount) {
+    liveCount.innerText = totalCount;
+        
+    if (totalCount > 0 && noDataRow) {
+    noDataRow.style.display = 'none';
+    }
+
+    // Xóa các dòng cũ (nếu có) để chuẩn bị vẽ lại từ đầu
+    const existingRows = tbody.querySelectorAll("tr:not(#noDataRow)");
+    existingRows.forEach(r => r.remove());
+
+    // Vẽ lại toàn bộ thiết bị đang có sẵn trong RAM của Server
+    devices.forEach(device => {
+    const row = document.createElement("tr");
+    row.id = "row_" + device.deviceId;
+    row.innerHTML = `
+    <td class="fw-bold text-primary ps-4">${device.deviceId}</td>
+    <td><span class="badge bg-light text-dark border">${device.ipAddress}</span></td>
+    <td><i class="bi bi-clock text-muted me-1"></i> ${device.connectTime}</td>
+    <td><span class="badge bg-success bg-opacity-75"><span class="spinner-grow spinner-grow-sm me-1" style="width: 0.5rem; height: 0.5rem;"></span>Live</span></td>
+    `;
+    // Chèn vào cuối bảng thay vì đầu bảng
+    tbody.appendChild(row);
+    });
+    });
+
+    // Khởi động kết nối
     connection.start().catch(err => console.error("Lỗi SignalR: ", err));
 </script>

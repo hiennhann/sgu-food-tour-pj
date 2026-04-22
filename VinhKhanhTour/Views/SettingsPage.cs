@@ -67,6 +67,25 @@ namespace VinhKhanhTour.Views
             aboutSection.Children.Add(aboutCard);
             contentStack.Children.Add(aboutSection);
 
+            // BẢN QUYỀN ỨNG DỤNG (MỚI THÊM)
+            var accountSection = new VerticalStackLayout { Spacing = 10 };
+            var accountTitle = new Label { FontSize = 12, FontAttributes = FontAttributes.Bold, TextColor = Colors.Gray, Margin = new Thickness(5, 0, 0, 0) };
+            accountTitle.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "BẢN QUYỀN ỨNG DỤNG"));
+            accountSection.Children.Add(accountTitle);
+
+            var accountCard = new Border { BackgroundColor = Colors.White, StrokeThickness = 0, StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 } };
+            var accountList = new VerticalStackLayout();
+
+            var upgradeRow = CreateSettingsRow("👑", "Nâng cấp gói Premium", "Mở khóa vĩnh viễn", true);
+            var tapUpgrade = new TapGestureRecognizer();
+            tapUpgrade.Tapped += async (s, e) => await Navigation.PushAsync(new PaywallPage(isLockedMode: false));
+            upgradeRow.GestureRecognizers.Add(tapUpgrade);
+
+            accountList.Children.Add(upgradeRow);
+            accountCard.Content = accountList;
+            accountSection.Children.Add(accountCard);
+            contentStack.Children.Add(accountSection);
+
             // Chữ ký 
             var footerLabel = new Label { FontSize = 12, TextColor = Colors.Gray, HorizontalOptions = LayoutOptions.Center, Margin = new Thickness(0, 20) };
             footerLabel.SetBinding(Label.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: TranslateConverter.Instance, converterParameter: "Thiết kế ❤️ bởi đội ngũ phát triển"));
@@ -109,7 +128,8 @@ namespace VinhKhanhTour.Views
 
             var avatar = new Border
             {
-                WidthRequest = 60, HeightRequest = 60,
+                WidthRequest = 60,
+                HeightRequest = 60,
                 StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 30 },
                 BackgroundColor = Color.FromArgb("#E0E0E0"),
                 StrokeThickness = 0,

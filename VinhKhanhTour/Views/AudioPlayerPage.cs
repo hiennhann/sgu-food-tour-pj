@@ -163,9 +163,10 @@ namespace VinhKhanhTour.Views
                 Shadow = new Shadow { Brush = Colors.Black, Radius = 10, Opacity = 0.08f, Offset = new Point(0, -4) }
             };
 
-            var actionGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Star } }, ColumnSpacing = 15 };
+            // Grid chia theo tỷ lệ 1 cột để dùng đủ chiều ngang do đã bỏ nút Menu
+            var actionGrid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Star } } };
 
-            var routeBtn = new Button { BackgroundColor = Color.FromArgb("#FFF0ED"), TextColor = Color.FromArgb("#FF5C0F"), FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
+            var routeBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
             routeBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Chỉ Đường", stringFormat: "📍 {0}"));
             routeBtn.Clicked += async (s, e) => {
                 var options = new MapLaunchOptions { Name = _currentPlace.Name, NavigationMode = NavigationMode.Driving };
@@ -175,12 +176,6 @@ namespace VinhKhanhTour.Views
             };
             Grid.SetColumn(routeBtn, 0);
             actionGrid.Children.Add(routeBtn);
-
-            var menuBtn = new Button { BackgroundColor = Color.FromArgb("#FF5C0F"), TextColor = Colors.White, FontAttributes = FontAttributes.Bold, CornerRadius = 25, HeightRequest = 55 };
-            menuBtn.SetBinding(Button.TextProperty, new Binding("CurrentLanguageCode", source: LocalizationResourceManager.Instance, converter: VinhKhanhTour.Helpers.TranslateConverter.Instance, converterParameter: "Xem Thực Đơn", stringFormat: "📋 {0}"));
-            menuBtn.Clicked += async (s, e) => await Navigation.PushAsync(new MenuPage(_currentPlace));
-            Grid.SetColumn(menuBtn, 1);
-            actionGrid.Children.Add(menuBtn);
 
             bottomBar.Content = actionGrid;
             Grid.SetRow(bottomBar, 1);
