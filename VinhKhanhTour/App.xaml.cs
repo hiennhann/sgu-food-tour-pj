@@ -7,7 +7,6 @@ namespace VinhKhanhTour
 {
     public partial class App : Application
     {
-        // Dùng SharedHub public static để các trang khác có thể gọi (gửi tọa độ, nghe heatmap...)
         public static HubConnection SharedHub { get; private set; }
         public static event EventHandler<string> HeatmapDataReceived;
 
@@ -16,11 +15,22 @@ namespace VinhKhanhTour
         public App()
         {
             InitializeComponent();
-
             _subscriptionService = new SubscriptionService();
-
-            // 1. Gọi hàm setup SignalR
             SetupSignalR();
+
+            // 1. NGƯỜI GÁC CỔNG: Kiểm tra xem đã quét mã QR chưa
+            bool isUnlocked = Preferences.Default.Get("IsAppUnlocked", false);
+
+            if (isUnlocked)
+            {
+                // Đã quét -> Vào thẳng trang chủ
+                MainPage = new NavigationPage(new HomePage());
+            }
+            else
+            {
+                // Chưa quét -> Khóa ngoài cửa
+                MainPage = CreateLockPage();
+            }
         }
 
         private void SetupSignalR()
@@ -32,19 +42,16 @@ namespace VinhKhanhTour
                 Preferences.Default.Set("UniqueDeviceId", deviceId);
             }
 
-            // Dùng link Dev Tunnels cố định
             string hubUrl = $"https://9x12w3qg-5113.asse.devtunnels.ms/monitoringHub?deviceId={deviceId}";
 
             SharedHub = new HubConnectionBuilder()
                 .WithUrl(hubUrl, options =>
                 {
-                    // Quan trọng: Ép bỏ qua trang cảnh báo của Microsoft
                     options.Headers.Add("X-Tunnel-Skip-AntiPhishing-Page", "true");
                 })
                 .WithAutomaticReconnect()
                 .Build();
 
-            // Lắng nghe sự kiện cập nhật bản đồ nhiệt
             SharedHub.On<string>("UpdateHeatmap", (jsonStr) =>
             {
                 MainThread.BeginInvokeOnMainThread(() =>
@@ -56,16 +63,15 @@ namespace VinhKhanhTour
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            // Trạng thái ban đầu: Nạp HomePage
-            return new Window(new NavigationPage(new HomePage()));
+            // Trả về MainPage đã được quyết định ở hàm App() phía trên
+            return new Window(MainPage);
         }
 
-        // 2. Kích hoạt kết nối và KIỂM TRA BẢN QUYỀN khi app bắt đầu chạy
         protected override async void OnStart()
         {
             base.OnStart();
 
-            // --- PHẦN A: BẬT SIGNALR (Kèm bắt lỗi hiện popup) ---
+            // Bật SignalR
             try
             {
                 await SharedHub.StartAsync();
@@ -78,22 +84,22 @@ namespace VinhKhanhTour
                 });
             }
 
-            // --- PHẦN B: KIỂM TRA BẢN QUYỀN TRẢ PHÍ ---
-            string deviceId = Preferences.Default.Get("UniqueDeviceId", string.Empty);
-            var status = await _subscriptionService.CheckStatusAsync(deviceId);
-
-            MainThread.BeginInvokeOnMainThread(() =>
+            // 2. CHỈ KIỂM TRA TRẢ PHÍ (PAYWALL) NẾU APP ĐÃ ĐƯỢC MỞ KHÓA BẰNG QR
+            bool isUnlocked = Preferences.Default.Get("IsAppUnlocked", false);
+            if (isUnlocked)
             {
-                if (status != null && status.Status == "Expired")
+                string deviceId = Preferences.Default.Get("UniqueDeviceId", string.Empty);
+                var status = await _subscriptionService.CheckStatusAsync(deviceId);
+
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    // Lập tức cắt đứt NavigationPage, đá văng về trang thanh toán
-                    Application.Current.MainPage = new PaywallPage();
-                }
-                else if (status != null && status.Status == "Trial")
-                {
-                    // Code hiện thông báo dùng thử (nếu có)
-                }
-            });
+                    if (status != null && status.Status == "Expired")
+                    {
+                        // Hết hạn thì đá qua trang thanh toán (Nhớ truyền tham số khóa màn hình nếu có)
+                        Application.Current.MainPage = new PaywallPage();
+                    }
+                });
+            }
         }
 
         protected override async void OnSleep()
@@ -102,25 +108,52 @@ namespace VinhKhanhTour
             try { await SharedHub.StopAsync(); } catch { }
         }
 
-        // --- PHẦN C: HỨNG LINK QUÉT MÃ QR (DEEP LINKING) ---
+        // 3. CHIẾC CHÌA KHÓA: HỨNG LINK TỪ CAMERA MẶC ĐỊNH
         protected override void OnAppLinkRequestReceived(Uri uri)
         {
             base.OnAppLinkRequestReceived(uri);
 
-            // Kiểm tra xem khách có vừa quét mã vinhkhanhtour.com/unlock không
-            if (uri.Host == "vinhkhanhtour.com" && uri.AbsolutePath == "/unlock")
+            // Dùng ToLower() để an toàn tuyệt đối khi so sánh chuỗi
+            if (uri.Host.ToLower() == "vkt" && uri.AbsolutePath.ToLower() == "/unlock")
             {
-                // Lưu vào bộ nhớ là đã kích hoạt
+                // Lưu vào bộ nhớ là đã kích hoạt vĩnh viễn
                 Preferences.Default.Set("IsAppUnlocked", true);
 
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    await Current.MainPage.DisplayAlert("Kích hoạt thành công", "Mời bạn bắt đầu chuyến Food Tour Vĩnh Khánh!", "Tuyệt vời");
+                    await Current.MainPage.DisplayAlert("Thành công", "Vé của bạn đã được xác nhận. Chào mừng đến với Vĩnh Khánh Tour!", "Bắt đầu ngay");
 
-                    // Xóa màn hình chờ, nạp lại HomePage
+                    // Phá khóa màn hình, đẩy khách vào trang chủ
                     Application.Current.MainPage = new NavigationPage(new HomePage());
                 });
             }
+        }
+
+        // 4. GIAO DIỆN MÀN HÌNH KHÓA (Code UI trực tiếp, không cần tạo file XAML mới)
+        private ContentPage CreateLockPage()
+        {
+            return new ContentPage
+            {
+                BackgroundColor = Color.FromArgb("#F5F5F5"),
+                Content = new VerticalStackLayout
+                {
+                    VerticalOptions = LayoutOptions.Center,
+                    Spacing = 20,
+                    Padding = 30,
+                    Children = {
+                        new Label {
+                            Text = "🔒 CHƯA KÍCH HOẠT TOUR",
+                            FontSize = 24, FontAttributes = FontAttributes.Bold,
+                            HorizontalOptions = LayoutOptions.Center, TextColor = Colors.Red
+                        },
+                        new Label {
+                            Text = "Vui lòng thoát App và dùng Camera điện thoại quét mã QR trên vé Tour của bạn để bắt đầu trải nghiệm.",
+                            HorizontalTextAlignment = TextAlignment.Center,
+                            FontSize = 16, TextColor = Colors.Gray
+                        }
+                    }
+                }
+            };
         }
     }
 }
