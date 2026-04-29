@@ -57,5 +57,32 @@ namespace VinhKhanhTour.Services
                 return new List<Poi>();
             }
         }
+
+        // THÊM HÀM NÀY VÀO TRONG CLASS ApiService
+        public async Task LogAppAccessAsync(string deviceId, string deviceModel)
+        {
+            try
+            {
+                var payload = new { DeviceId = deviceId, DeviceModel = deviceModel };
+
+                // Gọi nối tiếp vào cái _baseUrl đang chạy thành công của POI
+                var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}/UsageHistory/LogAccess", payload);
+
+                // BẮT BỆNH: Nếu Server từ chối, nó sẽ in lỗi ra màu đỏ để ní biết ngay
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"[LỖI API LỊCH SỬ]: {response.StatusCode} - {error}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("[THÀNH CÔNG] Đã lưu lịch sử vào Database!");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[LỖI MẠNG LỊCH SỬ]: {ex.Message}");
+            }
+        }
     }
 }

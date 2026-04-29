@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -297,29 +297,32 @@
                 <pre class="mermaid">
 flowchart LR
     %% Actors
-    Tourist([Khách Du Lịch\nUser Mobile])
-    Admin([Quản Trị Viên\nCMS Admin])
+    Tourist(["Khách Du Lịch\nUser Mobile"])
+    Admin(["Quản Trị Viên\nCMS Admin"])
 
     %% User System Boundary
-    subgraph System_Mobile [Vinh Khanh MAUI Mobile Application]
+    subgraph System_Mobile ["Vinh Khanh MAUI Mobile Application"]
         direction TB
-        UC1([Account: Đăng ký / Đăng nhập])
-        UC2([Map: Khám phá Bản đồ & Định vị])
-        UC3([Audio: Nghe Thuyết minh bản địa])
-        UC4([Menu: Xem Ẩm thực & Quán ăn])
-        UC5([Place: Xem Chi tiết địa điểm])
-        UC6([Setting: Tùy chỉnh Ngôn ngữ])
+        UC1(["Sub: Kiểm tra Bản Quyền\nPaywall / Trial / Premium"])
+        UC2(["Map: Khám phá Bản đồ & Định vị"])
+        UC3(["Audio: Thuyết minh TTS tự động"])
+        UC4(["Food: Xem Ẩm thực & Quán ăn"])
+        UC5(["Place: Xem Chi tiết địa điểm"])
+        UC6(["Setting: Tùy chỉnh Ngôn ngữ"])
+        UC7(["QR: Quét mã Deep Link Kích hoạt"])
+        UC8(["Signal: Gửi Tọa độ lên Bản đồ nhiệt"])
     end
 
     %% Admin System Boundary
-    subgraph System_CMS [Hệ Thống CMS Web Portal]
+    subgraph System_CMS ["Hệ Thống CMS Web Portal + API"]
         direction TB
-        UC7([Quản lý Cảnh Điểm POI])
-        UC8([Quản lý Tuyến Đường Tours])
-        UC9([Quản lý Tệp Âm Thanh Audio Tracks])
-        UC10([Quản lý Đa Ngôn Ngữ Translation])
-        UC11([Thống kê Hành vi Usage])
-        UC12([Cung Cấp Hệ sinh thái API])
+        UC9(["Quản lý Điểm đến POI"])
+        UC10(["Quản lý Tuyến Tour"])
+        UC11(["Quản lý Audio Tracks"])
+        UC12(["Quản lý Đa ngôn ngữ"])
+        UC13(["Duyệt Bản quyền DeviceSubscription"])
+        UC14(["Giám sát thiết bị Online SignalR"])
+        UC15(["Expose REST API JSON"])
     end
 
     %% Associations User
@@ -327,23 +330,28 @@ flowchart LR
     Tourist --- UC2
     Tourist --- UC4
     Tourist --- UC6
+    Tourist --- UC7
 
     %% Associations Admin
-    Admin --- UC7
-    Admin --- UC8
     Admin --- UC9
     Admin --- UC10
     Admin --- UC11
+    Admin --- UC12
+    Admin --- UC13
+    Admin --- UC14
 
-    %% Includes / Extends User Sub-cases
-    UC2 -.->|&lt;&lt;include&gt;&gt;| UC1
-    UC3 -.->|&lt;&lt;extend&gt;&gt;| UC2
-    UC5 -.->|&lt;&lt;extend&gt;&gt;| UC4
+    %% Includes / Extends
+    UC2 -.->|"&lt;&lt;include&gt;&gt;"| UC1
+    UC3 -.->|"&lt;&lt;extend&gt;&gt;"| UC2
+    UC5 -.->|"&lt;&lt;extend&gt;&gt;"| UC4
+    UC8 -.->|"&lt;&lt;include&gt;&gt;"| UC2
+    UC7 -.->|"&lt;&lt;extend&gt;&gt;"| UC1
 
-    %% Cross-interaction (Hệ thống đồng bộ)
-    UC12 -.->|&lt;&lt;include&gt;&gt; Đồng bộ Dữ liệu| UC2
-    UC12 -.->|&lt;&lt;include&gt;&gt; Đồng bộ Dữ liệu| UC4
-    
+    %% Cross-system
+    UC15 -.->|"&lt;&lt;include&gt;&gt; Sync Data"| UC2
+    UC15 -.->|"&lt;&lt;include&gt;&gt; Sync Data"| UC4
+    UC14 -.->|"&lt;&lt;realtime&gt;&gt; SignalR"| UC8
+
     style Tourist fill:#f8fafc,stroke:#3b82f6,stroke-width:2px
     style Admin fill:#f8fafc,stroke:#10b981,stroke-width:2px
 </pre>
@@ -364,66 +372,52 @@ flowchart LR
             <div class="diagram-container" style="overflow-x: auto; padding-bottom: 2rem;">
                 <pre class="mermaid">
 classDiagram
-    %% ======= MODELS / ENTITIES SHARED =======
-    namespace CoreEntities_Shared {
+    %% ======= CMS MODELS (PostgreSQL) =======
+    namespace CMS_Entities {
         class Poi {
             +int Id
             +string Name
             +string DisplayName
+            +string DisplayTtsScript
             +double Latitude
             +double Longitude
-            +string DisplayTtsScript
-            +string ImageUrl
+            +double Radius
             +int Priority
-            +int? TourId
+            +string ImageUrl
+            +string Address
+            +string Category
+            +bool IsActive
+            +ICollection~AudioTrack~ AudioTracks
         }
-        
         class Tour {
             +int Id
             +string TourName
             +string Description
+            +string PoiIds
+            +string CoverImageUrl
         }
-        
         class AudioTrack {
             +int Id
-            +string FileName
             +int PoiId
-            +string Language
+            +string LanguageCode
+            +string AudioUrl
+            +Poi Poi
         }
-        
         class Translation {
             +int Id
             +string LanguageCode
             +string Key
             +string Value
         }
-        
-        class FoodPlace {
-            +int Id
-            +string Name
-            +string Address
-            +string Description
-            +string ImageUrl
-            +double Latitude
-            +double Longitude
-        }
-        
-        class FoodItem {
-            +int Id
-            +string Name
-            +double Price
-            +string ImageUrl
-            +int PlaceId
-        }
-
-        class UserAccount {
-            +int Id
-            +string Email
-            +string PasswordHash
-            +string FullName
+        class DeviceSubscription {
+            +Guid Id
+            +string DeviceId
+            +DateTime FirstLaunchDate
+            +bool IsPaid
+            +string PaymentReceipt
             +DateTime CreatedAt
+            +DateTime UpdatedAt
         }
-        
         class UsageHistory {
             +int Id
             +string ActionType
@@ -432,96 +426,174 @@ classDiagram
         }
     }
 
-    %% ======= CMS ADMIN (WEB BACKEND) =======
-    namespace Admin_CMS_Backend {
+    %% ======= MAUI MOBILE MODELS =======
+    namespace MAUI_Models {
+        class Poi_Mobile {
+            +int Id
+            +string Name
+            +string DisplayName
+            +string DisplayTtsScript
+            +double Latitude
+            +double Longitude
+            +double Radius
+            +string ImageUrl
+            +string Address
+            +string Category
+            +bool IsActive
+        }
+        class FoodPlace {
+            +string Id
+            +string Name
+            +string Description
+            +string Address
+            +double Rating
+            +int ReviewCount
+            +string ImageUrl
+            +string NarrationText
+        }
+        class SubscriptionStatusResponse {
+            +string Status
+            +int HoursRemaining
+        }
+    }
+
+    %% ======= CMS BACKEND =======
+    namespace CMS_Backend {
         class AppDbContext {
             +DbSet~Poi~ Pois
             +DbSet~Tour~ Tours
             +DbSet~AudioTrack~ Audios
             +DbSet~Translation~ Translations
             +DbSet~UsageHistory~ UsageHistories
+            +DbSet~DeviceSubscription~ DeviceSubscriptions
             +SaveChangesAsync() Task~int~
         }
-        
         class PoiController {
             +Index() IActionResult
-            +Create(Poi) IActionResult
-            +Edit(int, Poi) IActionResult
+            +Create(Poi, IFormFile) IActionResult
+            +Edit(int, Poi, IFormFile) IActionResult
+            +Delete(int) IActionResult
         }
-        
         class TourController {
-            +Index()
-            +Create()
+            +Index() IActionResult
+            +Create(Tour) IActionResult
         }
-        
         class AudioTrackController {
-            +UploadAudio()
+            +Create(AudioTrack, IFormFile) IActionResult
         }
-        
-        class ApiApiController {
-            +GetPois() ActionResult~IEnumerable~Poi~~
-            +GetTours() ActionResult~IEnumerable~Tour~~
+        class SubscriptionController {
+            +CheckDeviceStatus(SubscriptionRequest) IActionResult
+            +ApproveDevice(string) IActionResult
+        }
+        class MonitoringHub {
+            +ConcurrentDictionary OnlineDevices
+            +OnConnectedAsync() Task
+            +OnDisconnectedAsync() Task
+            +UpdateUserLocation(int poiId) Task
+            -BroadcastHeatmap() Task
+        }
+        class PoiApiController {
+            +GetAll() IEnumerable~Poi~
+        }
+        class TourApiController {
+            +GetAll() IEnumerable~Tour~
+        }
+        class TranslationApiController {
+            +GetAll() IEnumerable~Translation~
         }
     }
 
-    %% ======= MAUI MOBILE (USER APP) =======
-    namespace User_Mobile_App {
-        class LocalSQLiteDB {
-            -SQLiteAsyncConnection _database
-            +InitAsync() Task
+    %% ======= MAUI SERVICES =======
+    namespace MAUI_Services {
+        class LocalDbService {
+            -SQLiteAsyncConnection _db
+            +SavePoisAsync(List~Poi~) Task
+            +GetOfflinePoisAsync() Task~List~Poi~~
         }
-        
-        class PoiRepository {
-            +GetAllPoisAsync() Task~List~Poi~~
-            +SyncWithApiAsync() Task
+        class ApiService {
+            -HttpClient _httpClient
+            -string _baseUrl
+            +GetPoisAsync() Task~List~Poi~~
         }
-        
-        class DatabaseService {
-            +GetUserAsync(string, string) Task~UserAccount~
-            +RegisterUserAsync(UserAccount) Task~int~
+        class SubscriptionService {
+            -HttpClient _httpClient
+            +GetOrCreateDeviceIdAsync() Task~string~
+            +CheckStatusAsync(string) Task~SubscriptionStatusResponse~
         }
-        
-        class MenuDataStore {
-            +GetPlacesAsync() Task~List~FoodPlace~~
+        class NarrationEngine {
+            +static Instance NarrationEngine
+            -CancellationTokenSource _ttsCts
+            +PlayNarrationAsync(FoodPlace, bool) Task
+            -TranslateTextAsync(string, string) Task~string~
+            +CancelCurrentNarration() void
         }
-        
+        class LocalizationResourceManager {
+            +static Instance LocalizationResourceManager
+            +string CurrentLanguageCode
+            +string this[string key]
+            +SetLanguage(string) void
+        }
+    }
+
+    %% ======= MAUI VIEWS =======
+    namespace MAUI_Views {
+        class App {
+            +static HubConnection SharedHub
+            -SubscriptionService _subscriptionService
+            +OnStart() void
+            +OnAppLinkRequestReceived(Uri) void
+        }
         class MapPage {
-            -LoadPins() void
-            -Pin_Clicked(sender, e) void
+            -LoadPoisFromCacheAsync() Task
+            -SyncDataFromApiAsync() Task
+            -CheckGeofence(Location) void
         }
-        
         class AudioPlayerPage {
-            -PlayMedia() void
-            -TextToSpeechFallback() void
+            -PlayAudioAsync() Task
+            -TextToSpeechFallback() Task
+        }
+        class SettingsPage {
+            -OnLanguageChanged() void
+        }
+        class PaywallPage {
+            -OnQrCodeScanned() void
+        }
+        class PlaceDetailPage {
+            -RenderMenuItems() void
+            -OnNavigateClicked() void
         }
     }
 
-    %% RELATIONS MODELS (SHARED)
-    AppDbContext "1" *-- "*" Poi : manages in SQL
-    AppDbContext "1" *-- "*" Tour : manages in SQL
-    AppDbContext "1" *-- "*" AudioTrack : manages in SQL
-    
-    LocalSQLiteDB "1" *-- "*" Poi : caches offline
-    
-    Poi "1" *-- "*" AudioTrack : has zero or more
-    Tour "1" o-- "*" Poi : consists of points
-    FoodPlace "1" *-- "*" FoodItem : contains menu items
+    %% === RELATIONS CMS ===
+    AppDbContext "1" *-- "*" Poi
+    AppDbContext "1" *-- "*" Tour
+    AppDbContext "1" *-- "*" AudioTrack
+    AppDbContext "1" *-- "*" Translation
+    AppDbContext "1" *-- "*" DeviceSubscription
+    AppDbContext "1" *-- "*" UsageHistory
+    Poi "1" *-- "*" AudioTrack
+    PoiController ..> AppDbContext
+    TourController ..> AppDbContext
+    AudioTrackController ..> AppDbContext
+    SubscriptionController ..> AppDbContext
+    PoiApiController ..> AppDbContext
+    TourApiController ..> AppDbContext
+    TranslationApiController ..> AppDbContext
 
-    %% RELATIONS CONTROLLERS (CMS)
-    PoiController ..> AppDbContext : injects
-    TourController ..> AppDbContext : injects
-    AudioTrackController ..> AppDbContext : injects
-    ApiApiController ..> AppDbContext : streams json
-
-    %% RELATIONS MAUI (USER)
-    PoiRepository --|> LocalSQLiteDB : uses connection
-    DatabaseService --|> LocalSQLiteDB : validates users
-    MenuDataStore ..> FoodPlace : loads
-    
-    MapPage ..> PoiRepository : queries local logic
-    AudioPlayerPage ..> Poi : loads script/audio details
-    
-    PoiRepository ..> ApiApiController : HTTP GET sync
+    %% === RELATIONS MAUI ===
+    App ..> SubscriptionService
+    App ..> MonitoringHub : SignalR HubConnection
+    MapPage ..> LocalDbService
+    MapPage ..> ApiService
+    MapPage ..> NarrationEngine
+    MapPage ..> MonitoringHub : UpdateUserLocation
+    AudioPlayerPage ..> NarrationEngine
+    PlaceDetailPage ..> NarrationEngine
+    SettingsPage ..> LocalizationResourceManager
+    NarrationEngine ..> LocalizationResourceManager
+    LocalDbService ..> Poi_Mobile
+    ApiService ..> PoiApiController : HTTP GET
+    SubscriptionService ..> SubscriptionController : HTTP POST
 </pre>
             </div>
         </div>
@@ -538,46 +610,43 @@ classDiagram
                 </h2>
             </div>
 
-            <!-- 3.1 & 3.2: USER AUTHENTICATION -->
+            <!-- 3.1 & 3.2: APP BOOT + SUBSCRIPTION CHECK -->
             <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 rounded-r-lg shadow-sm">
-                <h3 class="text-xl font-bold text-gray-800">3.1 & 3.2. Mobile App: Luồng Đăng Ký/Đăng Nhập Tài Khoản
-                    Người Dùng</h3>
+                <h3 class="text-xl font-bold text-gray-800">3.1 &amp; 3.2. Mobile App: Khởi động &amp; Kiểm tra Bản Quyền (Subscription Check)</h3>
             </div>
             <div class="diagram-container">
                 <pre class="mermaid">
 sequenceDiagram
     actor Tourist
-    participant TView as UI Views (Register/Login)
-    participant DbSvc as DatabaseService
-    participant SqLite as SQLite Local DB
-    participant State as Application State
+    participant App as App.xaml.cs
+    participant SubSvc as SubscriptionService
+    participant CmsApi as CMS API /subscription/check
+    participant SignalR as MonitoringHub
+    participant UI as NavigationPage
 
-    %% Register Path
-    Tourist-&gt;&gt;TView: [ĐĂNG KÝ] Nhập Email, Name, Bấm Đăng ký
-    TView-&gt;&gt;DbSvc: RegisterUserAsync(...)
-    DbSvc-&gt;&gt;SqLite: Cố gắng INSERT INTO UserAccount
-    alt Email Tồn Tại
-        SqLite--&gt;&gt;DbSvc: SQLError (Constraint Unique)
-        DbSvc--&gt;&gt;TView: Return Error
-        TView--&gt;&gt;Tourist: Hiện Popup Cảnh báo
-    else Đăng Ký OK
-        SqLite--&gt;&gt;DbSvc: Success Rows = 1
-        DbSvc--&gt;&gt;TView: Return True
-        TView--&gt;&gt;Tourist: Báo Thành công, Dẫn về Đăng Nhập
-    end
-    
-    %% Login Path
-    Tourist-&gt;&gt;TView: [ĐĂNG NHẬP] Nhập User, Pass
-    TView-&gt;&gt;DbSvc: GetUserAsync()
-    DbSvc-&gt;&gt;SqLite: SELECT * FROM UserAccount WHERE Auth
-    SqLite--&gt;&gt;DbSvc: User Object / Null
-    alt Hợp Lệ
-        DbSvc--&gt;&gt;TView: User Account
-        TView-&gt;&gt;State: Ghi đè Global Session Cache
-        TView--&gt;&gt;Tourist: Xóa Trang Auth, Rẽ sang Trang Chủ Shell
-    else Sai Pass
-        DbSvc--&gt;&gt;TView: Null
-        TView--&gt;&gt;Tourist: Chớp đỏ, Yêu cầu thử lại
+    Tourist->>App: Mở Ứng Dụng
+    App->>App: Tạo/Lấy UniqueDeviceId từ Preferences
+    App->>SignalR: HubConnectionBuilder.StartAsync()
+    SignalR-->>App: Connected OK
+    App->>SubSvc: CheckStatusAsync(deviceId)
+    SubSvc->>CmsApi: HTTP POST {deviceId}
+    CmsApi->>CmsApi: Tra cứu DeviceSubscription trong PostgreSQL
+    alt Lần đầu tiên
+        CmsApi-->>SubSvc: status=Trial, hoursRemaining=24
+        App->>UI: Vào HomePage bình thường
+    else Trial còn hiệu lực
+        CmsApi-->>SubSvc: status=Trial
+        App->>UI: Vào HomePage
+    else Hết hạn
+        CmsApi-->>SubSvc: status=Expired
+        App->>UI: Chuyển sang PaywallPage
+        Tourist->>App: Quét QR vinhkhanhtour.com/unlock
+        App->>App: OnAppLinkRequestReceived(uri)
+        App->>App: Preferences.Set(IsAppUnlocked, true)
+        App->>UI: NavigationPage mới - HomePage
+    else Đã trả phí Premium
+        CmsApi-->>SubSvc: status=Premium
+        App->>UI: Vào HomePage đầy đủ
     end
             </pre>
             </div>
@@ -750,26 +819,26 @@ sequenceDiagram
                 <!-- 4.1 -->
                 <div>
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-2 rounded-r-lg shadow-sm">
-                        <h3 class="font-bold text-gray-800">4.1. Mobile: Xác thực Định danh (Auth Flow)</h3>
+                        <h3 class="font-bold text-gray-800">4.1. Mobile: Kiểm tra Bản Quyền &amp; Paywall (Subscription Flow)</h3>
                     </div>
                     <div class="diagram-container">
                         <pre class="mermaid">
 flowchart TD
-    Start(["Bắt đầu Mở App"]) --&gt; CheckSession{"Có Token Local?"}
-    CheckSession --&gt;|"Đúng"| Home(["Sang Trang Chủ"])
-    CheckSession --&gt;|"Sai"| AuthView["Hiển thị Màn hình Xác thực"]
-    
-    AuthView --&gt; Choice{"Người dùng chọn?"}
-    Choice --&gt;|"Đăng Ký"| FillReg["Nhập Dữ liệu Đăng Ký"]
-    FillReg --&gt; ValidReg{"Tồn tại Email?"}
-    ValidReg --&gt;|"Có"| Err1["Báo lỗi: Đã sử dụng"] --&gt; AuthView
-    ValidReg --&gt;|"Chưa"| SaveReg["Lưu Account Mới SQLite"] --&gt; AuthView
-    
-    Choice --&gt;|"Đăng Nhập"| FillLogin["Nhập Tên/Pass"]
-    FillLogin --&gt; Verify{"Verify Data?"}
-    Verify --&gt;|"Khớp"| SetSess["Lưu Biến Phiên Toàn Cục"] --&gt; Home
-    Verify --&gt;|"Lệch"| Err2["Cảnh báo Lỗi"] --&gt; AuthView
-                    </pre>
+    Start(["Mở App - OnStart"]) --> GetId["Lấy UniqueDeviceId từ Preferences"]
+    GetId --> ConnSignalR["Kết nối SignalR MonitoringHub"]
+    ConnSignalR --> CallApi["POST /api/subscription/check"]
+    CallApi --> ApiOk{"API phản hồi?"}
+    ApiOk -->|"Lỗi mạng"| Fallback["Trạng thái: Trial (An toàn)"] --> Home
+    ApiOk -->|"OK"| CheckStatus{"Status?"}
+    CheckStatus -->|"Trial"| Home(["Vào HomePage"])
+    CheckStatus -->|"Premium"| Home
+    CheckStatus -->|"Expired"| Paywall["Hiển thị PaywallPage"]
+    Paywall --> ScanQR{"Quét mã QR?"}
+    ScanQR -->|"Chưa"| WaitPay["Chờ thanh toán"]
+    ScanQR -->|"vinhkhanhtour.com/unlock"| Unlock["OnAppLinkRequestReceived"]
+    Unlock --> SetPref["Preferences.Set(IsAppUnlocked, true)"]
+    SetPref --> Home
+                        </pre>
                     </div>
                 </div>
 

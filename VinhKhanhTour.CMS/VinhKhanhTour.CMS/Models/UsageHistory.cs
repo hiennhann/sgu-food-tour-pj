@@ -19,6 +19,7 @@ namespace VinhKhanhTour.CMS.Models
         [Required]
         public string Details { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        // ĐỔI Now THÀNH UtcNow
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
