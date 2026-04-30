@@ -17,15 +17,22 @@ namespace VinhKhanhTour.CMS.Controllers.Api
             _context = context;
         }
 
-        // Lấy từ điển theo mã ngôn ngữ (VD: GET api/TranslationApi?lang=en-US)
+        // Lấy danh sách bản dịch Quán ăn (POI) theo mã ngôn ngữ 
+        // VD: GET api/TranslationApi?lang=ko-KR
         [HttpGet]
-        public async Task<IActionResult> GetTranslations(string lang = "vi-VN")
+        public async Task<IActionResult> GetPoiTranslations(string lang = "en-US")
         {
-            // Chỉ lọc lấy các từ khóa của đúng ngôn ngữ người dùng đang chọn trên điện thoại
+            // Tìm tất cả các bản dịch thuộc về ngôn ngữ được truyền vào
             var translations = await _context.Translations
                                              .Where(t => t.LanguageCode == lang)
-                                             // Biến đổi thành dạng Dictionary { "Key": "Value" }
-                                             .ToDictionaryAsync(t => t.KeyName, t => t.TranslatedValue);
+                                             .Select(t => new
+                                             {
+                                                 PoiId = t.PoiId,
+                                                 TranslatedName = t.Name,
+                                                 TranslatedAddress = t.Address,
+                                                 TranslatedTtsScript = t.TtsScript
+                                             })
+                                             .ToListAsync();
 
             if (!translations.Any())
             {
@@ -33,7 +40,8 @@ namespace VinhKhanhTour.CMS.Controllers.Api
             }
 
             return Ok(translations);
-            // Kết quả trả về sẽ đẹp như vầy: { "btn_scan": "Scan QR", "app_title": "Food Street" }
+            // Kết quả trả về sẽ là một danh sách rõ ràng:
+            // [ { "poiId": 1, "translatedName": "Vu Snail", "translatedAddress": "...", "translatedTtsScript": "..." } ]
         }
     }
 }

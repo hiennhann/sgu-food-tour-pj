@@ -48,6 +48,37 @@ namespace VinhKhanhTour.CMS.Migrations
                     b.ToTable("Audios");
                 });
 
+            modelBuilder.Entity("VinhKhanhTour.CMS.Models.DeviceSubscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("FirstLaunchDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PaymentReceipt")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeviceSubscriptions");
+                });
+
             modelBuilder.Entity("VinhKhanhTour.CMS.Models.Poi", b =>
                 {
                     b.Property<int>("Id")
@@ -137,7 +168,7 @@ namespace VinhKhanhTour.CMS.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("KeyName")
+                    b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -145,11 +176,20 @@ namespace VinhKhanhTour.CMS.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("TranslatedValue")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PoiId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TtsScript")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PoiId");
 
                     b.ToTable("Translations");
                 });
@@ -190,6 +230,17 @@ namespace VinhKhanhTour.CMS.Migrations
                 {
                     b.HasOne("VinhKhanhTour.CMS.Models.Poi", "Poi")
                         .WithMany("AudioTracks")
+                        .HasForeignKey("PoiId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Poi");
+                });
+
+            modelBuilder.Entity("VinhKhanhTour.CMS.Models.Translation", b =>
+                {
+                    b.HasOne("VinhKhanhTour.CMS.Models.Poi", "Poi")
+                        .WithMany()
                         .HasForeignKey("PoiId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

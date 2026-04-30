@@ -1,41 +1,54 @@
 ﻿@model VinhKhanhTour.CMS.Models.Translation
 @{
-    ViewData["Title"] = "Add Translation";
+    ViewData["Title"] = "Thêm Bản Dịch Quán Ăn";
 }
 
 <div class="d-flex align-items-center mb-4">
-    <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;"><i class="bi bi-arrow-left"></i> Back</a>
-    <h3 class="fw-bold text-dark mb-0">Add New Translation</h3>
+    <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;"><i class="bi bi-arrow-left"></i> Quay Lại</a>
+    <h3 class="fw-bold text-dark mb-0">Dịch Thông Tin Quán (POI)</h3>
 </div>
 
 <div class="card shadow-sm border-0" style="border-radius: 10px;">
     <div class="card-body p-4">
         <form asp-action="Create" method="post">
             <div class="row">
-                <div class="col-md-4 mb-3">
+                <div class="col-md-6 mb-3">
                     <label asp-for="LanguageCode" class="form-label text-muted fw-bold">Mã Ngôn Ngữ</label>
                     <select asp-for="LanguageCode" class="form-select bg-light border-0" required>
-                        <option value="">-- Chọn --</option>
-                        <option value="vi-VN">Tiếng Việt (vi-VN)</option>
+                        <option value="">-- Chọn ngôn ngữ đích --</option>
                         <option value="en-US">English (en-US)</option>
-                        <option value="zh-CN">Chinese (zh-CN)</option>
-                        <option value="ja-JP">Japanese (ja-JP)</option>
                         <option value="ko-KR">Korean (ko-KR)</option>
+                        <option value="zh-CN">Chinese (zh-CN)</option>
                     </select>
                 </div>
-                <div class="col-md-8 mb-3">
-                    <label asp-for="KeyName" class="form-label text-muted fw-bold">Từ Khóa (Key)</label>
-                    <input asp-for="KeyName" class="form-control bg-light border-0" placeholder="vd: welcome_message" required />
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PoiId" class="form-label text-muted fw-bold">Quán Ăn Cần Dịch (POI Gốc)</label>
+                    <select asp-for="PoiId" class="form-select bg-light border-0" asp-items="ViewBag.PoiList" required>
+                        <option value="">-- Chọn quán ăn --</option>
+                    </select>
                 </div>
+
+                <div class="col-12 mb-3 mt-3">
+                    <label asp-for="Name" class="form-label text-muted fw-bold">Tên Quán (Đã dịch)</label>
+                    <input asp-for="Name" class="form-control bg-light border-0" placeholder="vd: Vu Snail Seafood" required />
+                </div>
+
+                <div class="col-12 mb-3">
+                    <label asp-for="Address" class="form-label text-muted fw-bold">Địa Chỉ (Đã dịch)</label>
+                    <input asp-for="Address" class="form-control bg-light border-0" placeholder="vd: 123 Vinh Khanh Street..." />
+                </div>
+
                 <div class="col-12 mb-4">
-                    <label asp-for="TranslatedValue" class="form-label text-muted fw-bold">Nội Dung Đã Dịch (Value)</label>
-                    <textarea asp-for="TranslatedValue" class="form-control bg-light border-0" rows="3" required></textarea>
+                    <label asp-for="TtsScript" class="form-label text-muted fw-bold">Kịch Bản Thuyết Minh (Audio Script)</label>
+                    <textarea asp-for="TtsScript" class="form-control bg-light border-0" rows="4" placeholder="Nhập bài thuyết minh bằng ngôn ngữ đã chọn..."></textarea>
                 </div>
             </div>
+            
             <hr class="text-muted my-4" />
             <div class="d-flex justify-content-end gap-2">
                 <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm" style="border-radius: 8px;">
-                    <i class="bi bi-save me-1"></i> Save Data
+                    <i class="bi bi-save me-1"></i> Lưu Bản Dịch
                 </button>
             </div>
         </form>

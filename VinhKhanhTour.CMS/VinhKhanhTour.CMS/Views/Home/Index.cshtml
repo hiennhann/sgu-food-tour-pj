@@ -3,7 +3,7 @@
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold text-dark"><i class="bi bi-speedometer2 text-primary me-2"></i> Bảng Điều Khiển</h2>
+    <h2 class="fw-bold text-dark"><i class="bi bi-speedometer2 text-primary me-2"></i> Bảng Theo Dõi</h2>
 </div>
 
 <div class="row mb-4">
@@ -15,7 +15,7 @@
                     <div class="spinner-grow spinner-grow-sm text-light" role="status"></div>
                 </div>
                 <h2 id="liveCount" class="display-5 fw-bold mb-0">0</h2>
-                <small class="text-white-50">thiết bị đang mở App</small>
+                <small class="text-white-50">thiết bị đang sử dụng</small>
             </div>
         </div>
     </div>
@@ -23,8 +23,9 @@
     <div class="col-md-4 col-lg-3 mb-3">
         <div class="card bg-primary text-white shadow-sm h-100" style="border-radius: 12px; border: none;">
             <div class="card-body">
-                <h6 class="fw-bold mb-2">Tổng số Tour</h6>
-                <h2 class="display-5 fw-bold mb-0">@ViewBag.TotalTours</h2>
+                <h6 class="fw-bold mb-2">Tổng lượt truy cập</h6>
+                <h2 class="display-5 fw-bold mb-0">@ViewBag.TotalAccess</h2>
+                <small class="text-white-50">lượt truy cập toàn hệ thống</small>
             </div>
         </div>
     </div>
@@ -50,7 +51,7 @@
 
 <div class="card shadow-sm border-0" style="border-radius: 10px;">
     <div class="card-header bg-white fw-bold py-3 border-bottom-0">
-        <i class="bi bi-broadcast text-success me-2"></i> Trạm giám sát thiết bị thời gian thực
+        <i class="bi bi-broadcast text-success me-2"></i> Trạm giám sát thiết bị đang sử dụng
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -67,7 +68,7 @@
                     <tr id="noDataRow">
                         <td colspan="4" class="text-center text-muted py-5">
                             <i class="bi bi-phone text-muted fs-1 d-block mb-2"></i>
-                            Hiện chưa có khách nào đang mở App.
+                            Hiện không có khách đang sử dụng
                         </td>
                     </tr>
                 </tbody>

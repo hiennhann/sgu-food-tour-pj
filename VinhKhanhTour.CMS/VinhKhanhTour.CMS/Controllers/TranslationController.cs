@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq;
@@ -16,14 +17,15 @@ namespace VinhKhanhTour.CMS.Controllers
         }
 
         // ==========================================
-        // 1. DANH SÁCH BẢN DỊCH
+        // 1. DANH SÁCH BẢN DỊCH (POI TRANSLATIONS)
         // ==========================================
         public async Task<IActionResult> Index()
         {
-            // Sắp xếp theo ngôn ngữ rồi đến ID để dễ quản lý
+            // .Include(t => t.Poi) để lấy được thông tên quán gốc hiển thị ra bảng
             var translations = await _context.Translations
+                                             .Include(t => t.Poi)
                                              .OrderBy(t => t.LanguageCode)
-                                             .ThenByDescending(t => t.Id)
+                                             .ThenBy(t => t.Poi.Name)
                                              .ToListAsync();
             return View(translations);
         }
@@ -33,6 +35,8 @@ namespace VinhKhanhTour.CMS.Controllers
         // ==========================================
         public IActionResult Create()
         {
+            // Lấy danh sách POI đang hoạt động để Admin chọn dịch
+            ViewBag.PoiList = new SelectList(_context.Pois.OrderBy(p => p.Name), "Id", "Name");
             return View();
         }
 
@@ -46,28 +50,24 @@ namespace VinhKhanhTour.CMS.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // Nếu lỗi (thiếu dữ liệu), phải nạp lại danh sách POI để Dropdown không bị trống
+            ViewBag.PoiList = new SelectList(_context.Pois.OrderBy(p => p.Name), "Id", "Name", translation.PoiId);
             return View(translation);
         }
 
         // ==========================================
-        // 3. XEM CHI TIẾT
-        // ==========================================
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-            var translation = await _context.Translations.FirstOrDefaultAsync(m => m.Id == id);
-            if (translation == null) return NotFound();
-            return View(translation);
-        }
-
-        // ==========================================
-        // 4. SỬA BẢN DỊCH
+        // 3. SỬA BẢN DỊCH
         // ==========================================
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
+
             var translation = await _context.Translations.FindAsync(id);
             if (translation == null) return NotFound();
+
+            // Nạp danh sách POI và chọn sẵn cái POI hiện tại
+            ViewBag.PoiList = new SelectList(_context.Pois.OrderBy(p => p.Name), "Id", "Name", translation.PoiId);
             return View(translation);
         }
 
@@ -91,6 +91,23 @@ namespace VinhKhanhTour.CMS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.PoiList = new SelectList(_context.Pois.OrderBy(p => p.Name), "Id", "Name", translation.PoiId);
+            return View(translation);
+        }
+
+        // ==========================================
+        // 4. CHI TIẾT BẢN DỊCH
+        // ==========================================
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var translation = await _context.Translations
+                                             .Include(t => t.Poi)
+                                             .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (translation == null) return NotFound();
             return View(translation);
         }
 
@@ -100,7 +117,11 @@ namespace VinhKhanhTour.CMS.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-            var translation = await _context.Translations.FirstOrDefaultAsync(m => m.Id == id);
+
+            var translation = await _context.Translations
+                                             .Include(t => t.Poi)
+                                             .FirstOrDefaultAsync(m => m.Id == id);
+
             if (translation == null) return NotFound();
             return View(translation);
         }

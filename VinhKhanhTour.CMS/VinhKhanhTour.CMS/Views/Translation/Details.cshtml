@@ -1,11 +1,11 @@
 ﻿@model VinhKhanhTour.CMS.Models.Translation
 @{
-    ViewData["Title"] = "Translation Details";
+    ViewData["Title"] = "Chi Tiết Bản Dịch";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div class="d-flex align-items-center">
-        <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;"><i class="bi bi-arrow-left"></i> Back</a>
+        <a asp-action="Index" class="btn btn-light text-muted me-3 shadow-sm" style="border-radius: 8px;"><i class="bi bi-arrow-left"></i> Quay Lại</a>
         <h3 class="fw-bold text-dark mb-0">Chi Tiết Bản Dịch</h3>
     </div>
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning fw-bold shadow-sm" style="border-radius: 8px;"><i class="bi bi-pencil-square"></i> Chỉnh sửa</a>
@@ -13,11 +13,16 @@
 
 <div class="card shadow-sm border-0" style="border-radius: 10px;">
     <div class="card-body p-4">
-        <h5 class="fw-bold text-primary mb-3">Key: @Model.KeyName</h5>
-        <p class="mb-2"><span class="fw-bold text-muted">Ngôn ngữ:</span> <span class="badge bg-success bg-opacity-10 text-success border border-success">@Model.LanguageCode</span></p>
-        <p class="fw-bold text-muted mb-1">Nội dung dịch:</p>
-        <div class="bg-light p-3 rounded text-dark text-break">
-            @Model.TranslatedValue
-        </div>
+        <h5 class="fw-bold text-primary mb-3">Quán gốc: @(Model.Poi != null ? Model.Poi.Name : "N/A")</h5>
+        <p class="mb-4"><span class="fw-bold text-muted">Ngôn ngữ:</span> <span class="badge bg-success bg-opacity-10 text-success border border-success">@Model.LanguageCode</span></p>
+        
+        <p class="fw-bold text-muted mb-1">Tên đã dịch:</p>
+        <div class="bg-light p-3 rounded text-dark text-break mb-3">@Model.Name</div>
+
+        <p class="fw-bold text-muted mb-1">Địa chỉ đã dịch:</p>
+        <div class="bg-light p-3 rounded text-dark text-break mb-3">@(string.IsNullOrEmpty(Model.Address) ? "Chưa có" : Model.Address)</div>
+
+        <p class="fw-bold text-muted mb-1">Kịch bản (Script):</p>
+        <div class="bg-light p-3 rounded text-dark text-break">@(string.IsNullOrEmpty(Model.TtsScript) ? "Chưa có" : Model.TtsScript)</div>
     </div>
 </div>
