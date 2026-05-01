@@ -21,20 +21,29 @@
                         <option value="zh-CN">Chinese (zh-CN)</option>
                     </select>
                 </div>
+                
                 <div class="col-md-6 mb-3">
                     <label asp-for="PoiId" class="form-label text-muted fw-bold">Quán Ăn Cần Dịch (POI Gốc)</label>
-                    <select asp-for="PoiId" class="form-select bg-light border-0" asp-items="ViewBag.PoiList" required>
-                        <option value="">-- Chọn quán ăn --</option>
-                    </select>
+                    <div class="input-group">
+                        <select asp-for="PoiId" class="form-select bg-light border-0" asp-items="ViewBag.PoiList" required>
+                            <option value="">-- Chọn quán ăn --</option>
+                        </select>
+                        <button type="button" class="btn btn-info text-white fw-bold shadow-sm" id="btnAutoTranslate">
+                            <i class="bi bi-magic"></i> Dịch Tự Động
+                        </button>
+                    </div>
                 </div>
+                
                 <div class="col-12 mb-3 mt-3">
                     <label asp-for="Name" class="form-label text-muted fw-bold">Tên Quán (Đã dịch)</label>
                     <input asp-for="Name" class="form-control bg-light border-0" required />
                 </div>
+                
                 <div class="col-12 mb-3">
                     <label asp-for="Address" class="form-label text-muted fw-bold">Địa Chỉ (Đã dịch)</label>
                     <input asp-for="Address" class="form-control bg-light border-0" />
                 </div>
+                
                 <div class="col-12 mb-4">
                     <label asp-for="TtsScript" class="form-label text-muted fw-bold">Kịch Bản Thuyết Minh (Audio Script)</label>
                     <textarea asp-for="TtsScript" class="form-control bg-light border-0" rows="4"></textarea>
@@ -48,3 +57,31 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $("#btnAutoTranslate").click(function () {
+            var poiId = $("#PoiId").val();
+            var lang = $("#LanguageCode").val();
+
+            if (!poiId || !lang) {
+                alert("Ní ơi, vui lòng chọn Ngôn ngữ và Quán ăn trước khi bấm dịch nha!");
+                return;
+            }
+
+            var btn = $(this);
+            var originalText = btn.html();
+            btn.html('<span class="spinner-border spinner-border-sm"></span> Đang dịch...').prop('disabled', true);
+
+            $.get('/api/TranslationApi/AutoTranslate', { poiId: poiId, targetLang: lang }, function (data) {
+                $("#Name").val(data.name);
+                $("#Address").val(data.address);
+                $("#TtsScript").val(data.script);
+                btn.html(originalText).prop('disabled', false);
+            }).fail(function() {
+                alert("Có lỗi mạng xảy ra khi dịch! Vui lòng thử lại.");
+                btn.html(originalText).prop('disabled', false);
+            });
+        });
+    </script>
+}

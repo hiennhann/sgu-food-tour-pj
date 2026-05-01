@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -31,11 +32,11 @@ namespace VinhKhanhTour.Services
             try
             {
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                // 1. Tải danh sách quán gốc (Tiếng Việt)
                 var response = await _httpClient.GetFromJsonAsync<List<Poi>>($"{_baseUrl}/PoiApi", options);
 
-                if (response != null)
+                if (response != null && response.Any())
                 {
-                    // ĐỒNG BỘ: Ép toàn bộ đường dẫn ảnh thành dạng tuyệt đối (http://...)
                     string serverHost = _baseUrl.Replace("/api", "");
 
                     foreach (var poi in response)
@@ -46,6 +47,61 @@ namespace VinhKhanhTour.Services
                             poi.ImageUrl = $"{serverHost}{separator}{poi.ImageUrl}";
                         }
                     }
+
+                    // ==================================================
+                    // 2. XỬ LÝ DỊCH THUẬT ĐỘNG TỪ CMS
+                    // ==================================================
+                    // Lấy mã ngôn ngữ hiện tại mà user đang chọn trên App
+                    string currentLang = LocalizationResourceManager.Instance.CurrentLanguageCode;
+
+                    // Nếu không phải tiếng Việt, tiến hành gọi API dịch
+                    if (currentLang != "vi")
+                    {
+                        // Map sang mã chuẩn của CMS (vd: "en" -> "en-US")
+                        string targetLang = currentLang switch
+                        {
+                            "en" => "en-US",
+                            "ko" => "ko-KR",
+                            "zh" => "zh-CN",
+                            "ja" => "ja-JP",
+                            "es" => "es-ES",
+                            "fr" => "fr-FR",
+                            "de" => "de-DE",
+                            "ru" => "ru-RU",
+                            "it" => "it-IT",
+                            "pt" => "pt-PT",
+                            "hi" => "hi-IN",
+                            _ => "en-US" // Mặc định phòng hờ
+                        };
+
+                        try
+                        {
+                            // Gọi API lấy các bản dịch tương ứng
+                            var translations = await _httpClient.GetFromJsonAsync<List<TranslationDto>>($"{_baseUrl}/TranslationApi?lang={targetLang}", options);
+
+                            if (translations != null && translations.Any())
+                            {
+                                foreach (var poi in response)
+                                {
+                                    var trans = translations.FirstOrDefault(t => t.PoiId == poi.Id);
+                                    if (trans != null)
+                                    {
+                                        // Ghi đè chữ dịch lên dữ liệu gốc
+                                        poi.Name = trans.TranslatedName;
+                                        poi.DisplayName = trans.TranslatedName; // Đổi luôn tên hiển thị
+                                        poi.Address = trans.TranslatedAddress;
+                                        poi.DisplayTtsScript = trans.TranslatedTtsScript;
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[LỖI API DỊCH]: {ex.Message}");
+                        }
+                    }
+                    // ==================================================
+
                     return response;
                 }
 
@@ -53,7 +109,7 @@ namespace VinhKhanhTour.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[LỖI API]: {ex.Message}");
+                Console.WriteLine($"[LỖI API LẤY POI]: {ex.Message}");
                 return new List<Poi>();
             }
         }
